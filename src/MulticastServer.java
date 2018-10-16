@@ -43,10 +43,12 @@ public class MulticastServer extends Thread {
 
             while (true) {
 
+
+
+                /*FileOutputStream f = new FileOutputStream(new File(file_name));
+                ObjectOutputStream o = new ObjectOutputStream(f);
                 FileInputStream fi = new FileInputStream(file_name);
                 ObjectInputStream oi = new ObjectInputStream(fi);
-                FileOutputStream f = new FileOutputStream(new File(file_name));
-                ObjectOutputStream o = new ObjectOutputStream(f);
 
                 byte[] optionReceived = new byte[256];
                 DatagramPacket packetOptionReceived = new DatagramPacket(optionReceived, optionReceived.length);
@@ -88,13 +90,11 @@ public class MulticastServer extends Thread {
                 //message2 = message2.toUpperCase();
                 //byte[] send2 = message2.getBytes();
                 //DatagramPacket teste = new DatagramPacket(send2, send2.length, group, CLIENT_PORT);
-                //sendSocket.send(teste);
+                //sendSocket.send(teste);*/
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             socket.close();
