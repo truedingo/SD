@@ -1,4 +1,5 @@
 
+import javax.jws.soap.SOAPBinding;
 import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import java.net.*;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 
@@ -19,6 +21,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 	private int PORT = 4444;
 	private int CLIENT_PORT = 4321;
 	private int MULTICAST_PORT = 5000;
+
+
+	//LinkedLists
+	private LinkedList<User> users;
 
 	public RMIServer() throws RemoteException {
 		super();
@@ -97,6 +103,33 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public synchronized void insertUser(User user) throws RemoteException{
+		users.add(user);
+	}
+
+	public boolean verificaUserExiste(String user) throws RemoteException{
+		for (User u: users){
+			if(u.getUsername().equals(user))
+				return false;
+			else
+				return true;
+		}
+		return true;
+	}
+
+	public boolean verifyCredencials(String username, String password) throws RemoteException{
+
+	    for (User u: users){
+	        if(u.getUsername().equals(username) && u.getPassword().equals(password)){
+	            return true;
+            }
+            else
+                return false;
+        }
+        return true;
+    }
 
 	// =========================================================
 	public static void main(String args[]) {
