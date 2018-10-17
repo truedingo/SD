@@ -1,3 +1,5 @@
+
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.UnknownHostException;
@@ -6,7 +8,7 @@ import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.*;
 import java.net.*;
-
+import java.util.Scanner;
 
 
 public class RMIServer extends UnicastRemoteObject implements RMI, Serializable {
@@ -22,25 +24,47 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 		super();
 	}
 
-	public void sayHello() throws RemoteException {
-		System.out.println("ping");
+	public String sayHello() throws RemoteException {
+		System.out.println("hello");
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return "hello";
 
 	}
 
-	public boolean metodoTeste(){
-
+	public void testing_connection(){
+		MulticastSocket socket = null;
+		MulticastSocket sendSocket = null;
+		System.out.println("Test method...");
 		try{
-			MulticastSocket socket = null;
-			MulticastSocket sendSocket = null;
+			//server stuff
+			socket = new MulticastSocket(configurations.getRMIport());  // create socket without binding it (only for sending)
+			sendSocket = new MulticastSocket();
 			InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
 			socket.joinGroup(group);
+
+			System.out.println("Try sending something to the multicast server...");
+			Scanner testScanner = new Scanner(System.in);
+			String test = testScanner.nextLine();
+			byte[] testBuffer = test.getBytes();
+			DatagramPacket testPacket = new DatagramPacket(testBuffer, testBuffer.length, group, MULTICAST_PORT);
+			sendSocket.send(testPacket);
+
+			byte[] testReceived = new byte[256];
+			DatagramPacket packetTestReceived = new DatagramPacket(testReceived, testReceived.length);
+			socket.receive(packetTestReceived);
+			String testString = new String(packetTestReceived.getData(), 0, packetTestReceived.getLength());
+			System.out.println(testString);
+
 
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public static void RMIOn() throws RemoteException {

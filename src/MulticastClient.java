@@ -83,6 +83,13 @@ class MulticastUser extends Thread {
                     socket.send(userPacket);
                     System.out.println("User information sent to server!");
                 }
+                else if(reading.equals("2")){
+                    String serverOption = "2";
+                    byte[] serverOptionBuffer = serverOption.getBytes();
+                    DatagramPacket optionPacket = new DatagramPacket(serverOptionBuffer, serverOptionBuffer.length, group, SERVER_PORT);
+                    socket.send(optionPacket);
+                    System.out.println("Sending option to server...");
+                }
 
                 /*-----*/
 

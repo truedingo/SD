@@ -1,4 +1,4 @@
 import java.rmi.*;
 public interface RMI extends Remote {
-	public void sayHello() throws java.rmi.RemoteException;
+	public String sayHello() throws java.rmi.RemoteException;
 }

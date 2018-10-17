@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -5,10 +6,11 @@ import java.net.MulticastSocket;
 import java.util.Scanner;
 
 public class MulticastServer extends Thread {
-    private String MULTICAST_ADDRESS = "224.0.224.0";
+    private String MULTICAST_ADDRESS = "224.1.224.1";
     private int PORT = 5000;
     private int CLIENT_PORT = 4321;
     private long SLEEP_TIME = 5000;
+    private int RMI_PORT = 7000;
     private int database_uid = 0;
 
     public static void main(String[] args) {
@@ -39,23 +41,32 @@ public class MulticastServer extends Thread {
             socket.joinGroup(group);
 
             //files stuff
-            String file_name = "test_user"+database_uid+".txt";
+            String file_name = "/Users/dingo/Desktop/SD/DropMusicMerged/test_user"+database_uid+".txt";
 
             while (true) {
 
+                byte[] testReceived = new byte[256];
+                DatagramPacket packetTestReceived = new DatagramPacket(testReceived, testReceived.length);
+                socket.receive(packetTestReceived);
+                String testString = new String(packetTestReceived.getData(), 0, packetTestReceived.getLength());
+                System.out.println(testString);
 
+                System.out.println("Sending answer back to RMI...");
+                Scanner testScanner = new Scanner(System.in);
+                String test = testScanner.nextLine();
+                byte[] testBuffer = test.getBytes();
+                DatagramPacket testPacket = new DatagramPacket(testBuffer, testBuffer.length, group, RMI_PORT);
+                sendSocket.send(testPacket);
 
-                /*FileOutputStream f = new FileOutputStream(new File(file_name));
-                ObjectOutputStream o = new ObjectOutputStream(f);
-                FileInputStream fi = new FileInputStream(file_name);
-                ObjectInputStream oi = new ObjectInputStream(fi);
-
-                byte[] optionReceived = new byte[256];
+                /*byte[] optionReceived = new byte[256];
                 DatagramPacket packetOptionReceived = new DatagramPacket(optionReceived, optionReceived.length);
                 socket.receive(packetOptionReceived);
                 String rOption = new String(packetOptionReceived.getData(), 0, packetOptionReceived.getLength());
                 System.out.println(rOption);
                 if(rOption.equals("1")){
+
+                    FileOutputStream f = new FileOutputStream(file_name);
+                    ObjectOutputStream o = new ObjectOutputStream(f);
 
                     //receber informações do user
                     byte[] buffer2 = new byte[256];
@@ -77,20 +88,26 @@ public class MulticastServer extends Thread {
 
                     //write to file
                     o.writeObject(new_user);
+                    o.flush();
+                    o.close();
                 }
+                else if(rOption.equals("2")){
+
+                    FileInputStream fi = new FileInputStream(file_name);
+                    ObjectInputStream oi = new ObjectInputStream(fi);
+                    test_user pr1 =(test_user)oi.readObject();
+                    System.out.println("Fetched this from file: ");
+                    System.out.println(pr1.toString());
+                    oi.close();
+                }*/
+
 
                 //read from file test
-                test_user pr1 =(test_user)oi.readObject();
-                System.out.println("Fetched this from file: ");
-                System.out.println(pr1.toString());
-
-                o.close();
-                oi.close();
 
                 //message2 = message2.toUpperCase();
                 //byte[] send2 = message2.getBytes();
                 //DatagramPacket teste = new DatagramPacket(send2, send2.length, group, CLIENT_PORT);
-                //sendSocket.send(teste);*/
+                //sendSocket.send(teste);
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
