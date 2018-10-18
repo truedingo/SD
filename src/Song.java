@@ -4,19 +4,15 @@ public class Song implements Serializable{
     private static final long serialVersionUID = 1L;
     private String songName;
     private String songGenre;
-    private String album;
-    private String artist;
     private long duration;
 
 
     Song(){
     };
 
-    public Song(String songName, String songGenre, String album, String artist, long duration) {
+    public Song(String songName, String songGenre, long duration) {
         this.songName = songName;
         this.songGenre = songGenre;
-        this.album = album;
-        this.artist = artist;
         this.duration = duration;
     }
 
@@ -40,22 +36,6 @@ public class Song implements Serializable{
         this.songGenre = songGenre;
     }
 
-    public String getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(String album) {
-        this.album = album;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
     public long getDuration() {
         return duration;
     }
@@ -66,6 +46,6 @@ public class Song implements Serializable{
 
     @Override
     public String toString() {
-        return "Name:" + songName + "\nGenre:" + songGenre + "\nAlbum:" + album + "\nArtist:" + artist + "\nDuration:" + duration;
+        return "Name:" + songName + "\nGenre:" + songGenre + "\nDuration:" + duration;
     }
 }

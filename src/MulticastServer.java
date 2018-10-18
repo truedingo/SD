@@ -1,9 +1,9 @@
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.Scanner;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MulticastServer extends Thread {
     private String MULTICAST_ADDRESS = "224.1.224.1";
@@ -12,6 +12,8 @@ public class MulticastServer extends Thread {
     private long SLEEP_TIME = 5000;
     private int RMI_PORT = 7000;
     private int database_uid = 0;
+
+    private CopyOnWriteArrayList<User> usersArrayList;
 
     public static void main(String[] args) {
         MulticastServer server = new MulticastServer();
@@ -24,6 +26,10 @@ public class MulticastServer extends Thread {
 
     public void run() {
         /*---*/
+        usersArrayList = new CopyOnWriteArrayList<>();
+        User admin = new User("admin", "admin");
+        admin.setPrivilege(true);
+        usersArrayList.add(admin);
         System.out.println("Please enter database UID for this server: ");
         Scanner serverUIDScanner = new Scanner(System.in);
         String serverUID = serverUIDScanner.nextLine();
@@ -31,7 +37,6 @@ public class MulticastServer extends Thread {
         System.out.println("Database UID for this server: "+database_uid);
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
-        long counter = 0;
         System.out.println(this.getName() + " running...");
         try {
             //server stuff
@@ -44,70 +49,41 @@ public class MulticastServer extends Thread {
             String file_name = "/Users/dingo/Desktop/SD/DropMusicMerged/test_user"+database_uid+".txt";
 
             while (true) {
+                byte[] receiveBuffer = new byte[256];
+                DatagramPacket  receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+                socket.receive(receivePacket);
+                String receiveString = new String(receivePacket.getData(), 0, receivePacket.getLength());
+                System.out.println("Received from RMI: "+receiveString);
 
-                byte[] testReceived = new byte[256];
-                DatagramPacket packetTestReceived = new DatagramPacket(testReceived, testReceived.length);
-                socket.receive(packetTestReceived);
-                String testString = new String(packetTestReceived.getData(), 0, packetTestReceived.getLength());
-                System.out.println(testString);
 
-                System.out.println("Sending answer back to RMI...");
-                Scanner testScanner = new Scanner(System.in);
-                String test = testScanner.nextLine();
-                byte[] testBuffer = test.getBytes();
-                DatagramPacket testPacket = new DatagramPacket(testBuffer, testBuffer.length, group, RMI_PORT);
-                sendSocket.send(testPacket);
+                if(receiveString.contains("type|register")){
+                    String [] splitString = receiveString.split(";");
+                    String [] getUsernameString = splitString[1].split("\\|");
+                    String [] getPasswordString = splitString[2].split("\\|");
+                    String getUsername = getUsernameString[1];
+                    String getPassword = getPasswordString[1];
+                    boolean flag;
+                    System.out.println("Trying to register user with Username:"+getUsername+" Password:"+getPassword);
 
-                /*byte[] optionReceived = new byte[256];
-                DatagramPacket packetOptionReceived = new DatagramPacket(optionReceived, optionReceived.length);
-                socket.receive(packetOptionReceived);
-                String rOption = new String(packetOptionReceived.getData(), 0, packetOptionReceived.getLength());
-                System.out.println(rOption);
-                if(rOption.equals("1")){
-
-                    FileOutputStream f = new FileOutputStream(file_name);
-                    ObjectOutputStream o = new ObjectOutputStream(f);
-
-                    //receber informações do user
-                    byte[] buffer2 = new byte[256];
-                    DatagramPacket packet2 = new DatagramPacket(buffer2, buffer2.length);
-                    socket.receive(packet2);
-
-                    //desempacotar e meter numa classe para escrita no ficheiro de objetos
-                    System.out.println("Received packet from " + packet2.getAddress().getHostAddress() + ":" + packet2.getPort() + " with message:");
-                    String message2 = new String(packet2.getData(), 0, packet2.getLength());
-                    System.out.println(message2);
-                    String[] userInfo = message2.split("\n");
-                    String name = (userInfo[0].split(":"))[1];
-                    String ageS = (userInfo[1].split(":"))[1];
-                    String [] age2 = ageS.split(" ");
-                    int age = Integer.parseInt(age2[1]);
-                    String gender = (userInfo[2].split(":"))[1];
-
-                    test_user new_user = new test_user(name, age, gender);
-
-                    //write to file
-                    o.writeObject(new_user);
-                    o.flush();
-                    o.close();
+                    flag = register(getUsername, getPassword);
+                    System.out.println(flag);
+                    if(flag == true){
+                        String sendRegister = "type|status;logged|on;msg|UserRegistered";
+                        byte[] sendBufferRegister = sendRegister.getBytes();
+                        DatagramPacket sendRegisterPacket = new DatagramPacket(sendBufferRegister, sendBufferRegister.length, group, RMI_PORT);
+                        sendSocket.send(sendRegisterPacket);
+                        System.out.println();
+                        System.out.println("Sent to RMI: "+sendRegister);
+                    }
+                    else{
+                        System.out.println("Username already in use");
+                        String sendError = "type|status;logged|off;msg|ErrorWithUsername";
+                        byte[] sendBufferError = sendError.getBytes();
+                        DatagramPacket sendErrorPacket = new DatagramPacket(sendBufferError, sendBufferError.length, group, RMI_PORT);
+                        sendSocket.send(sendErrorPacket);
+                        System.out.println("Sent to RMI: " + sendError);
+                    }
                 }
-                else if(rOption.equals("2")){
-
-                    FileInputStream fi = new FileInputStream(file_name);
-                    ObjectInputStream oi = new ObjectInputStream(fi);
-                    test_user pr1 =(test_user)oi.readObject();
-                    System.out.println("Fetched this from file: ");
-                    System.out.println(pr1.toString());
-                    oi.close();
-                }*/
-
-
-                //read from file test
-
-                //message2 = message2.toUpperCase();
-                //byte[] send2 = message2.getBytes();
-                //DatagramPacket teste = new DatagramPacket(send2, send2.length, group, CLIENT_PORT);
-                //sendSocket.send(teste);
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
@@ -115,6 +91,20 @@ public class MulticastServer extends Thread {
             e.printStackTrace();
         } finally {
             socket.close();
+            sendSocket.close();
         }
+    }
+
+    public boolean register(String username, String password){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username)){
+                return false;
+            }
+        }
+        User user = new User(username, password);
+        user.setPrivilege(false);
+        user.setStatus(true);
+        usersArrayList.add(user);
+        return true;
     }
 }

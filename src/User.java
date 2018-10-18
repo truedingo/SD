@@ -13,13 +13,9 @@ public class User implements Serializable {
     User(){
     };
 
-    public User(String username, String password, boolean status, boolean privilege, boolean checkPrivilegeNotification, boolean checkEditNofication) {
+    public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.status = status;
-        this.privilege = privilege;
-        this.checkPrivilegeNotification = checkPrivilegeNotification;
-        this.checkEditNofication = checkEditNofication;
     }
 
     public static long getSerialVersionUID() {

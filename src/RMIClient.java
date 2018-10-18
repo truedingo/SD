@@ -1,4 +1,8 @@
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.MulticastSocket;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.util.NoSuchElementException;
@@ -6,56 +10,10 @@ import java.util.Scanner;
 
 
 public class RMIClient {
-    private static RMI rmiInterface =null;
     private static Configurations configurations;
+    private static RMI rmiInterface;
 
-    public static void register() throws RemoteException{
-        Scanner s = new Scanner(System.in);
-        try {
-            System.out.print("\n> Username: ");
-            String username = s.nextLine();
-
-            System.out.print("\n> Password: ");
-            String password = s.nextLine();
-
-            User u = new User(username,password,false,false,false,false);
-
-            if(rmiInterface.verificaUserExiste(u.getUsername())) {
-                rmiInterface.insertUser(u);
-                System.out.println("Success! [Register]");
-            }
-            else {
-                System.out.println("User already in use. Try again!");
-                register();
-            }
-        } catch(ConnectException e) {
-            System.out.println("RMI Server inactive.");
-        }
-    }
-
-
-    public static void login() throws RemoteException {
-        Scanner s = new Scanner(System.in);
-        System.out.print("\n> Username: ");
-
-        String username = s.nextLine();
-
-        System.out.print("\n> Password: ");
-        String password = s.nextLine();
-
-        if(rmiInterface.verifyCredencials(username,password)){
-            System.out.println("Welcome to DropMusic");
-        }
-        else {
-            System.out.println("Wrong credencials, try again.");
-            login();
-        }
-    }
-
-
-        public static void menuLogin() throws RemoteException{
-        Scanner s = new Scanner(System.in);
-
+    public static void welcome(){
         while (true){
             try {
                 System.out.println("\n\t- Welcome to DropMusic -");
@@ -64,6 +22,7 @@ public class RMIClient {
                 System.out.println("\n0. Quit");
                 System.out.print("\n> Opcao: ");
 
+                Scanner s = new Scanner(System.in);
                 String strOpt = s.nextLine();
                 int opt = Integer.parseInt(strOpt);
 
@@ -76,7 +35,7 @@ public class RMIClient {
                 switch (opt) {
                     case 1:
                         //fuction login
-                        login();
+                        //login();
                         return;
                     case 2:
                         //function register
@@ -89,7 +48,9 @@ public class RMIClient {
 
             }catch (NumberFormatException e ){
                 System.out.println("Invalid option.");
-            } catch (NoSuchElementException e){}
+            } catch (NoSuchElementException e){} catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -99,17 +60,36 @@ public class RMIClient {
         //System.getProperties().put("java.security.policy", "policy.all");
         //System.setSecurityManager(new RMISecurityManager());
         //configurations = new Configurations(("/Users/iroseiro/IdeaProjects/Project/src/com/company/RMI_configs.cfg"));
-        configurations = new Configurations(("/Users/dingo/Desktop/SD/DropMusicMerged/src/RMI_configs.cfg"));
+        configurations = new Configurations("/Users/dingo/Desktop/SD/DropMusicMerged/out/production/DropMusicMerged/RMI_configs.cfg");
 
         try {
-            RMI rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+            rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
             rmiInterface.sayHello();
-            menuLogin();
+            welcome();
 
         } catch (Exception e) {
             System.out.println("Exception in main: " + e);
             e.printStackTrace();
         }
+
+    }
+
+    public static void register() throws RemoteException{
+
+        Scanner s = new Scanner(System.in);
+        System.out.println("Username: ");
+        String username = s.nextLine();
+
+        System.out.println("Password: ");
+        String password = s.nextLine();
+
+        if(rmiInterface.checkRegister(username, password)){
+            System.out.println("Registered successfully.");
+        }
+        else{
+            System.out.println("Username already in use.");
+        }
+
 
     }
 }
