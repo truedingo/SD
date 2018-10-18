@@ -17,10 +17,10 @@ public class RMIClient {
         while (true){
             try {
                 System.out.println("\n\t- Welcome to DropMusic -");
-                System.out.println("\n1. Login");
-                System.out.println("\n2. Register");
-                System.out.println("\n0. Quit");
-                System.out.print("\n> Opcao: ");
+                System.out.println("1. Login");
+                System.out.println("2. Register");
+                System.out.println("0. Quit");
+                System.out.print("> Opcao: ");
 
                 Scanner s = new Scanner(System.in);
                 String strOpt = s.nextLine();
@@ -28,14 +28,14 @@ public class RMIClient {
 
                 //verificacao option
                 if ((opt < 0) || (opt > 3)) {
-                    System.out.println("\n\tInvalid option! ");
+                    System.out.println("\tInvalid option! ");
                     continue;
                 }
 
                 switch (opt) {
                     case 1:
                         //fuction login
-                        //login();
+                        login();
                         return;
                     case 2:
                         //function register
@@ -85,11 +85,30 @@ public class RMIClient {
 
         if(rmiInterface.checkRegister(username, password)){
             System.out.println("Registered successfully.");
+            //mandar para menu
         }
         else{
             System.out.println("Username already in use.");
         }
 
 
+    }
+
+    public static void login() throws RemoteException{
+        Scanner s = new Scanner(System.in);
+        System.out.println("Username: ");
+        String username = s.nextLine();
+
+        System.out.println("Password: ");
+        String password = s.nextLine();
+        
+        if(rmiInterface.checkLogin(username, password)){
+            System.out.println("Logged in.");
+            //checkar privilegio
+            //mandar para menu
+        }
+        else{
+            System.out.println("Error with login.");
+        }
     }
 }

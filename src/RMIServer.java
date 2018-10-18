@@ -41,6 +41,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             sendSocket = new MulticastSocket();
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
             socket.joinGroup(group);
+
             String stringRegister = "type|register;username|" + username + ";password|" + password;
             System.out.println(stringRegister);
             byte[] bufferRegister = stringRegister.getBytes();
@@ -63,6 +64,44 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return true;
+    }
+
+    public boolean checkLogin(String username, String password) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringLogin = "type|login;username|" + username + ";password|" + password;
+            System.out.println(stringLogin);
+            byte[] bufferLogin = stringLogin.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferLogin, bufferLogin.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+stringLogin);
+
+            byte[] bufferReceiveLogin = new byte[256];
+            DatagramPacket receivePacketLogin = new DatagramPacket(bufferReceiveLogin, bufferReceiveLogin.length);
+            socket.receive(receivePacketLogin);
+            String receiveLogin = new String(receivePacketLogin.getData(), 0, receivePacketLogin.getLength());
+            System.out.println("Received from Multicast: "+receiveLogin);
+            if(receiveLogin.equals("type|status;logged|on;msg|ErrorWithLogin")){
+                return false;
+            }
+
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
             socket.close();
             sendSocket.close();
         }

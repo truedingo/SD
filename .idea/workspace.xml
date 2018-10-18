@@ -2,27 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bc796a7d-265c-4d37-a450-381a99e13dea" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/Album.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/Album.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/Artist.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/Artist.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/Configurations.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/Configurations.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/Critic.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/Critic.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/MulticastClient.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/MulticastClient.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/MulticastServer.class" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/MulticastUser.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/MulticastUser.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/RMI.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/RMI.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/RMIClient.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/RMIClient.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/RMIServer.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/RMIServer.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/Song.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/Song.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/User.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/User.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/test_user.class" afterPath="$PROJECT_DIR$/out/production/DropMusicMerged/test_user.class" />
       <change beforePath="$PROJECT_DIR$/src/MulticastServer.java" afterPath="$PROJECT_DIR$/src/MulticastServer.java" />
       <change beforePath="$PROJECT_DIR$/src/RMI.java" afterPath="$PROJECT_DIR$/src/RMI.java" />
       <change beforePath="$PROJECT_DIR$/src/RMIClient.java" afterPath="$PROJECT_DIR$/src/RMIClient.java" />
       <change beforePath="$PROJECT_DIR$/src/RMIServer.java" afterPath="$PROJECT_DIR$/src/RMIServer.java" />
-      <change beforePath="$PROJECT_DIR$/src/Song.java" afterPath="$PROJECT_DIR$/src/Song.java" />
-      <change beforePath="$PROJECT_DIR$/src/User.java" afterPath="$PROJECT_DIR$/src/User.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -74,11 +57,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RMIClient.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="RMIClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/RMIClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="846">
-              <caret line="85" column="59" lean-forward="true" selection-start-line="85" selection-start-column="59" selection-end-line="85" selection-end-column="59" />
+            <state relative-caret-position="303">
+              <caret line="103" column="8" lean-forward="false" selection-start-line="103" selection-start-column="8" selection-end-line="103" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -87,8 +70,8 @@
       <file leaf-file-name="RMIServer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/RMIServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="51" column="123" lean-forward="false" selection-start-line="51" selection-start-column="123" selection-end-line="51" selection-end-column="123" />
+            <state relative-caret-position="999">
+              <caret line="106" column="9" lean-forward="false" selection-start-line="106" selection-start-column="9" selection-end-line="106" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -96,11 +79,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MulticastServer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RMI.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/RMI.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="4" column="89" lean-forward="false" selection-start-line="4" selection-start-column="89" selection-end-line="4" selection-end-column="89" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MulticastServer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/MulticastServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="92">
-              <caret line="58" column="60" lean-forward="true" selection-start-line="58" selection-start-column="60" selection-end-line="58" selection-end-column="60" />
+            <state relative-caret-position="334">
+              <caret line="96" column="90" lean-forward="true" selection-start-line="96" selection-start-column="90" selection-end-line="96" selection-end-column="90" />
               <folding>
                 <element signature="e#675#676#0" expanded="true" />
                 <element signature="e#739#740#0" expanded="true" />
@@ -142,11 +135,11 @@
         <option value="$PROJECT_DIR$/src/Album.java" />
         <option value="$PROJECT_DIR$/src/Artist.java" />
         <option value="$PROJECT_DIR$/src/Song.java" />
-        <option value="$PROJECT_DIR$/src/RMI.java" />
         <option value="$PROJECT_DIR$/src/User.java" />
-        <option value="$PROJECT_DIR$/src/RMIClient.java" />
+        <option value="$PROJECT_DIR$/src/RMI.java" />
         <option value="$PROJECT_DIR$/src/RMIServer.java" />
         <option value="$PROJECT_DIR$/src/MulticastServer.java" />
+        <option value="$PROJECT_DIR$/src/RMIClient.java" />
       </list>
     </option>
   </component>
@@ -235,7 +228,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.RMIServer">
+  <component name="RunManager" selected="Application.MulticastServer">
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <option name="WIDTH" value="0" />
@@ -388,10 +381,10 @@
     </list>
     <recent_temporary>
       <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Application.RMIServer" />
-        <item index="1" class="java.lang.String" itemvalue="Application.RMIClient" />
-        <item index="2" class="java.lang.String" itemvalue="Application.MulticastServer" />
-        <item index="3" class="java.lang.String" itemvalue="Application.MulticastClient" />
+        <item index="0" class="java.lang.String" itemvalue="Application.MulticastServer" />
+        <item index="1" class="java.lang.String" itemvalue="Application.MulticastClient" />
+        <item index="2" class="java.lang.String" itemvalue="Application.RMIServer" />
+        <item index="3" class="java.lang.String" itemvalue="Application.RMIClient" />
       </list>
     </recent_temporary>
   </component>
@@ -416,12 +409,12 @@
       <workItem from="1539792613005" duration="5176000" />
       <workItem from="1539807778249" duration="5635000" />
       <workItem from="1539821552036" duration="177000" />
-      <workItem from="1539870439209" duration="12986000" />
+      <workItem from="1539870439209" duration="15028000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34317000" />
+    <option name="totallyTimeSpent" value="36359000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -435,7 +428,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3282353" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3282353" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282353" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -764,14 +757,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/RMI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="11" lean-forward="false" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/User.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="86">
@@ -780,32 +765,40 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/RMI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="89" lean-forward="false" selection-start-line="4" selection-start-column="89" selection-end-line="4" selection-end-column="89" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/RMIServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="51" column="123" lean-forward="false" selection-start-line="51" selection-start-column="123" selection-end-line="51" selection-end-column="123" />
+        <state relative-caret-position="999">
+          <caret line="106" column="9" lean-forward="false" selection-start-line="106" selection-start-column="9" selection-end-line="106" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/RMIClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="846">
-          <caret line="85" column="59" lean-forward="true" selection-start-line="85" selection-start-column="59" selection-end-line="85" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/MulticastServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="58" column="60" lean-forward="true" selection-start-line="58" selection-start-column="60" selection-end-line="58" selection-end-column="60" />
+        <state relative-caret-position="334">
+          <caret line="96" column="90" lean-forward="true" selection-start-line="96" selection-start-column="90" selection-end-line="96" selection-end-column="90" />
           <folding>
             <element signature="e#675#676#0" expanded="true" />
             <element signature="e#739#740#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/RMIClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="303">
+          <caret line="103" column="8" lean-forward="false" selection-start-line="103" selection-start-column="8" selection-end-line="103" selection-end-column="8" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -55,7 +55,6 @@ public class MulticastServer extends Thread {
                 String receiveString = new String(receivePacket.getData(), 0, receivePacket.getLength());
                 System.out.println("Received from RMI: "+receiveString);
 
-
                 if(receiveString.contains("type|register")){
                     String [] splitString = receiveString.split(";");
                     String [] getUsernameString = splitString[1].split("\\|");
@@ -67,7 +66,7 @@ public class MulticastServer extends Thread {
 
                     flag = register(getUsername, getPassword);
                     System.out.println(flag);
-                    if(flag == true){
+                    if(flag){
                         String sendRegister = "type|status;logged|on;msg|UserRegistered";
                         byte[] sendBufferRegister = sendRegister.getBytes();
                         DatagramPacket sendRegisterPacket = new DatagramPacket(sendBufferRegister, sendBufferRegister.length, group, RMI_PORT);
@@ -83,6 +82,32 @@ public class MulticastServer extends Thread {
                         sendSocket.send(sendErrorPacket);
                         System.out.println("Sent to RMI: " + sendError);
                     }
+                }
+                else if(receiveString.contains("type|login")){
+                    String [] splitString = receiveString.split(";");
+                    String [] getUsernameString = splitString[1].split("\\|");
+                    String [] getPasswordString = splitString[2].split("\\|");
+                    String getUsername = getUsernameString[1];
+                    String getPassword = getPasswordString[1];
+                    boolean flag;
+                    System.out.println("Trying to login user with Username:"+getUsername+" Password:"+getPassword);
+
+                    flag = login(getUsername, getPassword);
+                    if(flag){
+                        String sendLogin = "type|status;logged|on;msg|WelcomeToDropMusic";
+                        byte[] sendBufferLogin = sendLogin.getBytes();
+                        DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
+                        sendSocket.send(sendLoginPacket);
+                        System.out.println("Sent to RMI: "+sendLogin);
+                    }
+                    else{
+                        String sendLogin = "type|status;logged|on;msg|ErrorWithLogin";
+                        byte[] sendBufferLogin = sendLogin.getBytes();
+                        DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
+                        sendSocket.send(sendLoginPacket);
+                        System.out.println("Sent to RMI: "+sendLogin);
+                    }
+
                 }
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
@@ -106,5 +131,14 @@ public class MulticastServer extends Thread {
         user.setStatus(true);
         usersArrayList.add(user);
         return true;
+    }
+
+    public boolean login(String username, String password){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username) && u.getPassword().equals(password)){
+                return true;
+            }
+        }
+        return false;
     }
 }
