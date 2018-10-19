@@ -40,7 +40,7 @@ public class RMIClient {
                     case 2:
                         //function register
                         register();
-                        break;
+                        return;
                     case 0:
                         System.exit(0);
                         return;
@@ -60,7 +60,7 @@ public class RMIClient {
         //System.getProperties().put("java.security.policy", "policy.all");
         //System.setSecurityManager(new RMISecurityManager());
         //configurations = new Configurations(("/Users/iroseiro/IdeaProjects/Project/src/com/company/RMI_configs.cfg"));
-        configurations = new Configurations("/Users/dingo/Desktop/SD/DropMusicMerged/out/production/DropMusicMerged/RMI_configs.cfg");
+        configurations = new Configurations("/Users/iroseiro/Desktop/SD/SD/out/production/DropMusicMerged/RMI_configs.cfg");
 
         try {
             rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
@@ -90,7 +90,6 @@ public class RMIClient {
         else{
             System.out.println("Username already in use.");
         }
-
 
     }
 
@@ -246,44 +245,46 @@ public class RMIClient {
 
     //-------------- menu insert data -----------------------
     public static void insertData(){
-        while (true){
-            try {
-                System.out.println("\n\t- Insert Data -");
-                System.out.println("\n1. Insert music.");
-                System.out.println("\n2. Insert artist.");
-                System.out.println("\n3. Insert album.");
-                System.out.println("\n0. Quit");
-                System.out.print("\n> Option: ");
+        while (true) try {
+            System.out.println("\n\t- Insert Data -");
+            System.out.println("\n1. Insert music.");
+            System.out.println("\n2. Insert artist.");
+            System.out.println("\n3. Insert album.");
+            System.out.println("\n0. Quit");
+            System.out.print("\n> Option: ");
 
-                Scanner s = new Scanner(System.in);
-                String strOpt = s.nextLine();
-                int opt = Integer.parseInt(strOpt);
+            Scanner s = new Scanner(System.in);
+            String strOpt = s.nextLine();
+            int opt = Integer.parseInt(strOpt);
 
-                //verificacao option
-                if ((opt < 0) || (opt > 3)) {
-                    System.out.println("\n\tInvalid option! ");
-                    continue;
-                }
+            //verificacao option
+            if ((opt < 0) || (opt > 3)) {
+                System.out.println("\n\tInvalid option! ");
+                continue;
+            }
 
-                switch (opt) {
-                    case 1:
-                        insertMusic();
-                        //TODO
-                        return;
-                    case 2:
-                        //insert artist
-                        break;
-                    case 3 :
-                        //insert album
+            switch (opt) {
+                case 1:
+                    insertMusic();
+                    //TODO
+                    return;
+                case 2:
+                    //insert artist
+                    insertArtist();
+                    break;
+                case 3:
+                    //insert album
 
-                    case 0:
-                        System.exit(0);
-                        return;
-                }
+                case 0:
+                    System.exit(0);
+                    return;
+            }
 
-            }catch (NumberFormatException e ){
-                System.out.println("Invalid option.");
-            } catch (NoSuchElementException e){}
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid option.");
+        } catch (NoSuchElementException e) {
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -292,17 +293,37 @@ public class RMIClient {
     public static void insertMusic(){
         System.out.println("\n\t- Insert Music -");
         System.out.println("\nMusic name:");
-        Scanner musicName = new Scanner(System.in);
-        String strName = musicName.nextLine();
+        Scanner s = new Scanner(System.in);
+        String strName = s.nextLine();
 
         System.out.println("\nMusic genre:");
-        Scanner genreMusic = new Scanner(System.in);
-        String strGenre = musicName.nextLine();
+        String strGenre = s.nextLine();
 
         System.out.println("\nMusic duration:");
         Scanner durationMusic = new Scanner(System.in);
-        String strDuration = musicName.nextLine();
+        String strDuration = s.nextLine();
 
 
+    }
+
+    //------------ insert artist -----------------------
+
+    public static void insertArtist() throws RemoteException {
+        System.out.println("\n\t- Insert Artist -");
+        System.out.println("\nArtist name:");
+        Scanner s = new Scanner(System.in);
+
+        String artistName = s.nextLine();
+        System.out.println("\nArtist description:");
+        String artistDesc = s.nextLine();
+
+        if(rmiInterface.checkArtist(artistName,artistDesc)){
+            System.out.println("Artist added.");
+            menuAdministrador();
+        }
+        else{
+            System.out.println("Artist already exists! Try again");
+            insertArtist();
+        }
     }
 }

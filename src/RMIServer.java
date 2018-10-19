@@ -111,6 +111,47 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return "user";
     }
 
+    public boolean checkArtist(String artistName, String description) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringArtist = "type|insert_artist;" + artistName + ";description|" + description;
+            System.out.println(stringArtist);
+            byte[] bufferLogin = stringArtist.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferLogin, bufferLogin.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+stringArtist);
+
+            byte[] bufferReceiveLogin = new byte[256];
+            DatagramPacket receivePacketLogin = new DatagramPacket(bufferReceiveLogin, bufferReceiveLogin.length);
+            socket.receive(receivePacketLogin);
+            String receiveLogin = new String(receivePacketLogin.getData(), 0, receivePacketLogin.getLength());
+            System.out.println("Received from Multicast: "+receiveLogin);
+            if(receiveLogin.equals("type|insert_artist;successful")){
+                return true;
+            }
+            else if(receiveLogin.equals("type|insert_artist;error in insert artist")){
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+
+
         public static void RMIOn() throws RemoteException {
 
 		configurations = new Configurations(("RMI_configs.cfg"));

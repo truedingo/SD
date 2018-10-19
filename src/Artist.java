@@ -11,11 +11,9 @@ public class Artist implements Serializable{
 
     Artist(){};
 
-    public Artist(String artistName, String descArtist, ArrayList<Album> albums, ArrayList<String> userChanges) {
+    public Artist(String artistName, String descArtist) {
         this.artistName = artistName;
         this.descArtist = descArtist;
-        this.albums = albums;
-        this.userChanges = userChanges;
     }
 
     public static long getSerialVersionUID() {

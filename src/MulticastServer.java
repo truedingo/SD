@@ -14,6 +14,7 @@ public class MulticastServer extends Thread {
     private int database_uid = 0;
 
     private CopyOnWriteArrayList<User> usersArrayList;
+    private CopyOnWriteArrayList<Artist> artistsArrayList;
 
     public static void main(String[] args) {
         MulticastServer server = new MulticastServer();
@@ -27,14 +28,15 @@ public class MulticastServer extends Thread {
     public void run() {
         /*---*/
         usersArrayList = new CopyOnWriteArrayList<>();
+        artistsArrayList = new CopyOnWriteArrayList<>();
         User admin = new User("admin", "admin");
         admin.setPrivilege(true);
         usersArrayList.add(admin);
-        System.out.println("Please enter database UID for this server: ");
+        /*System.out.println("Please enter database UID for this server: ");
         Scanner serverUIDScanner = new Scanner(System.in);
         String serverUID = serverUIDScanner.nextLine();
         int database_uid = Integer.parseInt(serverUID);
-        System.out.println("Database UID for this server: "+database_uid);
+        System.out.println("Database UID for this server: "+database_uid);*/
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         System.out.println(this.getName() + " running...");
@@ -46,7 +48,7 @@ public class MulticastServer extends Thread {
             socket.joinGroup(group);
 
             //files stuff
-            String file_name = "/Users/dingo/Desktop/SD/DropMusicMerged/test_user"+database_uid+".txt";
+            //String file_name = "/Users/dingo/Desktop/SD/DropMusicMerged/test_user"+database_uid+".txt";
 
             while (true) {
                 byte[] receiveBuffer = new byte[256];
@@ -119,6 +121,36 @@ public class MulticastServer extends Thread {
                     }
 
                 }
+                else if(receiveString.contains("type|insert_artist")){
+                    String [] splitString = receiveString.split(";");
+                    String artistName = splitString[1];
+                    String [] splitString2 = splitString[2].split("\\|");
+                    String artistDescription = splitString2[1];
+
+                    boolean flag;
+                    flag = checkArtistExist(artistName);
+                    System.out.println(flag);
+                    if(flag){
+                        //Adiciona artista a lista
+                        addArtist(artistName,artistDescription);
+                        String sendArtist= "type|insert_artist;successful";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+                    else{
+                        String sendArtist= "type|insert_artist;error in insert artist";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+
+
+                }
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
@@ -169,5 +201,24 @@ public class MulticastServer extends Thread {
                 u.setPrivilege(true);
             }
         }
+    }
+
+    //funcao que verifica se o artista que vamos inserir ja existe - se ja existir retorna false, se nao retorna true
+    public boolean checkArtistExist(String name) {
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(name)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    public void addArtist(String name, String description){
+        Artist a;
+        a = new Artist(name, description);
+        artistsArrayList.add(a);
     }
 }
