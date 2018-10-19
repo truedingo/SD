@@ -144,6 +144,7 @@ public class RMIClient {
                         return;
                     case 2:
                         //menu change data
+                        //here
                         changeData();
                         break;
                     case 3:
