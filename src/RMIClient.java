@@ -85,7 +85,7 @@ public class RMIClient {
 
         if(rmiInterface.checkRegister(username, password)){
             System.out.println("Registered successfully.");
-            //mandar para menu
+            //mandar para menu user
         }
         else{
             System.out.println("Username already in use.");
@@ -104,14 +104,205 @@ public class RMIClient {
 
         if(rmiInterface.checkLogin(username, password).equals("editor")){
             System.out.println("Logged in as editor.");
-            //mandar para menu editor
+            menuAdministrador();
         }
         else if(rmiInterface.checkLogin(username, password).equals("user")){
             System.out.println("Logged in as user.");
             //mandar para menu user
+            //TODO
         }
         else{
             System.out.println("Error with login.");
         }
+    }
+
+    //----------- funcao de menu administrador -------------------
+    public static void menuAdministrador(){
+        while (true) {
+            try {
+                System.out.println("\n\t- Administrator Menu -");
+                System.out.println("\n1. Insert data");
+                System.out.println("\n2. Change data");
+                System.out.println("\n3. Remove data");
+                System.out.println("\n0. Quit");
+
+                Scanner s = new Scanner(System.in);
+                String strOpt = s.nextLine();
+                int opt = Integer.parseInt(strOpt);
+
+                System.out.print("\n> Option: ");
+                //verificacao option
+                if ((opt < 0) || (opt > 3)) {
+                    System.out.println("\n\tInvalid option! ");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        //menu insert data
+                        insertData();
+                        return;
+                    case 2:
+                        //menu change data
+                        changeData();
+                        break;
+                    case 3:
+                        //menu remove data
+                        removeData();
+                    case 0:
+                        System.exit(0);
+                        return;
+                }
+            }catch (NumberFormatException e ){
+                System.out.println("Invalid option.");
+            } catch (NoSuchElementException e){}
+        }
+    }
+
+    //-------------- menu remove data -----------------------
+    public static void removeData(){
+        while (true){
+            try {
+                System.out.println("\n\t- Remove Data -");
+                System.out.println("\n1. Remove music.");
+                System.out.println("\n2. Remove artist.");
+                System.out.println("\n3. Remove album.");
+                System.out.println("\n0. Quit");
+                Scanner s = new Scanner(System.in);
+                String strOpt = s.nextLine();
+                int opt = Integer.parseInt(strOpt);
+
+                //verificacao option
+                if ((opt < 0) || (opt > 3)) {
+                    System.out.println("\n\tInvalid option! ");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        //remove musica
+                        //login();
+                        return;
+                    case 2:
+                        //remove artista
+                        register();
+                        break;
+                    case 3 :
+                        //remove album
+                    case 0:
+                        System.exit(0);
+                        return;
+                }
+
+            }catch (NumberFormatException e ){
+                System.out.println("Invalid option.");
+            } catch (NoSuchElementException e){} catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //-------------- menu change data -----------------------
+    public static void changeData(){
+        while (true){
+            try {
+                System.out.println("\n\t- Change Data -");
+                System.out.println("\n1. Change music data.");
+                System.out.println("\n2. Change artist data.");
+                System.out.println("\n3. Change album data.");
+                System.out.println("\n0. Quit");
+                System.out.print("\n> Option: ");
+
+                Scanner s = new Scanner(System.in);
+                String strOpt = s.nextLine();
+                int opt = Integer.parseInt(strOpt);
+
+                //verificacao option
+                if ((opt < 0) || (opt > 3)) {
+                    System.out.println("\n\tInvalid option! ");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        //mudar dados da musica
+                        return;
+                    case 2:
+                        //mudar dados de artista
+                        //
+                        break;
+                    case 3 :
+                        //mudar dados de album
+                    case 0:
+                        System.exit(0);
+                        return;
+                }
+
+            }catch (NumberFormatException e ){
+                System.out.println("Invalid option.");
+            } catch (NoSuchElementException e){}
+        }
+    }
+
+    //-------------- menu insert data -----------------------
+    public static void insertData(){
+        while (true){
+            try {
+                System.out.println("\n\t- Insert Data -");
+                System.out.println("\n1. Insert music.");
+                System.out.println("\n2. Insert artist.");
+                System.out.println("\n3. Insert album.");
+                System.out.println("\n0. Quit");
+                System.out.print("\n> Option: ");
+
+                Scanner s = new Scanner(System.in);
+                String strOpt = s.nextLine();
+                int opt = Integer.parseInt(strOpt);
+
+                //verificacao option
+                if ((opt < 0) || (opt > 3)) {
+                    System.out.println("\n\tInvalid option! ");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        insertMusic();
+                        //TODO
+                        return;
+                    case 2:
+                        //insert artist
+                        break;
+                    case 3 :
+                        //insert album
+
+                    case 0:
+                        System.exit(0);
+                        return;
+                }
+
+            }catch (NumberFormatException e ){
+                System.out.println("Invalid option.");
+            } catch (NoSuchElementException e){}
+        }
+    }
+
+    //------------ insert music -----------------------
+
+    public static void insertMusic(){
+        System.out.println("\n\t- Insert Music -");
+        System.out.println("\nMusic name:");
+        Scanner musicName = new Scanner(System.in);
+        String strName = musicName.nextLine();
+
+        System.out.println("\nMusic genre:");
+        Scanner genreMusic = new Scanner(System.in);
+        String strGenre = musicName.nextLine();
+
+        System.out.println("\nMusic duration:");
+        Scanner durationMusic = new Scanner(System.in);
+        String strDuration = musicName.nextLine();
+
+
     }
 }

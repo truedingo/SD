@@ -4,6 +4,7 @@ public class Album {
 
     private static final long serialVersionUID = 1L;
     private String albumName;
+    private String nomedoArtista;
     ArrayList<Integer> mediaRating;
     ArrayList<Critic> critics;
     ArrayList<Song> songs;

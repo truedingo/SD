@@ -63,7 +63,6 @@ public class MulticastServer extends Thread {
                     String getPassword = getPasswordString[1];
                     boolean flag;
                     System.out.println("Trying to register user with Username:"+getUsername+" Password:"+getPassword);
-
                     flag = register(getUsername, getPassword);
                     System.out.println(flag);
                     if(flag){
