@@ -119,6 +119,31 @@ public class MulticastServer extends Thread {
                     }
 
                 }
+                else if(receiveString.contains("type|check;rights")){
+                    String [] splitString = receiveString.split(";");
+                    String getUsername = splitString[2];
+                    System.out.println("Trying to change rights of user with Username:"+getUsername);
+
+                    boolean check = checkUserRights(getUsername);
+                    if(check){
+                        setPrivilege(getUsername);
+                        System.out.println("Changed rights of "+getUsername+" to editor.");
+
+                        String sendCheck = "type|check;rights|changed";
+                        byte[] sendBufferCheck = sendCheck.getBytes();
+                        DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
+                        sendSocket.send(sendCheckPacket);
+                        System.out.println("Sent to RMI: "+sendCheck);
+                    }
+                    else{
+                        String sendCheck = "type|check;rights|error";
+                        byte[] sendBufferCheck = sendCheck.getBytes();
+                        DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
+                        sendSocket.send(sendCheckPacket);
+                        System.out.println("Sent to RMI: "+sendCheck);
+                    }
+
+                }
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
@@ -169,5 +194,18 @@ public class MulticastServer extends Thread {
                 u.setPrivilege(true);
             }
         }
+    }
+
+    public boolean checkUserRights(String username){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username)){
+                if(u.isPrivilege())
+                    return false;
+                else
+                    return true;
+
+            }
+        }
+        return false;
     }
 }

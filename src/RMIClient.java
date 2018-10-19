@@ -85,7 +85,7 @@ public class RMIClient {
 
         if(rmiInterface.checkRegister(username, password)){
             System.out.println("Registered successfully.");
-            //mandar para menu user
+            menuUser(username);
         }
         else{
             System.out.println("Username already in use.");
@@ -108,8 +108,7 @@ public class RMIClient {
         }
         else if(rmiInterface.checkLogin(username, password).equals("user")){
             System.out.println("Logged in as user.");
-            //mandar para menu user
-            //TODO
+            menuUser(username);
         }
         else{
             System.out.println("Error with login.");
@@ -120,11 +119,12 @@ public class RMIClient {
     public static void menuAdministrador(){
         while (true) {
             try {
-                System.out.println("\n\t- Administrator Menu -");
-                System.out.println("\n1. Insert data");
-                System.out.println("\n2. Change data");
-                System.out.println("\n3. Remove data");
-                System.out.println("\n0. Quit");
+                System.out.println("\t- Administrator Menu -");
+                System.out.println("1. Insert data");
+                System.out.println("2. Change data");
+                System.out.println("3. Remove data");
+                System.out.println("4. Give editor rights ");
+                System.out.println("0. Quit");
 
                 Scanner s = new Scanner(System.in);
                 String strOpt = s.nextLine();
@@ -132,7 +132,7 @@ public class RMIClient {
 
                 System.out.print("\n> Option: ");
                 //verificacao option
-                if ((opt < 0) || (opt > 3)) {
+                if ((opt < 0) || (opt > 4)) {
                     System.out.println("\n\tInvalid option! ");
                     continue;
                 }
@@ -149,13 +149,18 @@ public class RMIClient {
                     case 3:
                         //menu remove data
                         removeData();
+                    case 4:
+                        //change user rights
+                        changeRights();
                     case 0:
                         System.exit(0);
                         return;
                 }
             }catch (NumberFormatException e ){
                 System.out.println("Invalid option.");
-            } catch (NoSuchElementException e){}
+            } catch (NoSuchElementException e){} catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -296,12 +301,69 @@ public class RMIClient {
         String strName = musicName.nextLine();
 
         System.out.println("\nMusic genre:");
-        Scanner genreMusic = new Scanner(System.in);
         String strGenre = musicName.nextLine();
 
         System.out.println("\nMusic duration:");
-        Scanner durationMusic = new Scanner(System.in);
         String strDuration = musicName.nextLine();
+
+
+    }
+
+    //---------- menu user ---------//
+    public static void menuUser(String username){
+
+        while (true) {
+            try {
+                System.out.println("\n\t- User Menu -");
+                System.out.println("\n1. View Data");
+                System.out.println("\n0. Quit");
+
+                Scanner s = new Scanner(System.in);
+                String strOpt = s.nextLine();
+                int opt = Integer.parseInt(strOpt);
+
+                System.out.print("\n> Option: ");
+                //verificacao option
+                if ((opt < 0) || (opt > 3)) {
+                    System.out.println("\n\tInvalid option! ");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        //menu insert data
+                        return;
+                    case 2:
+                        //menu change data
+                        break;
+                    case 3:
+                        //menu remove data
+                    case 0:
+                        System.exit(0);
+                        return;
+                }
+            }catch (NumberFormatException e ){
+                System.out.println("Invalid option.");
+            } catch (NoSuchElementException e){} catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //--------change user rights-------
+    public static void changeRights() throws RemoteException {
+        Scanner s = new Scanner(System.in);
+        System.out.println("Insert username: ");
+        String username = s.nextLine();
+        if(rmiInterface.checkUserRights(username)){
+            System.out.println("Changed rights of user "+username+" to editor.");
+            menuAdministrador();
+        }
+        else{
+            System.out.println("User not found or is already an editor.");
+            menuAdministrador();
+        }
+
 
 
     }

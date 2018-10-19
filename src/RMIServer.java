@@ -70,6 +70,46 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return true;
     }
 
+    public boolean checkUserRights(String username){
+	    MulticastSocket socket = null;
+	    MulticastSocket sendSocket = null;
+	    try{
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String checkRight = "type|check;rights|username;"+username;
+            System.out.println(checkRight);
+            byte[] bufferCheckRight = checkRight.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferCheckRight, bufferCheckRight.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+checkRight);
+
+            byte[] bufferReceiveCheck = new byte[256];
+            DatagramPacket receivePacketCheck = new DatagramPacket(bufferReceiveCheck, bufferReceiveCheck.length);
+            socket.receive(receivePacketCheck);
+            String receiveCheck = new String(receivePacketCheck.getData(), 0, receivePacketCheck.getLength());
+            System.out.println("Received from Multicast: "+receiveCheck);
+            if(receiveCheck.equals("type|check;rights|error")){
+                return false;
+            }
+
+
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public boolean idleUserRights(String username){
+
+    }
+
     public String checkLogin(String username, String password) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
