@@ -90,15 +90,26 @@ public class MulticastServer extends Thread {
                     String getUsername = getUsernameString[1];
                     String getPassword = getPasswordString[1];
                     boolean flag;
+                    boolean check;
                     System.out.println("Trying to login user with Username:"+getUsername+" Password:"+getPassword);
 
                     flag = login(getUsername, getPassword);
                     if(flag){
-                        String sendLogin = "type|status;logged|on;msg|WelcomeToDropMusic";
-                        byte[] sendBufferLogin = sendLogin.getBytes();
-                        DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
-                        sendSocket.send(sendLoginPacket);
-                        System.out.println("Sent to RMI: "+sendLogin);
+                        check = checkPrivilege(getUsername);
+                        if(check){
+                            String sendLogin = "type|status;logged|on;msg|WelcomeToDropMusic|privilege;editor|";
+                            byte[] sendBufferLogin = sendLogin.getBytes();
+                            DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
+                            sendSocket.send(sendLoginPacket);
+                            System.out.println("Sent to RMI: "+sendLogin);
+                        }
+                        else{
+                            String sendLogin = "type|status;logged|on;msg|WelcomeToDropMusic|privilege;user|";
+                            byte[] sendBufferLogin = sendLogin.getBytes();
+                            DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
+                            sendSocket.send(sendLoginPacket);
+                            System.out.println("Sent to RMI: "+sendLogin);
+                        }
                     }
                     else{
                         String sendLogin = "type|status;logged|on;msg|ErrorWithLogin";
@@ -128,7 +139,6 @@ public class MulticastServer extends Thread {
         }
         User user = new User(username, password);
         user.setPrivilege(false);
-        user.setStatus(true);
         usersArrayList.add(user);
         return true;
     }
@@ -136,9 +146,29 @@ public class MulticastServer extends Thread {
     public boolean login(String username, String password){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username) && u.getPassword().equals(password)){
+                u.setStatus(true);
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean checkPrivilege(String username){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username)){
+                if(u.isPrivilege()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void setPrivilege(String username){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username)){
+                u.setPrivilege(true);
+            }
+        }
     }
 }

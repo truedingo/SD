@@ -70,7 +70,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return true;
     }
 
-    public boolean checkLogin(String username, String password) {
+    public String checkLogin(String username, String password) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -93,7 +93,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             String receiveLogin = new String(receivePacketLogin.getData(), 0, receivePacketLogin.getLength());
             System.out.println("Received from Multicast: "+receiveLogin);
             if(receiveLogin.equals("type|status;logged|on;msg|ErrorWithLogin")){
-                return false;
+                return "error";
+            }
+            else if(receiveLogin.equals("type|status;logged|on;msg|WelcomeToDropMusic|privilege;editor|")){
+                return "editor";
             }
 
 
@@ -105,7 +108,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             socket.close();
             sendSocket.close();
         }
-        return true;
+        return "user";
     }
 
         public static void RMIOn() throws RemoteException {

@@ -101,11 +101,14 @@ public class RMIClient {
 
         System.out.println("Password: ");
         String password = s.nextLine();
-        
-        if(rmiInterface.checkLogin(username, password)){
-            System.out.println("Logged in.");
-            //checkar privilegio
-            //mandar para menu
+
+        if(rmiInterface.checkLogin(username, password).equals("editor")){
+            System.out.println("Logged in as editor.");
+            //mandar para menu editor
+        }
+        else if(rmiInterface.checkLogin(username, password).equals("user")){
+            System.out.println("Logged in as user.");
+            //mandar para menu user
         }
         else{
             System.out.println("Error with login.");
