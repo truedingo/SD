@@ -22,7 +22,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 		super();
 	}
 
-	public String sayHello() throws RemoteException {
+	public synchronized String sayHello() throws RemoteException {
 		System.out.println("hello");
 		try {
 			Thread.sleep(3000);
@@ -32,7 +32,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 		return "hello";
 	}
 
-	public boolean checkRegister(String username, String password) {
+	public synchronized boolean checkRegister(String username, String password) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -70,7 +70,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return true;
     }
 
-    public boolean checkUserRights(String username){
+    public synchronized boolean checkUserRights(String username){
 	    MulticastSocket socket = null;
 	    MulticastSocket sendSocket = null;
 	    try{
@@ -106,11 +106,44 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return true;
     }
 
-    public boolean idleUserRights(String username){
+    public synchronized boolean idleUserRights(String username) {
 
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String idleCheck = "type|idle;rights|"+username;
+            System.out.println(idleCheck);
+            byte[] bufferIdleRight = idleCheck.getBytes();
+            DatagramPacket idlePacket = new DatagramPacket(bufferIdleRight, bufferIdleRight.length, group, MULTICAST_PORT);
+            sendSocket.send(idlePacket);
+            System.out.println("Sent to Multicast: "+idleCheck);
+
+            byte[] bufferReceiveIdle = new byte[256];
+            DatagramPacket receivePacketIdle = new DatagramPacket(bufferReceiveIdle, bufferReceiveIdle.length);
+            socket.receive(receivePacketIdle);
+            String receiveLogin = new String(receivePacketIdle.getData(), 0, receivePacketIdle.getLength());
+            System.out.println("Received from Multicast: "+receiveLogin);
+
+            if(receiveLogin.equals("type|idle;rights|editor")){
+                return true;
+            }
+
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public String checkLogin(String username, String password) {
+    public synchronized String checkLogin(String username, String password) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -151,7 +184,126 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return "user";
     }
 
-        public static void RMIOn() throws RemoteException {
+    public synchronized boolean checkArtist(String artistName, String description) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringArtist = "type|insert_artist;" + artistName + ";description|" + description;
+            System.out.println(stringArtist);
+            byte[] bufferLogin = stringArtist.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferLogin, bufferLogin.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+stringArtist);
+
+            byte[] bufferReceiveLogin = new byte[256];
+            DatagramPacket receivePacketLogin = new DatagramPacket(bufferReceiveLogin, bufferReceiveLogin.length);
+            socket.receive(receivePacketLogin);
+            String receiveLogin = new String(receivePacketLogin.getData(), 0, receivePacketLogin.getLength());
+            System.out.println("Received from Multicast: "+receiveLogin);
+            if(receiveLogin.equals("type|insert_artist;successful")){
+                return true;
+            }
+            else if(receiveLogin.equals("type|insert_artist;error in insert artist")){
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+    public synchronized boolean checkAlbum(String albumName, String description,String artistName) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+
+            String stringAlbum = "type|insert_album;album_name|" + albumName + ";description|" + description +";artist_name|" + artistName;
+            System.out.println(stringAlbum);
+            byte[] bufferAlbum = stringAlbum.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferAlbum, bufferAlbum.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+stringAlbum);
+
+            byte[] bufferReceiveAlbum = new byte[256];
+            DatagramPacket receivePacketAlbum = new DatagramPacket(bufferReceiveAlbum, bufferReceiveAlbum.length);
+            socket.receive(receivePacketAlbum);
+            String receiveAlbum = new String(receivePacketAlbum.getData(), 0, receivePacketAlbum.getLength());
+            System.out.println("Received from Multicast: "+receiveAlbum);
+            if(receiveAlbum.equals("type|insert_album;successful")){
+                return true;
+            }
+            else if(receiveAlbum.equals("type|insert_album;error in insert album")){
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+    public synchronized boolean checkMusic(String musicName, String genre,String duration, String artistName, String albumName) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+
+            String stringMusic = "type|insert_music;music_name|" + musicName + ";genre|"+ genre +  ";duration|" + duration +";artist_name|" + artistName + ";album_name|" + albumName;
+            System.out.println(stringMusic);
+            byte[] bufferMusic = stringMusic.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferMusic, bufferMusic.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+stringMusic);
+
+            byte[] bufferReceiveMusic = new byte[256];
+            DatagramPacket receivePacketMusic = new DatagramPacket(bufferReceiveMusic, bufferReceiveMusic.length);
+            socket.receive(receivePacketMusic);
+            String receiveAlbum = new String(receivePacketMusic.getData(), 0, receivePacketMusic.getLength());
+            System.out.println("Received from Multicast: "+receiveAlbum);
+            if(receiveAlbum.equals("type|insert_music;successful")){
+                return true;
+            }
+            else if(receiveAlbum.equals("type|insert_music;error in insert music")){
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+    public static void RMIOn() throws RemoteException {
 
 		configurations = new Configurations(("RMI_configs.cfg"));
 		System.out.println("NomeRMI: " + configurations.getRMIname());

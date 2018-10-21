@@ -3,6 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="bc796a7d-265c-4d37-a450-381a99e13dea" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/MulticastServer.class" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/RMIClient.class" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/src/Album.java" afterPath="$PROJECT_DIR$/src/Album.java" />
+      <change beforePath="$PROJECT_DIR$/src/Artist.java" afterPath="$PROJECT_DIR$/src/Artist.java" />
+      <change beforePath="$PROJECT_DIR$/src/MulticastServer.java" afterPath="$PROJECT_DIR$/src/MulticastServer.java" />
+      <change beforePath="$PROJECT_DIR$/src/RMI.java" afterPath="$PROJECT_DIR$/src/RMI.java" />
+      <change beforePath="$PROJECT_DIR$/src/RMIClient.java" afterPath="$PROJECT_DIR$/src/RMIClient.java" />
+      <change beforePath="$PROJECT_DIR$/src/RMIServer.java" afterPath="$PROJECT_DIR$/src/RMIServer.java" />
+      <change beforePath="$PROJECT_DIR$/src/Song.java" afterPath="$PROJECT_DIR$/src/Song.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -44,95 +53,27 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="User.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/User.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="443">
-              <caret line="52" column="47" lean-forward="false" selection-start-line="52" selection-start-column="47" selection-end-line="52" selection-end-column="47" />
-              <folding>
-                <element signature="e#1170#1171#0" expanded="true" />
-                <element signature="e#1202#1203#0" expanded="true" />
-                <element signature="e#1253#1254#0" expanded="true" />
-                <element signature="e#1295#1296#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Artist.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Artist.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="15" column="37" lean-forward="false" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RMIClient.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/RMIClient.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1830">
-              <caret line="161" column="16" lean-forward="false" selection-start-line="161" selection-start-column="16" selection-end-line="161" selection-end-column="36" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#welcome#0;class#RMIClient#0" expanded="false" />
-                <element signature="method#removeData#0;class#RMIClient#0" expanded="false" />
-                <element signature="method#changeData#0;class#RMIClient#0" expanded="false" />
-                <element signature="method#insertData#0;class#RMIClient#0" expanded="false" />
-                <element signature="method#insertMusic#0;class#RMIClient#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RMI.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/RMI.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="77" lean-forward="false" selection-start-line="5" selection-start-column="77" selection-end-line="5" selection-end-column="77" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RMIServer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/RMIServer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="106" column="5" lean-forward="false" selection-start-line="106" selection-start-column="5" selection-end-line="106" selection-end-column="5" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#sayHello#0;class#RMIServer#0" expanded="false" />
-                <element signature="method#checkRegister#0;class#RMIServer#0" expanded="false" />
-                <element signature="method#checkUserRights#0;class#RMIServer#0" expanded="false" />
-                <element signature="method#RMIOn#0;class#RMIServer#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MulticastServer.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MulticastServer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/MulticastServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1395">
-              <caret line="98" column="102" lean-forward="false" selection-start-line="98" selection-start-column="102" selection-end-line="98" selection-end-column="102" />
+            <state relative-caret-position="164">
+              <caret line="27" column="22" lean-forward="false" selection-start-line="27" selection-start-column="22" selection-end-line="27" selection-end-column="22" />
               <folding>
-                <element signature="e#675#676#0" expanded="true" />
-                <element signature="e#739#740#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Album.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Album.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="35" lean-forward="false" selection-start-line="14" selection-start-column="35" selection-end-line="14" selection-end-column="35" />
-              <folding>
-                <element signature="e#315#316#0" expanded="true" />
-                <element signature="e#357#358#0" expanded="true" />
+                <element signature="method#run#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#register#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#login#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#checkPrivilege#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#checkUserRights#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#checkArtistExist#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#checkAlbumExist#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#checkMusicRepetition#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#addArtist#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#addSong#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#addAlbum#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#removeMusic#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#removeAlbum#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#removeArtist#0;class#MulticastServer#0" expanded="false" />
+                <element signature="method#setPrivilege#0;class#MulticastServer#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -150,6 +91,11 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>register</find>
+      <find>changerights</find>
+      <find>checkUser</find>
+      <find>check</find>
+      <find>insert</find>
+      <find>checkPr</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -167,15 +113,15 @@
         <option value="$PROJECT_DIR$/src/Configurations.java" />
         <option value="$PROJECT_DIR$/src/MulticastClient.java" />
         <option value="$PROJECT_DIR$/src/HelloClient.java" />
-        <option value="$PROJECT_DIR$/src/Critic.java" />
-        <option value="$PROJECT_DIR$/src/Song.java" />
         <option value="$PROJECT_DIR$/src/User.java" />
+        <option value="$PROJECT_DIR$/src/RMIServer.java" />
         <option value="$PROJECT_DIR$/src/Album.java" />
         <option value="$PROJECT_DIR$/src/Artist.java" />
-        <option value="$PROJECT_DIR$/src/MulticastServer.java" />
-        <option value="$PROJECT_DIR$/src/RMI.java" />
-        <option value="$PROJECT_DIR$/src/RMIServer.java" />
+        <option value="$PROJECT_DIR$/src/Critic.java" />
+        <option value="$PROJECT_DIR$/src/Song.java" />
         <option value="$PROJECT_DIR$/src/RMIClient.java" />
+        <option value="$PROJECT_DIR$/src/RMI.java" />
+        <option value="$PROJECT_DIR$/src/MulticastServer.java" />
       </list>
     </option>
   </component>
@@ -186,7 +132,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
-    <option name="width" value="476" />
+    <option name="x" value="721" />
+    <option name="width" value="1236" />
     <option name="height" value="900" />
   </component>
   <component name="ProjectView">
@@ -444,12 +391,12 @@
       <workItem from="1539792613005" duration="5176000" />
       <workItem from="1539807778249" duration="5635000" />
       <workItem from="1539821552036" duration="177000" />
-      <workItem from="1539870439209" duration="29454000" />
+      <workItem from="1539870439209" duration="39610000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50785000" />
+    <option name="totallyTimeSpent" value="60941000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="6" />
@@ -464,7 +411,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282353" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.73058826" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36588237" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19791667" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -491,7 +438,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="4" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -514,10 +463,10 @@
             <element signature="e#1053#1054#0" expanded="false" />
             <element signature="e#1098#1099#0" expanded="false" />
             <element signature="e#1134#1135#0" expanded="false" />
-            <element signature="e#1170#1171#0" expanded="true" />
-            <element signature="e#1202#1203#0" expanded="true" />
-            <element signature="e#1253#1254#0" expanded="true" />
-            <element signature="e#1295#1296#0" expanded="true" />
+            <element signature="e#1170#1171#0" expanded="false" />
+            <element signature="e#1202#1203#0" expanded="false" />
+            <element signature="e#1253#1254#0" expanded="false" />
+            <element signature="e#1295#1296#0" expanded="false" />
             <element signature="e#1348#1349#0" expanded="false" />
             <element signature="e#1397#1398#0" expanded="false" />
             <element signature="e#1604#1605#0" expanded="false" />
@@ -534,11 +483,22 @@
           <caret line="8" column="4" lean-forward="false" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#main#0;class#RMIClient#0" expanded="false" />
             <element signature="method#welcome#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#menuUser#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#menuAdministrador#0;class#RMIClient#0" expanded="false" />
             <element signature="method#removeData#0;class#RMIClient#0" expanded="false" />
             <element signature="method#changeData#0;class#RMIClient#0" expanded="false" />
             <element signature="method#insertData#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#register#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#login#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#changeRights#0;class#RMIClient#0" expanded="false" />
             <element signature="method#insertMusic#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#insertArtist#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#insertAlbum#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeMusic#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeAlbum#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeArtist#0;class#RMIClient#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -556,11 +516,17 @@
         <state relative-caret-position="540">
           <caret line="46" column="51" lean-forward="false" selection-start-line="46" selection-start-column="51" selection-end-line="46" selection-end-column="51" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="method#RMIServer#0;class#RMIServer#0" expanded="false" />
             <element signature="method#sayHello#0;class#RMIServer#0" expanded="false" />
             <element signature="method#checkRegister#0;class#RMIServer#0" expanded="false" />
             <element signature="method#checkUserRights#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#idleUserRights#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkLogin#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkArtist#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkAlbum#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkMusic#0;class#RMIServer#0" expanded="false" />
             <element signature="method#RMIOn#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#main#0;class#RMIServer#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -570,8 +536,21 @@
         <state relative-caret-position="1605">
           <caret line="114" column="31" lean-forward="false" selection-start-line="114" selection-start-column="31" selection-end-line="114" selection-end-column="31" />
           <folding>
-            <element signature="e#675#676#0" expanded="true" />
-            <element signature="e#739#740#0" expanded="true" />
+            <element signature="method#run#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#register#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#login#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkPrivilege#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkUserRights#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkArtistExist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkAlbumExist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkMusicRepetition#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addArtist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addSong#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addAlbum#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeMusic#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeAlbum#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeArtist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#setPrivilege#0;class#MulticastServer#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -595,10 +574,10 @@
             <element signature="e#1053#1054#0" expanded="false" />
             <element signature="e#1098#1099#0" expanded="false" />
             <element signature="e#1134#1135#0" expanded="false" />
-            <element signature="e#1170#1171#0" expanded="true" />
-            <element signature="e#1202#1203#0" expanded="true" />
-            <element signature="e#1253#1254#0" expanded="true" />
-            <element signature="e#1295#1296#0" expanded="true" />
+            <element signature="e#1170#1171#0" expanded="false" />
+            <element signature="e#1202#1203#0" expanded="false" />
+            <element signature="e#1253#1254#0" expanded="false" />
+            <element signature="e#1295#1296#0" expanded="false" />
             <element signature="e#1348#1349#0" expanded="false" />
             <element signature="e#1397#1398#0" expanded="false" />
             <element signature="e#1604#1605#0" expanded="false" />
@@ -614,11 +593,17 @@
         <state relative-caret-position="690">
           <caret line="46" column="51" lean-forward="false" selection-start-line="46" selection-start-column="51" selection-end-line="46" selection-end-column="51" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="method#RMIServer#0;class#RMIServer#0" expanded="false" />
             <element signature="method#sayHello#0;class#RMIServer#0" expanded="false" />
             <element signature="method#checkRegister#0;class#RMIServer#0" expanded="false" />
             <element signature="method#checkUserRights#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#idleUserRights#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkLogin#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkArtist#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkAlbum#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkMusic#0;class#RMIServer#0" expanded="false" />
             <element signature="method#RMIOn#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#main#0;class#RMIServer#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -636,8 +621,21 @@
         <state relative-caret-position="1605">
           <caret line="114" column="31" lean-forward="false" selection-start-line="114" selection-start-column="31" selection-end-line="114" selection-end-column="31" />
           <folding>
-            <element signature="e#675#676#0" expanded="true" />
-            <element signature="e#739#740#0" expanded="true" />
+            <element signature="method#run#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#register#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#login#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkPrivilege#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkUserRights#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkArtistExist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkAlbumExist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkMusicRepetition#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addArtist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addSong#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addAlbum#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeMusic#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeAlbum#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeArtist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#setPrivilege#0;class#MulticastServer#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -648,11 +646,22 @@
           <caret line="8" column="4" lean-forward="false" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#main#0;class#RMIClient#0" expanded="false" />
             <element signature="method#welcome#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#menuUser#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#menuAdministrador#0;class#RMIClient#0" expanded="false" />
             <element signature="method#removeData#0;class#RMIClient#0" expanded="false" />
             <element signature="method#changeData#0;class#RMIClient#0" expanded="false" />
             <element signature="method#insertData#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#register#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#login#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#changeRights#0;class#RMIClient#0" expanded="false" />
             <element signature="method#insertMusic#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#insertArtist#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#insertAlbum#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeMusic#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeAlbum#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeArtist#0;class#RMIClient#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -676,10 +685,10 @@
             <element signature="e#1053#1054#0" expanded="false" />
             <element signature="e#1098#1099#0" expanded="false" />
             <element signature="e#1134#1135#0" expanded="false" />
-            <element signature="e#1170#1171#0" expanded="true" />
-            <element signature="e#1202#1203#0" expanded="true" />
-            <element signature="e#1253#1254#0" expanded="true" />
-            <element signature="e#1295#1296#0" expanded="true" />
+            <element signature="e#1170#1171#0" expanded="false" />
+            <element signature="e#1202#1203#0" expanded="false" />
+            <element signature="e#1253#1254#0" expanded="false" />
+            <element signature="e#1295#1296#0" expanded="false" />
             <element signature="e#1348#1349#0" expanded="false" />
             <element signature="e#1397#1398#0" expanded="false" />
             <element signature="e#1604#1605#0" expanded="false" />
@@ -695,11 +704,17 @@
         <state relative-caret-position="1500">
           <caret line="109" column="1" lean-forward="true" selection-start-line="109" selection-start-column="1" selection-end-line="109" selection-end-column="1" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="method#RMIServer#0;class#RMIServer#0" expanded="false" />
             <element signature="method#sayHello#0;class#RMIServer#0" expanded="false" />
             <element signature="method#checkRegister#0;class#RMIServer#0" expanded="false" />
             <element signature="method#checkUserRights#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#idleUserRights#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkLogin#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkArtist#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkAlbum#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkMusic#0;class#RMIServer#0" expanded="false" />
             <element signature="method#RMIOn#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#main#0;class#RMIServer#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -710,11 +725,22 @@
           <caret line="114" column="1" lean-forward="true" selection-start-line="114" selection-start-column="1" selection-end-line="114" selection-end-column="1" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#main#0;class#RMIClient#0" expanded="false" />
             <element signature="method#welcome#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#menuUser#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#menuAdministrador#0;class#RMIClient#0" expanded="false" />
             <element signature="method#removeData#0;class#RMIClient#0" expanded="false" />
             <element signature="method#changeData#0;class#RMIClient#0" expanded="false" />
             <element signature="method#insertData#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#register#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#login#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#changeRights#0;class#RMIClient#0" expanded="false" />
             <element signature="method#insertMusic#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#insertArtist#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#insertAlbum#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeMusic#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeAlbum#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeArtist#0;class#RMIClient#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -739,8 +765,21 @@
         <state relative-caret-position="825">
           <caret line="62" column="24" lean-forward="false" selection-start-line="62" selection-start-column="23" selection-end-line="62" selection-end-column="24" />
           <folding>
-            <element signature="e#675#676#0" expanded="true" />
-            <element signature="e#739#740#0" expanded="true" />
+            <element signature="method#run#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#register#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#login#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkPrivilege#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkUserRights#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkArtistExist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkAlbumExist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkMusicRepetition#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addArtist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addSong#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addAlbum#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeMusic#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeAlbum#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeArtist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#setPrivilege#0;class#MulticastServer#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -755,13 +794,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test_user32.txt" />
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk-10.0.1.jdk/Contents/Home/lib/src.zip!/java.base/java/io/ObjectInputStream.java" />
-    <entry file="file://$PROJECT_DIR$/src/Configurations.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/HelloServer.java" />
     <entry file="file://$PROJECT_DIR$/src/HelloClient.java" />
     <entry file="file://$PROJECT_DIR$/src/test_user.java">
@@ -786,56 +818,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Critic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="6" lean-forward="false" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Song.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="720">
-          <caret line="48" column="62" lean-forward="false" selection-start-line="48" selection-start-column="62" selection-end-line="48" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/out/production/DropMusicMerged/Album.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="12" column="26" lean-forward="true" selection-start-line="12" selection-start-column="3" selection-end-line="12" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Album.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="35" lean-forward="false" selection-start-line="14" selection-start-column="35" selection-end-line="14" selection-end-column="35" />
-          <folding>
-            <element signature="e#315#316#0" expanded="true" />
-            <element signature="e#357#358#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/User.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="52" column="47" lean-forward="false" selection-start-line="52" selection-start-column="47" selection-end-line="52" selection-end-column="47" />
-          <folding>
-            <element signature="e#1170#1171#0" expanded="true" />
-            <element signature="e#1202#1203#0" expanded="true" />
-            <element signature="e#1253#1254#0" expanded="true" />
-            <element signature="e#1295#1296#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Artist.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="15" column="37" lean-forward="false" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
           <folding />
         </state>
       </provider>
@@ -848,50 +834,150 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/RMI.java">
+    <entry file="file://$PROJECT_DIR$/src/Configurations.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="77" lean-forward="false" selection-start-line="5" selection-start-column="77" selection-end-line="5" selection-end-column="77" />
+        <state relative-caret-position="165">
+          <caret line="15" column="47" lean-forward="true" selection-start-line="15" selection-start-column="47" selection-end-line="15" selection-end-column="47" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/MulticastServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1395">
-          <caret line="98" column="102" lean-forward="false" selection-start-line="98" selection-start-column="102" selection-end-line="98" selection-end-column="102" />
-          <folding>
-            <element signature="e#675#676#0" expanded="true" />
-            <element signature="e#739#740#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/RMIServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="106" column="5" lean-forward="false" selection-start-line="106" selection-start-column="5" selection-end-line="106" selection-end-column="5" />
+        <state relative-caret-position="387">
+          <caret line="265" column="24" lean-forward="true" selection-start-line="265" selection-start-column="24" selection-end-line="265" selection-end-column="24" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="method#RMIServer#0;class#RMIServer#0" expanded="false" />
             <element signature="method#sayHello#0;class#RMIServer#0" expanded="false" />
             <element signature="method#checkRegister#0;class#RMIServer#0" expanded="false" />
             <element signature="method#checkUserRights#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#idleUserRights#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkLogin#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkArtist#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkAlbum#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#checkMusic#0;class#RMIServer#0" expanded="false" />
             <element signature="method#RMIOn#0;class#RMIServer#0" expanded="false" />
+            <element signature="method#main#0;class#RMIServer#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Album.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="79" column="0" lean-forward="false" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Critic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Artist.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="71" column="0" lean-forward="false" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+          <folding>
+            <element signature="e#1231#1232#0" expanded="true" />
+            <element signature="e#1269#1270#0" expanded="true" />
+            <element signature="e#1313#1314#0" expanded="true" />
+            <element signature="e#1354#1355#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="18" column="5" lean-forward="true" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Song.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+          <folding>
+            <element signature="e#462#463#0" expanded="true" />
+            <element signature="e#501#502#0" expanded="true" />
+            <element signature="e#536#537#0" expanded="true" />
+            <element signature="e#567#568#0" expanded="true" />
+            <element signature="e#615#616#0" expanded="true" />
+            <element signature="e#655#656#0" expanded="true" />
+            <element signature="e#691#692#0" expanded="true" />
+            <element signature="e#723#724#0" expanded="true" />
+            <element signature="e#773#774#0" expanded="true" />
+            <element signature="e#815#816#0" expanded="true" />
+            <element signature="e#850#851#0" expanded="true" />
+            <element signature="e#881#882#0" expanded="true" />
+            <element signature="e#929#930#0" expanded="true" />
+            <element signature="e#969#970#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/RMI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="81" lean-forward="false" selection-start-line="12" selection-start-column="81" selection-end-line="12" selection-end-column="81" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/RMIClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1830">
-          <caret line="161" column="16" lean-forward="false" selection-start-line="161" selection-start-column="16" selection-end-line="161" selection-end-column="36" />
+        <state relative-caret-position="398">
+          <caret line="501" column="19" lean-forward="false" selection-start-line="501" selection-start-column="19" selection-end-line="501" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#main#0;class#RMIClient#0" expanded="false" />
             <element signature="method#welcome#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#menuUser#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#menuAdministrador#0;class#RMIClient#0" expanded="false" />
             <element signature="method#removeData#0;class#RMIClient#0" expanded="false" />
             <element signature="method#changeData#0;class#RMIClient#0" expanded="false" />
             <element signature="method#insertData#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#register#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#login#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#changeRights#0;class#RMIClient#0" expanded="false" />
             <element signature="method#insertMusic#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#insertArtist#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#insertAlbum#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeMusic#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeAlbum#0;class#RMIClient#0" expanded="false" />
+            <element signature="method#removeArtist#0;class#RMIClient#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/MulticastServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="27" column="22" lean-forward="false" selection-start-line="27" selection-start-column="22" selection-end-line="27" selection-end-column="22" />
+          <folding>
+            <element signature="method#run#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#register#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#login#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkPrivilege#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkUserRights#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkArtistExist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkAlbumExist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#checkMusicRepetition#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addArtist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addSong#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#addAlbum#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeMusic#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeAlbum#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#removeArtist#0;class#MulticastServer#0" expanded="false" />
+            <element signature="method#setPrivilege#0;class#MulticastServer#0" expanded="false" />
           </folding>
         </state>
       </provider>

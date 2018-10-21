@@ -1,18 +1,35 @@
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Album {
 
     private static final long serialVersionUID = 1L;
     private String albumName;
-    ArrayList<Integer> mediaRating;
-    ArrayList<Critic> critics;
-    ArrayList<Song> songs;
-    ArrayList<String> userChanges;
+    private String description;
+    CopyOnWriteArrayList<Integer> mediaRating;
+    CopyOnWriteArrayList<Critic> critics;
+    CopyOnWriteArrayList<Song> songs;
+    CopyOnWriteArrayList<String> userChanges;
 
     Album(){};
 
-    public Album(String albumName) {
+    public Album(String albumName, String description) {
         this.albumName = albumName;
+        this.description = description;
+
+        this.songs = new CopyOnWriteArrayList<Song>();
+    }
+
+    public void setSongs(CopyOnWriteArrayList<Song> songs) {
+        this.songs = songs;
+    }
+
+    public void addSongs( Song song) {
+        this.songs.add(song);
+    }
+
+    public void removeSongs( Song song) {
+        this.songs.remove(song);
     }
 
     public static long getSerialVersionUID() {
@@ -27,35 +44,31 @@ public class Album {
         this.albumName = albumName;
     }
 
-    public ArrayList<Integer> getMediaRating() {
+    public CopyOnWriteArrayList<Integer> getMediaRating() {
         return mediaRating;
     }
 
-    public void setMediaRating(ArrayList<Integer> mediaRating) {
+    public void setMediaRating(CopyOnWriteArrayList<Integer> mediaRating) {
         this.mediaRating = mediaRating;
     }
 
-    public ArrayList<Critic> getCritics() {
+    public CopyOnWriteArrayList<Critic> getCritics() {
         return critics;
     }
 
-    public void setCritics(ArrayList<Critic> critics) {
+    public void setCritics(CopyOnWriteArrayList<Critic> critics) {
         this.critics = critics;
     }
 
-    public ArrayList<Song> getSongs() {
+    public CopyOnWriteArrayList<Song> getSongs() {
         return songs;
     }
 
-    public void setSongs(ArrayList<Song> songs) {
-        this.songs = songs;
-    }
-
-    public ArrayList<String> getUserChanges() {
+    public CopyOnWriteArrayList<String> getUserChanges() {
         return userChanges;
     }
 
-    public void setUserChanges(ArrayList<String> userChanges) {
+    public void setUserChanges(CopyOnWriteArrayList<String> userChanges) {
         this.userChanges = userChanges;
     }
 

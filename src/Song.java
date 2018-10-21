@@ -4,13 +4,13 @@ public class Song implements Serializable{
     private static final long serialVersionUID = 1L;
     private String songName;
     private String songGenre;
-    private long duration;
+    private String duration;
 
 
     Song(){
     };
 
-    public Song(String songName, String songGenre, long duration) {
+    public Song(String songName, String songGenre, String duration) {
         this.songName = songName;
         this.songGenre = songGenre;
         this.duration = duration;
@@ -36,11 +36,11 @@ public class Song implements Serializable{
         this.songGenre = songGenre;
     }
 
-    public long getDuration() {
+    public String getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(String duration) {
         this.duration = duration;
     }
 

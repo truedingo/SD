@@ -1,19 +1,22 @@
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Artist implements Serializable{
 
     private static final long serialVersionUID = 1L;
     private String artistName;
     private String descArtist;
-    private ArrayList<Album> albums;
-    private ArrayList<String> userChanges;
+    private CopyOnWriteArrayList<Album> albums;
+    private CopyOnWriteArrayList<String> userChanges;
 
     Artist(){};
 
     public Artist(String artistName, String descArtist) {
         this.artistName = artistName;
         this.descArtist = descArtist;
+        this.albums = new CopyOnWriteArrayList<Album>();
+
     }
 
     public static long getSerialVersionUID() {
@@ -36,24 +39,33 @@ public class Artist implements Serializable{
         this.descArtist = descArtist;
     }
 
-    public ArrayList<Album> getAlbums() {
+    public CopyOnWriteArrayList<Album> getAlbums() {
         return albums;
     }
 
-    public void setAlbums(ArrayList<Album> albums) {
+    public void setAlbums(CopyOnWriteArrayList<Album> albums) {
         this.albums = albums;
     }
 
-    public ArrayList<String> getUserChanges() {
+    public void addAlbums( Album album) {
+        this.albums.add(album);
+    }
+    public void removeAlbum( Album album) {
+        this.albums.remove(album);
+    }
+
+    public CopyOnWriteArrayList<String> getUserChanges() {
         return userChanges;
     }
 
-    public void setUserChanges(ArrayList<String> userChanges) {
+    public void setUserChanges(CopyOnWriteArrayList<String> userChanges) {
         this.userChanges = userChanges;
     }
+
 
     @Override
     public String toString() {
         return "Artist:" + artistName + "\nDescArtist:" + descArtist + "\nAlbums:" + albums + "\nUserChanges:" + userChanges;
     }
+
 }

@@ -14,6 +14,7 @@ public class MulticastServer extends Thread {
     private int database_uid = 0;
 
     private CopyOnWriteArrayList<User> usersArrayList;
+    private CopyOnWriteArrayList<Artist> artistsArrayList;
 
     public static void main(String[] args) {
         MulticastServer server = new MulticastServer();
@@ -27,6 +28,7 @@ public class MulticastServer extends Thread {
     public void run() {
         /*---*/
         usersArrayList = new CopyOnWriteArrayList<>();
+        artistsArrayList = new CopyOnWriteArrayList<>();
         User admin = new User("admin", "admin");
         admin.setPrivilege(true);
         usersArrayList.add(admin);
@@ -128,7 +130,6 @@ public class MulticastServer extends Thread {
                     if(check){
                         setPrivilege(getUsername);
                         System.out.println("Changed rights of "+getUsername+" to editor.");
-
                         String sendCheck = "type|check;rights|changed";
                         byte[] sendBufferCheck = sendCheck.getBytes();
                         DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
@@ -144,6 +145,251 @@ public class MulticastServer extends Thread {
                     }
 
                 }
+                else if(receiveString.contains("type|idle;rights|")){
+                    String [] splitString = receiveString.split(";");
+                    String [] splitString2 = splitString[1].split("\\|");
+                    String getUsername = splitString2[1];
+                    System.out.println("IdleCheck: "+getUsername);
+                    boolean flag = checkPrivilege(getUsername);
+                    if(flag){
+                        String sendIdle = "type|idle;rights|editor";
+                        byte[] sendBufferIdle = sendIdle.getBytes();
+                        DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferIdle, sendBufferIdle.length, group, RMI_PORT);
+                        sendSocket.send(sendCheckPacket);
+                        System.out.println("Sent to RMI: "+sendIdle);
+                    }
+                    else{
+                        String sendIdle = "type|idle;rights|user";
+                        byte[] sendIdleCheck = sendIdle.getBytes();
+                        DatagramPacket sendIdlePacket = new DatagramPacket(sendIdleCheck, sendIdleCheck.length, group, RMI_PORT);
+                        sendSocket.send(sendIdlePacket);
+                        System.out.println("Sent to RMI: "+sendIdle);
+                    }
+
+                }
+                else if(receiveString.contains("type|insert_album")){
+                    String [] splitString = receiveString.split(";");
+
+                    //nome album
+                    String [] splitString1 =splitString[1].split("\\|");
+                    String albumName =splitString1[1];
+                    //descricao
+                    String [] splitString2 = splitString[2].split("\\|");
+                    String albumDescription =splitString2[1];
+                    //artista
+                    String [] splitString3 = splitString[3].split("\\|");
+                    String albumArtist =splitString3[1];
+
+                    boolean flag;
+                    flag = checkArtistExist(albumArtist);
+                    System.out.println(flag);
+                    if(!flag){
+                        addAlbum(albumName, albumDescription, albumArtist);
+                        String sendAlbum= "type|insert_album;successful";
+
+                        byte[] sendBufferAlbum = sendAlbum.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferAlbum, sendBufferAlbum.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendAlbum);
+                    }
+                    else{
+                        String sendArtist= "type|insert_album;error in insert album";
+
+                        byte[] sendBufferAlbum = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferAlbum, sendBufferAlbum.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+
+
+                }
+                else if(receiveString.contains("type|insert_artist")){
+                    String [] splitString = receiveString.split(";");
+                    String artistName = splitString[1];
+                    String [] splitString2 = splitString[2].split("\\|");
+                    String artistDescription = splitString2[1];
+
+                    boolean flag;
+                    boolean check;
+                    flag = checkArtistExist(artistName);
+                    System.out.println(flag);
+                    if(flag){
+                        //Adiciona artista a lista
+                        addArtist(artistName,artistDescription);
+                        String sendArtist= "type|insert_artist;successful";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+                    else{
+                        String sendArtist= "type|insert_artist;error in insert artist";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+
+
+                }
+                else if(receiveString.contains("type|insert_music")){
+                    String [] splitString = receiveString.split(";");
+                    //musica
+                    String [] splitString1 =splitString[1].split("\\|");
+                    String musicName = splitString1[1];
+                    //genero
+                    String [] splitString2 = splitString[2].split("\\|");
+                    String genre = splitString2[1];
+                    //duracao
+                    String [] splitString3 = splitString[3].split("\\|");
+                    String duration = splitString3[1];
+                    //artista
+                    String [] splitString4 = splitString[4].split("\\|");
+                    String artistName = splitString4[1];
+                    //album name
+                    String [] splitString5 = splitString[5].split("\\|");
+                    String albumName = splitString5[1];
+
+                    boolean flag;
+                    boolean check;
+                    boolean check2;
+                    //Se o album existir
+                    //se o artista existir
+
+                    flag = checkArtistExist(artistName);
+                    check = checkAlbumExist(albumName, artistName);
+                    check2 = checkMusicRepetition(artistName,albumName,musicName);
+
+                    System.out.println(flag);
+                    if(!flag && !check && check2){
+                        //Adiciona musica a lista
+                        addSong(musicName,genre,duration,albumName,artistName);
+                        String sendArtist= "type|insert_music;successful";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+                    else{
+                        String sendArtist= "type|insert_music;error in insert music";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+                }
+                else if(receiveString.contains("type|remove_music")){
+                    String [] splitString = receiveString.split(";");
+                    //nome musica
+                    String [] splitString1 =splitString[1].split("\\|");
+                    String musicName = splitString1[1];
+                    //artista
+                    String [] splitString2 = splitString[2].split("\\|");
+                    String artistName = splitString2[1];
+                    //album
+                    String [] splitString3 = splitString[3].split("\\|");
+                    String albumName = splitString3[1];
+
+                    boolean flag;
+                    boolean check;
+                    boolean check2;
+                    //Se o album existir
+                    //se o artista existir
+
+                    flag = checkArtistExist(artistName);
+                    check = checkAlbumExist(albumName, artistName);
+
+                    System.out.println(flag);
+                    if(!flag && !check){
+                        //Adiciona musica a lista
+                        removeMusic(musicName,artistName,albumName);
+                        String sendArtist= "type|remove_music;successful";
+                        byte[] sendBufferRemoveMusic = sendArtist.getBytes();
+                        DatagramPacket removeMusicPacket = new DatagramPacket(sendBufferRemoveMusic, sendBufferRemoveMusic.length, group, RMI_PORT);
+                        sendSocket.send(removeMusicPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+                    else{
+                        String sendArtist= "type|remove_music;error in remove music";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: "+ sendArtist);
+                    }
+
+
+                }
+                else if(receiveString.contains("type|remove_album")) {
+                    String[] splitString = receiveString.split(";");
+                    //album
+                    String [] splitString1 =splitString[1].split("\\|");
+                    String albumName = splitString1[1];
+
+                    //artista
+                    String [] splitString2 = splitString[2].split("\\|");
+                    String artistName = splitString2[1];
+
+                    boolean flag;
+                    boolean check;
+                    //Se o album existir
+                    //se o artista existir
+
+                    flag = checkArtistExist(artistName);
+                    check = checkAlbumExist(albumName, artistName);
+
+                    System.out.println(flag);
+                    if (!flag && !check) {
+                        removeAlbum(artistName,albumName);
+
+                        String sendArtist = "type|remove_album;successful";
+                        byte[] sendBufferRemoveMusic = sendArtist.getBytes();
+                        DatagramPacket removeMusicPacket = new DatagramPacket(sendBufferRemoveMusic, sendBufferRemoveMusic.length, group, RMI_PORT);
+                        sendSocket.send(removeMusicPacket);
+                        System.out.println("Sent to RMI: " + sendArtist);
+                    } else {
+                        String sendArtist = "type|remove_album;error in remove album";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: " + sendArtist);
+                    }
+                }
+
+                else if(receiveString.contains("type|remove_artist")) {
+                    String[] splitString = receiveString.split(";");
+                    //album
+                    String [] splitString1 =splitString[1].split("\\|");
+                    String artistName = splitString1[1];
+
+                    boolean flag;
+
+                    flag = checkArtistExist(artistName);
+
+                    System.out.println(flag);
+                    if (!flag) {
+                        removeArtist(artistName);
+                        String sendArtist = "type|remove_artist;successful";
+                        byte[] sendBufferRemoveMusic = sendArtist.getBytes();
+                        DatagramPacket removeMusicPacket = new DatagramPacket(sendBufferRemoveMusic, sendBufferRemoveMusic.length, group, RMI_PORT);
+                        sendSocket.send(removeMusicPacket);
+                        System.out.println("Sent to RMI: " + sendArtist);
+                    } else {
+                        String sendArtist = "type|remove_artist;error in remove album";
+
+                        byte[] sendBufferArtist = sendArtist.getBytes();
+                        DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
+                        sendSocket.send(artistPacket);
+                        System.out.println("Sent to RMI: " + sendArtist);
+                    }
+                }
+
+
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
@@ -155,6 +401,10 @@ public class MulticastServer extends Thread {
         }
     }
 
+
+    //-------- LOGIN/REGISTER--------//
+
+    //register
     public boolean register(String username, String password){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username)){
@@ -167,6 +417,7 @@ public class MulticastServer extends Thread {
         return true;
     }
 
+    //login
     public boolean login(String username, String password){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username) && u.getPassword().equals(password)){
@@ -177,6 +428,10 @@ public class MulticastServer extends Thread {
         return false;
     }
 
+
+    //-------- CHECK--------//
+
+    //check privilege (MEXER NISTO EVENTUALMENTE)
     public boolean checkPrivilege(String username){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username)){
@@ -188,14 +443,7 @@ public class MulticastServer extends Thread {
         return false;
     }
 
-    public void setPrivilege(String username){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username)){
-                u.setPrivilege(true);
-            }
-        }
-    }
-
+    //check user rights
     public boolean checkUserRights(String username){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username)){
@@ -207,5 +455,155 @@ public class MulticastServer extends Thread {
             }
         }
         return false;
+    }
+
+    //check artist - funcao que verifica se o artista que vamos inserir ja existe - se ja existir retorna false, se nao retorna true
+    public boolean checkArtistExist(String name) {
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(name)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    //check album - Se ja existir um album com esse nome retorna falso
+    public boolean checkAlbumExist(String albumName, String artistName) {
+        for(Artist a: artistsArrayList){
+            if(a.getArtistName().equals(artistName)){
+                for(Album alb: a.getAlbums()){
+                    if(alb.getAlbumName().equals(albumName)){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    //check music - se ja existir uma musica desse artista com esse nome falso
+    public boolean checkMusicRepetition(String artistName,String albumName,String musicName){
+        for (Artist a: artistsArrayList){
+            if(a.getArtistName().equals(artistName)){
+                for(Album alb : a.getAlbums()){
+                    if(alb.getAlbumName().equals(albumName)){
+                        for(Song s : alb.getSongs()){
+                            if(s.getSongName().equals(musicName)){
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+
+    //-------- ADD --------//
+
+    //add artist
+    public void addArtist(String name, String description){
+        Artist a;
+        a = new Artist(name, description);
+        artistsArrayList.add(a);
+    }
+
+    //add song
+    public void addSong(String name, String genre, String duration, String albumName, String artistName){
+
+        for(Artist a: artistsArrayList){
+            if(a.getArtistName().equals(artistName)){
+                for(Album alb : a.getAlbums()){
+                    if(alb.getAlbumName().equals(albumName)){
+                        Song s = new Song(name, genre, duration);
+                        alb.addSongs(s);
+                    }
+                }
+            }
+        }
+    }
+
+    //add album
+    public void addAlbum(String albumName, String desc, String artistName){
+        for(Artist a: artistsArrayList){
+            if(a.getArtistName().equals(artistName)){
+                Album album = new Album(albumName, desc);
+                a.addAlbums(album);
+            }
+        }
+    }
+
+    //-------- REMOVE --------//
+
+    //remove music
+    public void removeMusic(String musicName, String artistName, String albumName) {
+        Album getAlbum = null;
+        Song removeSong = null;
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(albumName)) {
+                            getAlbum = alb;
+                            if (!alb.getSongs().isEmpty()) {
+                                for (Song s : alb.getSongs()) {
+                                    if (s.getSongName().equals(musicName)) {
+                                        removeSong = s;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        getAlbum.removeSongs(removeSong);
+    }
+
+    //remove album
+    public void removeAlbum(String artistName,String albumName) {
+        Artist getArtist = null;
+        Album removeAlbum = null;
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    getArtist = a;
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(albumName)) {
+                            removeAlbum = alb;
+                        }
+                    }
+                }
+            }
+        }
+        getArtist.removeAlbum(removeAlbum);
+    }
+
+    //remove artist
+    public void removeArtist(String artistName) {
+        Artist removeArtist = null;
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    removeArtist = a;
+                }
+            }
+        }
+        artistsArrayList.remove(removeArtist);
+    }
+
+
+    //-------- OTHER --------//
+
+    //set privilege
+    public void setPrivilege(String username){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username)){
+                u.setPrivilege(true);
+            }
+        }
     }
 }
