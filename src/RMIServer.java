@@ -303,7 +303,167 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
-    public static void RMIOn() throws RemoteException {
+    public boolean checkRemoveMusic(String musicName, String artistName, String albumName) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+
+            String stringRemoveMusic = "type|remove_music;music_name|" + musicName + ";artist_name|" + artistName + ";album_name|" + albumName;
+            System.out.println(stringRemoveMusic);
+            byte[] bufferRemoveMusic = stringRemoveMusic.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferRemoveMusic, bufferRemoveMusic.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+stringRemoveMusic);
+
+            byte[] bufferReceiveRemoveMusic = new byte[256];
+            DatagramPacket receivePacketRemoveMusic = new DatagramPacket(bufferReceiveRemoveMusic, bufferReceiveRemoveMusic.length);
+            socket.receive(receivePacketRemoveMusic);
+            String receiveAlbum = new String(receivePacketRemoveMusic.getData(), 0, receivePacketRemoveMusic.getLength());
+            System.out.println("Received from Multicast: "+receiveAlbum);
+            if(receiveAlbum.equals("type|remove_music;successful")){
+                return true;
+            }
+            else if(receiveAlbum.equals("type|remove_music;error in remove music")){
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+    public boolean checkRemoveAlbum(String artistName, String albumName) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+
+            String stringRemoveAlbum = "type|remove_album;album_name|" + albumName + ";artist_name|" + artistName;
+            System.out.println(stringRemoveAlbum);
+            byte[] bufferRemoveAlbum = stringRemoveAlbum.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferRemoveAlbum, bufferRemoveAlbum.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+stringRemoveAlbum);
+
+            byte[] bufferReceiveRemoveAlbum = new byte[256];
+            DatagramPacket receivePacketRemoveAlbum= new DatagramPacket(bufferReceiveRemoveAlbum, bufferReceiveRemoveAlbum.length);
+            socket.receive(receivePacketRemoveAlbum);
+            String receiveAlbum = new String(receivePacketRemoveAlbum.getData(), 0, receivePacketRemoveAlbum.getLength());
+            System.out.println("Received from Multicast: "+receiveAlbum);
+            if(receiveAlbum.equals("type|remove_album;successful")){
+                return true;
+            }
+            else if(receiveAlbum.equals("type|remove_album;error in remove album")){
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+    public boolean checkRemoveArtist(String artistName) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+
+            String stringRemoveAlbum = "type|remove_artist;artist_name|" + artistName;
+            System.out.println(stringRemoveAlbum);
+            byte[] bufferRemoveAlbum = stringRemoveAlbum.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferRemoveAlbum, bufferRemoveAlbum.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: "+stringRemoveAlbum);
+
+            byte[] bufferReceiveRemoveAlbum = new byte[256];
+            DatagramPacket receivePacketRemoveAlbum= new DatagramPacket(bufferReceiveRemoveAlbum, bufferReceiveRemoveAlbum.length);
+            socket.receive(receivePacketRemoveAlbum);
+            String receiveAlbum = new String(receivePacketRemoveAlbum.getData(), 0, receivePacketRemoveAlbum.getLength());
+            System.out.println("Received from Multicast: "+receiveAlbum);
+            if(receiveAlbum.equals("type|remove_artist;successful")){
+                return true;
+            }
+            else if(receiveAlbum.equals("type|remove_artist;error in remove artist")){
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+    public boolean checkEditArtist(String oldArtistName, String newArtistName, String newDesc) {
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringEditArtist = "type|edit_artist;old_artist_name|" + oldArtistName + ";new_artist_name|" + newArtistName + ";new_description|" + newDesc;
+            System.out.println(stringEditArtist);
+            byte[] bufferEditArtist = stringEditArtist.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditArtist, bufferEditArtist.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringEditArtist);
+
+            byte[] bufferReceiveEditArtist = new byte[256];
+            DatagramPacket receiveEditArtistPacket = new DatagramPacket(bufferReceiveEditArtist, bufferReceiveEditArtist.length);
+            socket.receive(receiveEditArtistPacket);
+            String receiveEditArtist = new String(receiveEditArtistPacket.getData(), 0, receiveEditArtistPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditArtist);
+
+            if (receiveEditArtist.equals("type|edit_artist;successful")) {
+                return true;
+            } else if (receiveEditArtist.equals("type|edit_artist;error in edit artist")) {
+                return false;
+            }
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+        public static void RMIOn() throws RemoteException {
 
 		configurations = new Configurations(("RMI_configs.cfg"));
 		System.out.println("NomeRMI: " + configurations.getRMIname());

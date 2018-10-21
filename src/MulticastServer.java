@@ -360,7 +360,6 @@ public class MulticastServer extends Thread {
                         System.out.println("Sent to RMI: " + sendArtist);
                     }
                 }
-
                 else if(receiveString.contains("type|remove_artist")) {
                     String[] splitString = receiveString.split(";");
                     //album
@@ -388,6 +387,43 @@ public class MulticastServer extends Thread {
                         System.out.println("Sent to RMI: " + sendArtist);
                     }
                 }
+                else if(receiveString.contains("type|edit_artist")){
+
+                    String [] splitString = receiveString.split(";");
+
+                    System.out.println(splitString[0]);
+                    System.out.println(splitString[1]);
+                    System.out.println(splitString[2]);
+                    System.out.println(splitString[3]);
+
+                    String[] splitString2 = splitString[1].split("\\|");
+                    String getOldArtistName = splitString2[1];
+
+                    String[] splitString3 = splitString[2].split("\\|");
+                    String getNewArtistName = splitString3[1];
+
+                    String[] splitString4 = splitString[3].split("\\|");
+                    String getDescription = splitString4[0];
+
+                    boolean flag = editArtist(getOldArtistName, getNewArtistName, getDescription);
+
+                    System.out.println(flag);
+                    if (flag) {
+                        String sendEditArtist = "type|edit_artist;successful";
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    } else {
+                        String sendEditArtist = "type|edit_artist;error in edit artist";
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    }
+
+                }
+
 
 
 
@@ -593,6 +629,23 @@ public class MulticastServer extends Thread {
             }
         }
         artistsArrayList.remove(removeArtist);
+    }
+
+
+    //-------- EDIT --------//
+
+    //edit artist
+    public boolean editArtist(String oldArtistName, String newArtistName, String description) {
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(oldArtistName)) {
+                    a.setArtistName(newArtistName);
+                    a.setDescArtist(description);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

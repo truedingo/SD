@@ -11,4 +11,5 @@ public interface RMI extends Remote {
     boolean checkRemoveMusic(String musicName, String artistName, String albumName) throws java.rmi.RemoteException;
     boolean checkRemoveAlbum(String artistName, String albumName) throws java.rmi.RemoteException;
     boolean checkRemoveArtist(String artistName) throws java.rmi.RemoteException;
+    public boolean checkEditArtist(String oldArtistName, String newArtistName, String newDesc) throws java.rmi.RemoteException;
 	}

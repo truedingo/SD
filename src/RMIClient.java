@@ -175,9 +175,9 @@ public class RMIClient {
         while (true){
             try {
                 System.out.println("\n\t- Remove Data -");
-                System.out.println("1. Remove music.");
-                System.out.println("2. Remove artist.");
-                System.out.println("3. Remove album.");
+                System.out.println("1. Remove artist.");
+                System.out.println("2. Remove album.");
+                System.out.println("3. Remove music.");
                 System.out.println("4. Return to Admin Menu");
                 System.out.println("0. Quit");
                 Scanner s = new Scanner(System.in);
@@ -192,13 +192,17 @@ public class RMIClient {
 
                 switch (opt) {
                     case 1:
-                        //remove musica
+                        //remove artist
+                        removeArtist();
                         return;
                     case 2:
-                        //remove artista
+                        //remove album
+                        removeAlbum();
                         return;
                     case 3 :
-                        //remove album
+                        //remove music
+                        removeMusic();
+                        return;
                     case 4:
                         menuAdministrador();
                         return;
@@ -209,7 +213,9 @@ public class RMIClient {
 
             }catch (NumberFormatException e ){
                 System.out.println("Invalid option.");
-            } catch (NoSuchElementException e){}
+            } catch (NoSuchElementException e){} catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -218,9 +224,9 @@ public class RMIClient {
         while (true){
             try {
                 System.out.println("\n\t- Change Data -");
-                System.out.println("1. Change music data.");
-                System.out.println("2. Change artist data.");
-                System.out.println("3. Change album data.");
+                System.out.println("1. Change artist data.");
+                System.out.println("2. Change album data.");
+                System.out.println("3. Change music data.");
                 System.out.println("4. Return to Admin Menu");
                 System.out.println("0. Quit");
 
@@ -236,14 +242,15 @@ public class RMIClient {
 
                 switch (opt) {
                     case 1:
-                        //mudar dados da musica
+                        //mudar dados da artista
+                        editArtist();
                         return;
                     case 2:
-                        //mudar dados de artista
+                        //mudar dados de album
                         //
                         return;
                     case 3 :
-                        //mudar dados de album
+                        //mudar dados de musica
                     case 4:
                         menuAdministrador();
                         return;
@@ -254,7 +261,9 @@ public class RMIClient {
 
             }catch (NumberFormatException e ){
                 System.out.println("Invalid option.");
-            } catch (NoSuchElementException e){}
+            } catch (NoSuchElementException e){} catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -377,20 +386,20 @@ public class RMIClient {
     //insert music
     public static void insertMusic() throws RemoteException {
         System.out.println("\n\t- Insert Music -");
-        System.out.println("\nMusic name:");
+        System.out.println("Music name:");
         Scanner s = new Scanner(System.in);
         String strName = s.nextLine();
 
-        System.out.println("\nMusic genre:");
+        System.out.println("Music genre:");
         String strGenre = s.nextLine();
 
-        System.out.println("\nMusic duration:");
+        System.out.println("Music duration:");
         String strDuration = s.nextLine();
 
-        System.out.println("\nArtist name:");
+        System.out.println("Artist name:");
         String strArtistName = s.nextLine();
 
-        System.out.println("\nAlbum name:");
+        System.out.println("Album name:");
         String strAlbumName = s.nextLine();
 
 
@@ -414,11 +423,11 @@ public class RMIClient {
     //insert artist
     public static void insertArtist() throws RemoteException {
         System.out.println("\n\t- Insert Artist -");
-        System.out.println("\nArtist name:");
+        System.out.println("Artist name:");
         Scanner s = new Scanner(System.in);
 
         String artistName = s.nextLine();
-        System.out.println("\nArtist description:");
+        System.out.println("Artist description:");
         String artistDesc = s.nextLine();
 
         if (rmiInterface.checkArtist(artistName, artistDesc)) {
@@ -433,14 +442,14 @@ public class RMIClient {
     //insert album
     public static void insertAlbum() throws RemoteException {
         System.out.println("\n\t- Insert Album -");
-        System.out.println("\nAlbum name:");
+        System.out.println("Album name:");
         Scanner s = new Scanner(System.in);
 
         String albumName = s.nextLine();
-        System.out.println("\nAlbum description:");
+        System.out.println("Album description:");
         String albumDescr = s.nextLine();
 
-        System.out.println("\nArtist:");
+        System.out.println("Artist:");
         String artistName = s.nextLine();
 
 
@@ -454,6 +463,7 @@ public class RMIClient {
         }
     }
 
+
     //-------- REMOVE FUNCTIONS--------//
 
     //remove music
@@ -461,11 +471,11 @@ public class RMIClient {
         System.out.println("\n\t- Remove Music -");
         Scanner s = new Scanner(System.in);
 
-        System.out.println("\nMusic name:");
+        System.out.println("Music name:");
         String musicName = s.nextLine();
-        System.out.println("\nArtist name:");
+        System.out.println("Artist name:");
         String artistName = s.nextLine();
-        System.out.println("\nAlbum name:");
+        System.out.println("Album name:");
         String albumName = s.nextLine();
 
         if (rmiInterface.checkRemoveMusic(musicName,artistName,albumName)) {
@@ -473,7 +483,7 @@ public class RMIClient {
             menuAdministrador();
         } else {
             System.out.println("Music cannot be removed. Try again!");
-            removeMusic();
+            menuAdministrador();
 
         }
     }
@@ -483,9 +493,9 @@ public class RMIClient {
         System.out.println("\n\t- Remove Album -");
         Scanner s = new Scanner(System.in);
 
-        System.out.println("\nAlbum name:");
+        System.out.println("Album name:");
         String albumName = s.nextLine();
-        System.out.println("\nArtist name:");
+        System.out.println("Artist name:");
         String artistName = s.nextLine();
 
 
@@ -494,7 +504,7 @@ public class RMIClient {
             menuAdministrador();
         } else {
             System.out.println("Album cannot be removed. Try again!");
-            removeAlbum();
+            menuAdministrador();
 
         }
     }
@@ -504,7 +514,7 @@ public class RMIClient {
         System.out.println("\n\t- Remove Artist -");
         Scanner s = new Scanner(System.in);
 
-        System.out.println("\nArtist name:");
+        System.out.println("Artist name:");
         String artistName = s.nextLine();
 
         if (rmiInterface.checkRemoveArtist(artistName)) {
@@ -512,10 +522,115 @@ public class RMIClient {
             menuAdministrador();
         } else {
             System.out.println("Artist cannot be removed. Try again!");
-            removeArtist();
+            menuAdministrador();
 
         }
     }
+
+
+    //-------- EDIT FUNCTIONS--------//
+
+    public static void editMusic() throws RemoteException {
+        System.out.println("\n\t- Edit Music -");
+        System.out.println("\n\tINPUT OLD DATA");
+
+        System.out.println("Artist name of music to edit: ");
+        Scanner s = new Scanner(System.in);
+        String artistName = s.nextLine();
+
+        System.out.println("Album name of music to edit:");
+        String albumName = s.nextLine();
+
+        System.out.println("Music name to edit: ");
+        String oldMusicName = s.nextLine();
+
+        System.out.println("\n\t INPUT NEW DATA");
+        System.out.println("NEW Music name: ");
+        String newMusicName = s.nextLine();
+
+        System.out.println("NEW Music genre:");
+        String strGenre = s.nextLine();
+
+        System.out.println("NEW Music duration:");
+        String strDuration = s.nextLine();
+
+
+        //CheckMusic
+        /*try {
+            if (rmiInterface.checkMusic(strName, strGenre,strDuration,strArtistName,strAlbumName)) {
+
+                System.out.println("Music added.");
+                menuAdministrador();
+            } else {
+                System.out.println("Music already exists! Try again");
+                menuAdministrador();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }*/
+
+
+    }
+
+    //insert artist
+    public static void editArtist() throws RemoteException {
+        System.out.println("\n\t- Edit Artist -");
+        System.out.println("\n\tINPUT OLD DATA");
+
+        System.out.println("Artist name to edit:");
+        Scanner s = new Scanner(System.in);
+        String oldArtistName = s.nextLine();
+
+        System.out.println("\n\t INPUT NEW DATA");
+
+        System.out.println("NEW Artist name:");
+        String newArtistName = s.nextLine();
+
+        System.out.println("NEW Artist description:");
+        String artistDesc = s.nextLine();
+
+        if (rmiInterface.checkEditArtist(oldArtistName, newArtistName, artistDesc)) {
+            System.out.println("Artist edited.");
+            menuAdministrador();
+        } else {
+            System.out.println("Artist doesn't exist.");
+            menuAdministrador();
+        }
+    }
+
+    //insert album
+    public static void editAlbum() throws RemoteException {
+        System.out.println("\n\t- Edit Album -");
+        System.out.println("\n\tINPUT OLD DATA");
+
+        System.out.println("Artist name of album to edit: ");
+        Scanner s = new Scanner(System.in);
+        String artistName = s.nextLine();
+
+        System.out.println("Album name to edit:");
+        String oldAlbumName = s.nextLine();
+
+        System.out.println("\n\t INPUT NEW DATA");
+
+        System.out.println("NEW Album name:");
+        String newAlbumName = s.nextLine();
+
+        System.out.println("NEW Album description:");
+        String albumDescr = s.nextLine();
+
+
+        /*if (rmiInterface.checkAlbum(albumName, albumDescr,artistName)) {
+            System.out.println("Album added.");
+            menuAdministrador();
+        } else {
+            System.out.println("Album already exists! Try again");
+            menuAdministrador();
+
+        }
+        */
+    }
+
+
 
 }
 
