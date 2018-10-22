@@ -1,5 +1,6 @@
 import java.io.Serializable;
 
+
 public class test_user implements Serializable {
 
     private static final long serialVersionUID = 1L;

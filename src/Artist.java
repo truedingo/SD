@@ -1,5 +1,4 @@
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Artist implements Serializable{

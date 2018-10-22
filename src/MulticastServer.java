@@ -5,6 +5,7 @@ import java.net.MulticastSocket;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
 public class MulticastServer extends Thread {
     private String MULTICAST_ADDRESS = "224.1.224.1";
     private int PORT = 5000;
@@ -254,7 +255,6 @@ public class MulticastServer extends Thread {
                     boolean flag;
                     boolean check;
                     boolean check2;
-                    
                     //Se o album existir
                     //se o artista existir
 

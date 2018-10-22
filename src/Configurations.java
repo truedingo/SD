@@ -4,6 +4,7 @@ import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+
 public class Configurations {
     private String RMIname, RMIhost;
     private int RMIport;
