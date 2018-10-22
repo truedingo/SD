@@ -543,8 +543,50 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
+    public synchronized boolean checkCritic(String username, String artistName, String albumName, int rate, String critic ){
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
 
-        public static void RMIOn() throws RemoteException {
+            String rateString = ""+rate;
+            String stringCritic = "type|write_critic;username|" + username + ";artist_name|" + artistName + ";album_name|" + albumName + ";rate|"+rateString+ ";critic|"+critic;
+            System.out.println(stringCritic);
+            byte[] bufferEditArtist = stringCritic.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditArtist, bufferEditArtist.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringCritic);
+
+            byte[] bufferReceiveEditArtist = new byte[256];
+            DatagramPacket receiveEditArtistPacket = new DatagramPacket(bufferReceiveEditArtist, bufferReceiveEditArtist.length);
+            socket.receive(receiveEditArtistPacket);
+            String receiveEditArtist = new String(receiveEditArtistPacket.getData(), 0, receiveEditArtistPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditArtist);
+
+            if (receiveEditArtist.equals("type|write_critic;successful")) {
+                return true;
+            } else if (receiveEditArtist.equals("type|write_critic;error in write critic")) {
+                return false;
+            }
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+
+
+    public static void RMIOn() throws RemoteException {
 
 		configurations = new Configurations(("RMI_configs.cfg"));
 		System.out.println("NomeRMI: " + configurations.getRMIname());

@@ -495,6 +495,49 @@ public class MulticastServer extends Thread {
                     }
 
                 }
+                else if(receiveString.contains("type|write_critic")){
+
+                    String [] splitString = receiveString.split(";");
+                    //user
+                    String [] splitString1 =splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    //artista
+                    String [] splitString2 =splitString[2].split("\\|");
+                    String artistName = splitString2[1];
+                    //album
+                    String [] splitString3 =splitString[3].split("\\|");
+                    String albumName = splitString3[1];
+                    //rate
+                    String [] splitString4 =splitString[4].split("\\|");
+                    String rate = splitString4[1];
+                    //Desc
+                    String [] splitString5=splitString[5].split("\\|");
+                    String descricao = splitString5[1];
+
+                    int intRate = Integer.parseInt(rate);
+
+                    boolean flag = checkAlbumExist(albumName,artistName);
+                    boolean flag2 = checkArtistExist(artistName);
+
+                    System.out.println(flag);
+                    if (!flag && !flag2) {
+                        //add critic
+                        addCritic(username,artistName,albumName,intRate,descricao);
+                        String sendWriteCritic = "type|write_critic;successful";
+                        byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
+                        DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
+                        sendSocket.send(sendWriteCriticPacket);
+                        System.out.println("Sent to RMI: " + sendWriteCritic);
+                    } else {
+                        String sendWriteCritic = "type|write_critic;error in write critic";
+                        byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
+                        DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
+                        sendSocket.send(sendWriteCriticPacket);
+                        System.out.println("Sent to RMI: " + sendWriteCritic);
+                    }
+
+                }
+
 
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
@@ -649,6 +692,24 @@ public class MulticastServer extends Thread {
         }
     }
 
+    //add critic
+    public void addCritic(String username,String artistName, String albumName, int rate, String critic){
+        for(Artist a: artistsArrayList){
+            if(a.getArtistName().equals(artistName)){
+                for(Album alb : a.getAlbums()){
+                    if(alb.getAlbumName().equals(albumName)){
+                        Critic c = new Critic(rate, username, critic);
+                        alb.addCritics(c);
+                        alb.addAvgRate(rate);
+
+                        //DEBUG
+                        System.out.println(c);
+                    }
+                }
+            }
+        }
+    }
+
     //-------- REMOVE --------//
 
     //remove music
@@ -793,5 +854,25 @@ public class MulticastServer extends Thread {
                 u.setPrivilege(true);
             }
         }
+    }
+
+    //avg rate calc
+    public float calAvgRate(String artistName, String albumName){
+        int sum = 0;
+        float totalRates = 0;
+        for(Artist a: artistsArrayList){
+            if(a.getArtistName().equals(artistName)){
+                for(Album alb : a.getAlbums()){
+                    if(alb.getAlbumName().equals(albumName)){
+                        for (int i = 0; i < alb.getMediaRating().size() ; i++) {
+                            sum+= alb.getMediaRating().get(i);
+                            totalRates++;
+
+                        }
+                    }
+                }
+            }
+        }
+        return sum/totalRates;
     }
 }

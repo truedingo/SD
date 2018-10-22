@@ -21,6 +21,8 @@ public class Album {
         this.musicalGenre = musicalGenre;
 
         this.songs = new CopyOnWriteArrayList<Song>();
+        this.critics = new CopyOnWriteArrayList<Critic>();
+        this.mediaRating = new CopyOnWriteArrayList<Integer>();
     }
 
     public void setSongs(CopyOnWriteArrayList<Song> songs) {
@@ -97,6 +99,14 @@ public class Album {
 
     public void setMusicalGenre(String musicalGenre) {
         this.musicalGenre = musicalGenre;
+    }
+
+    public void addAvgRate( Integer rate) {
+        this.mediaRating.add(rate);
+    }
+
+    public void addCritics( Critic critic) {
+        this.critics.add(critic);
     }
 
     @Override
