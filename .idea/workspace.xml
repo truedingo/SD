@@ -1,20 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bc796a7d-265c-4d37-a450-381a99e13dea" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/Album.class" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/Artist.class" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/MulticastServer.class" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/RMIClient.class" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/Song.class" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/User.class" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/out/production/DropMusicMerged/test_user.class" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/Album.java" afterPath="$PROJECT_DIR$/src/Album.java" />
-      <change beforePath="$PROJECT_DIR$/src/MulticastServer.java" afterPath="$PROJECT_DIR$/src/MulticastServer.java" />
-      <change beforePath="$PROJECT_DIR$/src/RMI.java" afterPath="$PROJECT_DIR$/src/RMI.java" />
-      <change beforePath="$PROJECT_DIR$/src/RMIClient.java" afterPath="$PROJECT_DIR$/src/RMIClient.java" />
-      <change beforePath="$PROJECT_DIR$/src/RMIServer.java" afterPath="$PROJECT_DIR$/src/RMIServer.java" />
-    </list>
+    <list default="true" id="bc796a7d-265c-4d37-a450-381a99e13dea" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
