@@ -223,7 +223,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
-    public synchronized boolean checkAlbum(String albumName, String description,String artistName) {
+    public synchronized boolean checkAlbum(String albumName, String description,String musicalGenre, String udate, String artistName) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -232,9 +232,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             sendSocket = new MulticastSocket();
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
             socket.joinGroup(group);
-
-
-            String stringAlbum = "type|insert_album;album_name|" + albumName + ";description|" + description +";artist_name|" + artistName;
+            String stringAlbum = "type|insert_album;album_name|" + albumName + ";description|" + description +";music_genre|"+musicalGenre+";date|"+udate+";artist_name|"+artistName;
             System.out.println(stringAlbum);
             byte[] bufferAlbum = stringAlbum.getBytes();
             DatagramPacket rmiPacket = new DatagramPacket(bufferAlbum, bufferAlbum.length, group, MULTICAST_PORT);
@@ -263,7 +261,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
-    public synchronized boolean checkMusic(String musicName, String genre,String duration, String artistName, String albumName) {
+    public synchronized boolean checkMusic(String musicName, String genre,String duration, String udate, String lyrics, String artistName, String albumName) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -274,7 +272,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             socket.joinGroup(group);
 
 
-            String stringMusic = "type|insert_music;music_name|" + musicName + ";genre|"+ genre +  ";duration|" + duration +";artist_name|" + artistName + ";album_name|" + albumName;
+            String stringMusic = "type|insert_music;music_name|" + musicName + ";genre|"+ genre + ";duration|" + duration +";artist_name|" + artistName + ";album_name|" + albumName+";lyrics|"+lyrics+";date|"+udate;
             System.out.println(stringMusic);
             byte[] bufferMusic = stringMusic.getBytes();
             DatagramPacket rmiPacket = new DatagramPacket(bufferMusic, bufferMusic.length, group, MULTICAST_PORT);
@@ -303,7 +301,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
-    public boolean checkRemoveMusic(String musicName, String artistName, String albumName) {
+    public synchronized boolean checkRemoveMusic(String musicName, String artistName, String albumName) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -343,7 +341,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
-    public boolean checkRemoveAlbum(String artistName, String albumName) {
+    public synchronized boolean checkRemoveAlbum(String artistName, String albumName) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -383,7 +381,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
-    public boolean checkRemoveArtist(String artistName) {
+    public synchronized boolean checkRemoveArtist(String artistName) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -423,7 +421,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
-    public boolean checkEditArtist(String oldArtistName, String newArtistName, String newDesc) {
+    public synchronized boolean checkEditArtist(String oldArtistName, String newArtistName, String newDesc) {
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         try {
@@ -462,6 +460,88 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         }
         return false;
     }
+
+    public synchronized boolean checkEditAlbum(String artistName, String oldAlbumName, String newAlbumName, String albumDescr, String musicalGenre, String udate){
+
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringEditAlbum = "type|edit_album;artist_name|" + artistName + ";old_album_name|" + oldAlbumName+";new_album_name|"+newAlbumName+";new_description|"+albumDescr+";music_genre|"+musicalGenre+";date|"+udate;
+            System.out.println(stringEditAlbum);
+            byte[] bufferEditAlbum = stringEditAlbum.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditAlbum, bufferEditAlbum.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringEditAlbum);
+
+            byte[] bufferReceiveEditAlbum = new byte[256];
+            DatagramPacket receiveEditAlbumPacket = new DatagramPacket(bufferReceiveEditAlbum, bufferReceiveEditAlbum.length);
+            socket.receive(receiveEditAlbumPacket);
+            String receiveEditAlbum = new String(receiveEditAlbumPacket.getData(), 0, receiveEditAlbumPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditAlbum);
+
+            if (receiveEditAlbum.equals("type|edit_album;successful")) {
+                return true;
+            } else if (receiveEditAlbum.equals("type|edit_album;error in edit album")) {
+                return false;
+            }
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
+    public synchronized boolean checkEditSong(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics) {
+
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringEditSong = "type|edit_music;artist_name|" + artistName + ";album_name|" + albumName + ";old_music_name|" + oldMusicName + ";new_music_name|" + newMusicName + ";music_genre|" + musicGenre + ";duration|" + duration + ";date|" + date + ";lyrics|" + lyrics;
+            System.out.println(stringEditSong);
+            byte[] bufferEditSong = stringEditSong.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditSong, bufferEditSong.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringEditSong);
+
+            byte[] bufferReceiveEditSong = new byte[256];
+            DatagramPacket receiveEditSongPacket = new DatagramPacket(bufferReceiveEditSong, bufferReceiveEditSong.length);
+            socket.receive(receiveEditSongPacket);
+            String receiveEditSong = new String(receiveEditSongPacket.getData(), 0, receiveEditSongPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditSong);
+
+            if (receiveEditSong.equals("type|edit_music;successful")) {
+                return true;
+            } else if (receiveEditSong.equals("type|edit_music;error in edit album")) {
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            socket.close();
+            sendSocket.close();
+        }
+        return false;
+    }
+
 
         public static void RMIOn() throws RemoteException {
 

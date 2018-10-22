@@ -6,6 +6,8 @@ public class Album {
     private static final long serialVersionUID = 1L;
     private String albumName;
     private String description;
+    private String releaseDate;
+    private String musicalGenre;
     CopyOnWriteArrayList<Integer> mediaRating;
     CopyOnWriteArrayList<Critic> critics;
     CopyOnWriteArrayList<Song> songs;
@@ -13,9 +15,11 @@ public class Album {
 
     Album(){};
 
-    public Album(String albumName, String description) {
+    public Album(String albumName, String description, String releaseDate, String musicalGenre) {
         this.albumName = albumName;
         this.description = description;
+        this.releaseDate = releaseDate;
+        this.musicalGenre = musicalGenre;
 
         this.songs = new CopyOnWriteArrayList<Song>();
     }
@@ -72,8 +76,32 @@ public class Album {
         this.userChanges = userChanges;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getMusicalGenre() {
+        return musicalGenre;
+    }
+
+    public void setMusicalGenre(String musicalGenre) {
+        this.musicalGenre = musicalGenre;
+    }
+
     @Override
     public String toString() {
-        return "Album:" + albumName + "\nAvgRating:" + mediaRating + "\nCritics:" + critics + "\nSong:" + songs + "\nUserChanges:" + userChanges;
+        return "Album:"+albumName+"\nDescArtist:"+description+"\nReleaseDate:"+releaseDate+"\nMusicalGenre:"+musicalGenre;
     }
 }

@@ -170,21 +170,21 @@ public class MulticastServer extends Thread {
                 else if(receiveString.contains("type|insert_album")){
                     String [] splitString = receiveString.split(";");
 
-                    //nome album
-                    String [] splitString1 =splitString[1].split("\\|");
-                    String albumName =splitString1[1];
-                    //descricao
-                    String [] splitString2 = splitString[2].split("\\|");
-                    String albumDescription =splitString2[1];
-                    //artista
-                    String [] splitString3 = splitString[3].split("\\|");
-                    String albumArtist =splitString3[1];
+                    String getAlbumName = (splitString[1].split("\\|"))[1];
+
+                    String getDescription = (splitString[2].split("\\|"))[1];
+
+                    String getMusicGenre = (splitString[3].split("\\|"))[1];
+
+                    String getDate = (splitString[4].split("\\|"))[1];
+
+                    String getArtistName = (splitString[5].split("\\|"))[1];
 
                     boolean flag;
-                    flag = checkArtistExist(albumArtist);
+                    flag = checkArtistExist(getArtistName);
                     System.out.println(flag);
                     if(!flag){
-                        addAlbum(albumName, albumDescription, albumArtist);
+                        addAlbum(getAlbumName, getDescription, getMusicGenre, getDate, getArtistName);
                         String sendAlbum= "type|insert_album;successful";
 
                         byte[] sendBufferAlbum = sendAlbum.getBytes();
@@ -236,21 +236,27 @@ public class MulticastServer extends Thread {
                 }
                 else if(receiveString.contains("type|insert_music")){
                     String [] splitString = receiveString.split(";");
-                    //musica
-                    String [] splitString1 =splitString[1].split("\\|");
-                    String musicName = splitString1[1];
-                    //genero
-                    String [] splitString2 = splitString[2].split("\\|");
-                    String genre = splitString2[1];
-                    //duracao
-                    String [] splitString3 = splitString[3].split("\\|");
-                    String duration = splitString3[1];
-                    //artista
-                    String [] splitString4 = splitString[4].split("\\|");
-                    String artistName = splitString4[1];
-                    //album name
-                    String [] splitString5 = splitString[5].split("\\|");
-                    String albumName = splitString5[1];
+
+                    String getMusicName = (splitString[1].split("\\|"))[1];
+                    System.out.println(getMusicName);
+
+                    String getMusicGenre = (splitString[2].split("\\|"))[1];
+                    System.out.println(getMusicGenre);
+
+                    String getDuration = (splitString[3].split("\\|"))[1];
+                    System.out.println(getDuration);
+
+                    String getArtistName = (splitString[4].split("\\|"))[1];
+                    System.out.println(getArtistName);
+
+                    String getAlbumName = (splitString[5].split("\\|"))[1];
+                    System.out.println(getAlbumName);
+
+                    String getLyrics = (splitString[6].split("\\|"))[1];
+                    System.out.println(getLyrics);
+
+                    String getDate = (splitString[7].split("\\|"))[1];
+                    System.out.println(getDate);
 
                     boolean flag;
                     boolean check;
@@ -258,14 +264,14 @@ public class MulticastServer extends Thread {
                     //Se o album existir
                     //se o artista existir
 
-                    flag = checkArtistExist(artistName);
-                    check = checkAlbumExist(albumName, artistName);
-                    check2 = checkMusicRepetition(artistName,albumName,musicName);
+                    flag = checkArtistExist(getArtistName);
+                    check = checkAlbumExist(getAlbumName, getArtistName);
+                    check2 = checkMusicRepetition(getArtistName,getAlbumName,getMusicName);
 
                     System.out.println(flag);
                     if(!flag && !check && check2){
                         //Adiciona musica a lista
-                        addSong(musicName,genre,duration,albumName,artistName);
+                        addSong(getMusicName, getMusicGenre, getDuration,getDate, getLyrics, getAlbumName, getArtistName);
                         String sendArtist= "type|insert_music;successful";
 
                         byte[] sendBufferArtist = sendArtist.getBytes();
@@ -305,7 +311,6 @@ public class MulticastServer extends Thread {
 
                     System.out.println(flag);
                     if(!flag && !check){
-                        //Adiciona musica a lista
                         removeMusic(musicName,artistName,albumName);
                         String sendArtist= "type|remove_music;successful";
                         byte[] sendBufferRemoveMusic = sendArtist.getBytes();
@@ -423,8 +428,79 @@ public class MulticastServer extends Thread {
                     }
 
                 }
+                else if(receiveString.contains("type|edit_album")){
 
+                    String [] splitString = receiveString.split(";");
 
+                    String getArtistName = (splitString[1].split("\\|"))[1];
+
+                    String getOldAlbumName = (splitString[2].split("\\|"))[1];
+
+                    String getNewAlbumName = (splitString[3].split("\\|"))[1];
+
+                    String getDescription = (splitString[4].split("\\|"))[1];
+
+                    String getMusicGenre = (splitString[5].split("\\|"))[1];
+
+                    String getDate = (splitString[6].split("\\|"))[1];
+
+                    boolean flag = editAlbum(getArtistName, getOldAlbumName, getNewAlbumName, getDescription, getMusicGenre, getDate);
+
+                    System.out.println(flag);
+                    if (flag) {
+                        String sendEditAlbum = "type|edit_album;successful";
+                        byte[] sendBufferEditAlbum = sendEditAlbum.getBytes();
+                        DatagramPacket sendEditAlbumPacket = new DatagramPacket(sendBufferEditAlbum, sendBufferEditAlbum.length, group, RMI_PORT);
+                        sendSocket.send(sendEditAlbumPacket);
+                        System.out.println("Sent to RMI: " + sendEditAlbum);
+                    } else {
+                        String sendEditAlbum = "type|edit_album;error in edit album";
+                        byte[] sendBufferEditAlbum = sendEditAlbum.getBytes();
+                        DatagramPacket sendEditAlbumPacket = new DatagramPacket(sendBufferEditAlbum, sendBufferEditAlbum.length, group, RMI_PORT);
+                        sendSocket.send(sendEditAlbumPacket);
+                        System.out.println("Sent to RMI: " + sendEditAlbum);
+                    }
+
+                }
+                else if(receiveString.contains("type|edit_music")){
+
+                    String[] splitString = receiveString.split(";");
+
+                    String getArtistName = (splitString[1].split("\\|"))[1];
+
+                    String getAlbumName = (splitString[2].split("\\|"))[1];
+
+                    String getOldMusicName = (splitString[3].split("\\|"))[1];
+
+                    String getNewMusicName = (splitString[4].split("\\|"))[1];
+
+                    String getGenre = (splitString[5].split("\\|"))[1];
+
+                    String getDuration = (splitString[6].split("\\|"))[1];
+
+                    String getDate = (splitString[7].split("\\|"))[1];
+
+                    String getLyrics = (splitString[8].split("\\|"))[1];
+
+                    boolean flag = editMusic(getArtistName, getAlbumName, getOldMusicName, getNewMusicName, getGenre, getDuration, getDate, getLyrics);
+
+                    System.out.println(flag);
+
+                    if (flag) {
+                        String sendEditMusic = "type|edit_music;successful";
+                        byte[] sendBufferEditMusic = sendEditMusic.getBytes();
+                        DatagramPacket sendEditMusicPacket = new DatagramPacket(sendBufferEditMusic, sendBufferEditMusic.length, group, RMI_PORT);
+                        sendSocket.send(sendEditMusicPacket);
+                        System.out.println("Sent to RMI: " + sendEditMusic);
+                    } else {
+                        String sendEditMusic = "type|edit_music;error in edit music";
+                        byte[] sendBufferEditMusic = sendEditMusic.getBytes();
+                        DatagramPacket sendEditMusicPacket = new DatagramPacket(sendBufferEditMusic, sendBufferEditMusic.length, group, RMI_PORT);
+                        sendSocket.send(sendEditMusicPacket);
+                        System.out.println("Sent to RMI: " + sendEditMusic);
+                    }
+
+                }
 
 
                 try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
@@ -545,17 +621,22 @@ public class MulticastServer extends Thread {
         Artist a;
         a = new Artist(name, description);
         artistsArrayList.add(a);
+
+        //DEBUG
+        System.out.println(a);
     }
 
     //add song
-    public void addSong(String name, String genre, String duration, String albumName, String artistName){
+    public void addSong(String name, String genre, String duration, String udate, String lyrics, String albumName, String artistName){
 
         for(Artist a: artistsArrayList){
             if(a.getArtistName().equals(artistName)){
                 for(Album alb : a.getAlbums()){
                     if(alb.getAlbumName().equals(albumName)){
-                        Song s = new Song(name, genre, duration);
+                        Song s = new Song(name, genre, duration, udate, lyrics);
                         alb.addSongs(s);
+                        //DEBUG
+                        System.out.println(s);
                     }
                 }
             }
@@ -563,11 +644,13 @@ public class MulticastServer extends Thread {
     }
 
     //add album
-    public void addAlbum(String albumName, String desc, String artistName){
+    public void addAlbum(String albumName, String desc, String musicGenre, String date, String artistName){
         for(Artist a: artistsArrayList){
             if(a.getArtistName().equals(artistName)){
-                Album album = new Album(albumName, desc);
+                Album album = new Album(albumName, desc, date, musicGenre);
                 a.addAlbums(album);
+                //DEBUG
+                System.out.println(album);
             }
         }
     }
@@ -641,12 +724,70 @@ public class MulticastServer extends Thread {
                 if (a.getArtistName().equals(oldArtistName)) {
                     a.setArtistName(newArtistName);
                     a.setDescArtist(description);
+
+                    //DEBUG
+                    System.out.println(a);
                     return true;
                 }
             }
         }
         return false;
     }
+
+    //edit album
+    public boolean editAlbum(String artistName, String OldAlbumName, String newAlbumName, String description, String musicGenre, String udate){
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(OldAlbumName)) {
+                            alb.setAlbumName(newAlbumName);
+                            alb.setDescription(description);
+                            alb.setMusicalGenre(musicGenre);
+                            alb.setReleaseDate(udate);
+
+                            //DEBUG
+                            System.out.println(alb);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    //edit music
+    public boolean editMusic(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics){
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(albumName)) {
+                            if (!alb.getSongs().isEmpty()) {
+                                for (Song s : alb.getSongs()) {
+                                    if (s.getSongName().equals(oldMusicName)) {
+                                        s.setSongName(newMusicName);
+                                        s.setSongGenre(musicGenre);
+                                        s.setDuration(duration);
+                                        s.setReleaseDate(date);
+                                        s.setLyrics(lyrics);
+
+                                        //DEBUG
+                                        System.out.println(s);
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
 
 
     //-------- OTHER --------//

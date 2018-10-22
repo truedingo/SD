@@ -6,6 +6,10 @@ import java.net.MulticastSocket;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.RemoteRef;
+import java.sql.SQLOutput;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -13,6 +17,9 @@ import java.util.Scanner;
 public class RMIClient {
     private static Configurations configurations;
     private static RMI rmiInterface;
+
+    //validate date in format dd/mm/yyyy or d/m/yyyy
+    private static final DateTimeFormatter PARSE_FORMATTER = DateTimeFormatter.ofPattern("d/M/uuuu");
 
     public static void main(String args[]) throws InterruptedException {
 
@@ -247,6 +254,7 @@ public class RMIClient {
                         return;
                     case 2:
                         //mudar dados de album
+                        editAlbum();
                         //
                         return;
                     case 3 :
@@ -389,12 +397,16 @@ public class RMIClient {
         System.out.println("Music name:");
         Scanner s = new Scanner(System.in);
         String strName = s.nextLine();
-
         System.out.println("Music genre:");
         String strGenre = s.nextLine();
 
         System.out.println("Music duration:");
         String strDuration = s.nextLine();
+
+        String udate = dateInput(s);
+
+        System.out.println("Lyrics:");
+        String lyrics = s.nextLine();
 
         System.out.println("Artist name:");
         String strArtistName = s.nextLine();
@@ -405,12 +417,12 @@ public class RMIClient {
 
         //CheckMusic
         try {
-            if (rmiInterface.checkMusic(strName, strGenre,strDuration,strArtistName,strAlbumName)) {
+            if (rmiInterface.checkMusic(strName, strGenre,strDuration,udate, lyrics, strArtistName,strAlbumName)) {
 
                 System.out.println("Music added.");
                 menuAdministrador();
             } else {
-                System.out.println("Music already exists! Try again");
+                System.out.println("Error adding music.");
                 menuAdministrador();
             }
         } catch (RemoteException e) {
@@ -434,13 +446,14 @@ public class RMIClient {
             System.out.println("Artist added.");
             menuAdministrador();
         } else {
-            System.out.println("Artist already exists! Try again");
+            System.out.println("Error adding artist.");
             menuAdministrador();
         }
     }
 
     //insert album
     public static void insertAlbum() throws RemoteException {
+
         System.out.println("\n\t- Insert Album -");
         System.out.println("Album name:");
         Scanner s = new Scanner(System.in);
@@ -449,15 +462,20 @@ public class RMIClient {
         System.out.println("Album description:");
         String albumDescr = s.nextLine();
 
-        System.out.println("Artist:");
+        System.out.println("Musical Genre:");
+        String musicalGenre = s.nextLine();
+
+        String udate = dateInput(s);
+
+        System.out.println("Artist name:");
         String artistName = s.nextLine();
 
 
-        if (rmiInterface.checkAlbum(albumName, albumDescr,artistName)) {
+        if (rmiInterface.checkAlbum(albumName, albumDescr, musicalGenre, udate, artistName)) {
             System.out.println("Album added.");
             menuAdministrador();
         } else {
-            System.out.println("Album already exists! Try again");
+            System.out.println("Error adding Album.");
             menuAdministrador();
 
         }
@@ -482,7 +500,7 @@ public class RMIClient {
             System.out.println("Music removed.");
             menuAdministrador();
         } else {
-            System.out.println("Music cannot be removed. Try again!");
+            System.out.println("Error removing music.");
             menuAdministrador();
 
         }
@@ -503,7 +521,7 @@ public class RMIClient {
             System.out.println("Album removed.");
             menuAdministrador();
         } else {
-            System.out.println("Album cannot be removed. Try again!");
+            System.out.println("Error removing album.");
             menuAdministrador();
 
         }
@@ -521,7 +539,7 @@ public class RMIClient {
             System.out.println("Artist removed.");
             menuAdministrador();
         } else {
-            System.out.println("Artist cannot be removed. Try again!");
+            System.out.println("Error removing artist.");
             menuAdministrador();
 
         }
@@ -541,7 +559,7 @@ public class RMIClient {
         System.out.println("Album name of music to edit:");
         String albumName = s.nextLine();
 
-        System.out.println("Music name to edit: ");
+        System.out.println("Music name to edit:");
         String oldMusicName = s.nextLine();
 
         System.out.println("\n\t INPUT NEW DATA");
@@ -554,20 +572,23 @@ public class RMIClient {
         System.out.println("NEW Music duration:");
         String strDuration = s.nextLine();
 
+        String udate = dateInput(s);
 
-        //CheckMusic
-        /*try {
-            if (rmiInterface.checkMusic(strName, strGenre,strDuration,strArtistName,strAlbumName)) {
+        System.out.println("NEW Lyrics:");
+        String lyrics = s.nextLine();
 
-                System.out.println("Music added.");
+        try {
+            if (rmiInterface.checkEditSong(artistName, albumName,oldMusicName,newMusicName, strGenre, strDuration, udate, lyrics)) {
+
+                System.out.println("Music edited.");
                 menuAdministrador();
             } else {
-                System.out.println("Music already exists! Try again");
+                System.out.println("Error editing music.");
                 menuAdministrador();
             }
         } catch (RemoteException e) {
             e.printStackTrace();
-        }*/
+        }
 
 
     }
@@ -593,7 +614,7 @@ public class RMIClient {
             System.out.println("Artist edited.");
             menuAdministrador();
         } else {
-            System.out.println("Artist doesn't exist.");
+            System.out.println("Error editing artist.");
             menuAdministrador();
         }
     }
@@ -618,16 +639,35 @@ public class RMIClient {
         System.out.println("NEW Album description:");
         String albumDescr = s.nextLine();
 
+        System.out.println("NEW Musical Genre:");
+        String musicalGenre = s.nextLine();
 
-        /*if (rmiInterface.checkAlbum(albumName, albumDescr,artistName)) {
-            System.out.println("Album added.");
+        String udate = dateInput(s);
+
+
+        if (rmiInterface.checkEditAlbum(artistName, oldAlbumName, newAlbumName, albumDescr, musicalGenre, udate)) {
+            System.out.println("Album edited.");
             menuAdministrador();
         } else {
-            System.out.println("Album already exists! Try again");
+            System.out.println("Error editing album.");
             menuAdministrador();
 
         }
-        */
+    }
+
+    //-------OTHERS----------//
+
+    ///https://stackoverflow.com/questions/44696400/user-to-enter-date-mm-dd-yyyy-and-validate-the-data-entered
+    public static String dateInput(Scanner s) {
+        System.out.println("Please enter a date (mm/dd/yyyy)");
+        String uDate = s.nextLine();
+        try {
+            LocalDate.parse(uDate, PARSE_FORMATTER);
+        } catch (DateTimeParseException dtpe) {
+            System.out.println(uDate + " is a not valid Date");
+            dateInput(s);
+        }
+        return uDate;
     }
 
 

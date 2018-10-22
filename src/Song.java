@@ -5,15 +5,20 @@ public class Song implements Serializable{
     private String songName;
     private String songGenre;
     private String duration;
+    private String releaseDate;
+    private String lyrics;
+
 
 
     Song(){
     };
 
-    public Song(String songName, String songGenre, String duration) {
+    public Song(String songName, String songGenre, String duration, String releaseDate, String lyrics) {
         this.songName = songName;
         this.songGenre = songGenre;
         this.duration = duration;
+        this.releaseDate = releaseDate;
+        this.lyrics = lyrics;
     }
 
     public static long getSerialVersionUID() {
@@ -42,6 +47,22 @@ public class Song implements Serializable{
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getLyrics() {
+        return lyrics;
+    }
+
+    public void setLyrics(String lyrics) {
+        this.lyrics = lyrics;
     }
 
     @Override
