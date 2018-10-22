@@ -67,6 +67,6 @@ public class Song implements Serializable{
 
     @Override
     public String toString() {
-        return "Name:" + songName + "\nGenre:" + songGenre + "\nDuration:" + duration;
+        return "\nName:" + songName + "\nGenre:" + songGenre + "\nDuration:" + duration+"\nReleaseDate:"+releaseDate+"\nLyrics:"+lyrics;
     }
 }

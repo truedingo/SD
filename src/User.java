@@ -72,6 +72,6 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "Username:" + username + "\nPassword:" + password + "\nStatus:" + status + "\nPrivilege:" + privilege + "\nPrivNotif:" + checkPrivilegeNotification + "\nEdtNotif:" + checkEditNofication;
+        return "\nUsername:" + username + "\nPassword:" + password + "\nStatus:" + status + "\nPrivilege:" + privilege;
     }
 }

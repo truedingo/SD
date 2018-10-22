@@ -238,25 +238,18 @@ public class MulticastServer extends Thread {
                     String [] splitString = receiveString.split(";");
 
                     String getMusicName = (splitString[1].split("\\|"))[1];
-                    System.out.println(getMusicName);
 
                     String getMusicGenre = (splitString[2].split("\\|"))[1];
-                    System.out.println(getMusicGenre);
 
                     String getDuration = (splitString[3].split("\\|"))[1];
-                    System.out.println(getDuration);
 
                     String getArtistName = (splitString[4].split("\\|"))[1];
-                    System.out.println(getArtistName);
 
                     String getAlbumName = (splitString[5].split("\\|"))[1];
-                    System.out.println(getAlbumName);
 
                     String getLyrics = (splitString[6].split("\\|"))[1];
-                    System.out.println(getLyrics);
 
                     String getDate = (splitString[7].split("\\|"))[1];
-                    System.out.println(getDate);
 
                     boolean flag;
                     boolean check;

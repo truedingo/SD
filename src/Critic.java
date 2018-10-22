@@ -46,6 +46,6 @@ public class Critic implements Serializable{
 
     @Override
     public String toString() {
-        return "Rating:" + rating + "Username:" + username + "DescCritic:" + descCritic;
+        return "\nRating:" + rating + "\nUsername:" + username + "\nDescCritic:" + descCritic;
     }
 }

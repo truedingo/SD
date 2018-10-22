@@ -65,7 +65,7 @@ public class Artist implements Serializable{
 
     @Override
     public String toString() {
-        return "Artist:" + artistName + "\nDescArtist:" + descArtist + "\nAlbums:" + albums + "\nUserChanges:" + userChanges;
+        return "\nArtist:" + artistName + "\nDescArtist:" + descArtist + "\nAlbums:" + albums;
     }
 
 }

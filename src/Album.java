@@ -102,6 +102,6 @@ public class Album {
 
     @Override
     public String toString() {
-        return "Album:"+albumName+"\nDescArtist:"+description+"\nReleaseDate:"+releaseDate+"\nMusicalGenre:"+musicalGenre;
+        return "\nAlbum:"+albumName+"\nDescArtist:"+description+"\nReleaseDate:"+releaseDate+"\nMusicalGenre:"+musicalGenre+"\nMedRatings:"+mediaRating+"\nCritics:"+critics+"\nSongs:"+songs;
     }
 }
