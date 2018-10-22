@@ -254,6 +254,7 @@ public class MulticastServer extends Thread {
                     boolean flag;
                     boolean check;
                     boolean check2;
+                    
                     //Se o album existir
                     //se o artista existir
 
