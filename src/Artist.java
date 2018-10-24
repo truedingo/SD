@@ -7,14 +7,15 @@ public class Artist implements Serializable{
     private String artistName;
     private String descArtist;
     private CopyOnWriteArrayList<Album> albums;
-    private CopyOnWriteArrayList<String> userChanges;
+    private CopyOnWriteArrayList<Notification> userChanges;
 
     Artist(){};
 
     public Artist(String artistName, String descArtist) {
         this.artistName = artistName;
         this.descArtist = descArtist;
-        this.albums = new CopyOnWriteArrayList<Album>();
+        this.albums = new CopyOnWriteArrayList<>();
+        this.userChanges = new CopyOnWriteArrayList<>();
 
     }
 
@@ -53,11 +54,11 @@ public class Artist implements Serializable{
         this.albums.remove(album);
     }
 
-    public CopyOnWriteArrayList<String> getUserChanges() {
+    public CopyOnWriteArrayList<Notification> getUserChanges() {
         return userChanges;
     }
 
-    public void setUserChanges(CopyOnWriteArrayList<String> userChanges) {
+    public void setUserChanges(CopyOnWriteArrayList<Notification> userChanges) {
         this.userChanges = userChanges;
     }
 

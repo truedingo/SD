@@ -4,10 +4,10 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
     private String username;
     private String password;
-    private boolean status;     //0->offline 1->online
-    private boolean privilege;  //0->regular 1->editor
-    private boolean checkPrivilegeNotification; //0->delivered 1->not delivered
-    private boolean checkEditNofication; //0-> delivered 1-> not delivered
+    private boolean rights;  //0->regular 1->editor
+    private boolean isNotifiedRights;
+    private boolean isNotifiedAlbum;
+    private boolean isNotifiedArtist;
 
     User(){
     };
@@ -37,40 +37,40 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isRights() {
+        return rights;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setRights(boolean rights) {
+        this.rights = rights;
     }
 
-    public boolean isPrivilege() {
-        return privilege;
+    public boolean isNotifiedRights() {
+        return isNotifiedRights;
     }
 
-    public void setPrivilege(boolean privilege) {
-        this.privilege = privilege;
+    public void setNotifiedRights(boolean notifiedRights) {
+        this.isNotifiedRights = notifiedRights;
     }
 
-    public boolean isCheckPrivilegeNotification() {
-        return checkPrivilegeNotification;
+    public boolean isNotifiedAlbum() {
+        return isNotifiedAlbum;
     }
 
-    public void setCheckPrivilegeNotification(boolean checkPrivilegeNotification) {
-        this.checkPrivilegeNotification = checkPrivilegeNotification;
+    public void setNotifiedAlbum(boolean notifiedAlbum) {
+        this.isNotifiedAlbum = notifiedAlbum;
     }
 
-    public boolean isCheckEditNofication() {
-        return checkEditNofication;
+    public boolean isNotifiedArtist() {
+        return isNotifiedArtist;
     }
 
-    public void setCheckEditNofication(boolean checkEditNofication) {
-        this.checkEditNofication = checkEditNofication;
+    public void setNotifiedArtist(boolean notifiedArtist) {
+        this.isNotifiedArtist = notifiedArtist;
     }
 
     @Override
     public String toString() {
-        return "\nUsername:" + username + "\nPassword:" + password + "\nStatus:" + status + "\nPrivilege:" + privilege;
+        return "\nUsername:" + username + "\nPassword:" + password + "\nRights:" + rights;
     }
 }

@@ -10,7 +10,7 @@ public class Album {
     CopyOnWriteArrayList<Integer> mediaRating;
     CopyOnWriteArrayList<Critic> critics;
     CopyOnWriteArrayList<Song> songs;
-    CopyOnWriteArrayList<String> userChanges;
+    CopyOnWriteArrayList<Notification> userChanges;
 
     Album(){};
 
@@ -69,11 +69,11 @@ public class Album {
         return songs;
     }
 
-    public CopyOnWriteArrayList<String> getUserChanges() {
+    public CopyOnWriteArrayList<Notification> getUserChanges() {
         return userChanges;
     }
 
-    public void setUserChanges(CopyOnWriteArrayList<String> userChanges) {
+    public void setUserChanges(CopyOnWriteArrayList<Notification> userChanges) {
         this.userChanges = userChanges;
     }
 

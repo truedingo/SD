@@ -6,9 +6,7 @@ public interface RMI extends Remote {
 
     String checkLogin(String username, String password) throws java.rmi.RemoteException;
 
-    boolean checkUserRights(String username) throws java.rmi.RemoteException;
-
-    boolean idleUserRights(String username) throws java.rmi.RemoteException;
+    boolean checkUserRights(String username, ClientInterface client) throws java.rmi.RemoteException;
 
     boolean checkArtist(String artistName, String description) throws java.rmi.RemoteException;
 
@@ -28,6 +26,18 @@ public interface RMI extends Remote {
 
     boolean checkEditSong(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics) throws java.rmi.RemoteException;
 
-    boolean checkCritic(String username, String artistName, String albumName, int rate, String critic ) throws java.rmi.RemoteException;
+    boolean checkCritic(String username, String artistName, String albumName, int rate, String critic) throws java.rmi.RemoteException;
 
-    }
+    void addLoggedUsers(ClientInterface c) throws java.rmi.RemoteException;
+
+    String removeLoggedUsers(String username) throws RemoteException;
+
+    boolean searchOnlineListRights(String username) throws RemoteException;
+
+    ClientInterface fetchClientOnlineListRighs(String username) throws RemoteException;
+
+
+    boolean checkNotificationsRights(String username, ClientInterface client) throws  RemoteException;
+
+
+}

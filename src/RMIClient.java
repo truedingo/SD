@@ -1,5 +1,7 @@
 import java.rmi.Naming;
+import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -7,24 +9,31 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 
-public class RMIClient {
+public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     private static Configurations configurations;
     private static RMI rmiInterface;
+    private static String clientUsername;
+    private static RMIClient client;
 
     //validate date in format dd/mm/yyyy or d/m/yyyy
     private static final DateTimeFormatter PARSE_FORMATTER = DateTimeFormatter.ofPattern("d/M/uuuu");
 
+    RMIClient() throws RemoteException {
+        super();
+    }
+
     public static void main(String args[]) throws InterruptedException {
 
         //This might be necessary if you ever need to download classes:
-        //System.getProperties().put("java.security.policy", "policy.all");
-        //System.setSecurityManager(new RMISecurityManager());
+        System.getProperties().put("java.security.policy", "policy.all");
+        System.setSecurityManager(new RMISecurityManager());
         //configurations = new Configurations(("/Users/iroseiro/IdeaProjects/Project/src/com/company/RMI_configs.cfg"));
         configurations = new Configurations("/Users/dingo/Desktop/SD/DropMusicMerged/out/production/DropMusicMerged/RMI_configs.cfg");
 
         try {
             rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
             rmiInterface.sayHello();
+            client = new RMIClient();
             welcome();
 
         } catch (Exception e) {
@@ -78,58 +87,60 @@ public class RMIClient {
             }
         }
     }
+
     //menu user
-    public static void menuUser(String username){
+    public static void menuUser(String username) throws RemoteException {
 
         while (true) {
-            try {
-                if(rmiInterface.idleUserRights(username)){
-                    System.out.println("Your rights were changed to editor.");
-                    menuAdministrador(username);
-                }
-                System.out.println("\t- User Menu -");
-                System.out.println("1. View Data");
-                System.out.println("2. Write Critic");
-                System.out.println("0. Quit");
+            if(rmiInterface.checkNotificationsRights(username, client)){
+                menuAdministrador(username);
+            }
+            System.out.println("\t- User Menu -");
+            System.out.println("1. View Data");
+            System.out.println("2. Write Critic");
+            System.out.println("0. Log Out");
+            Scanner s = new Scanner(System.in);
+            String strOpt = s.nextLine();
+            int opt = Integer.parseInt(strOpt);
+            //verificacao option
+            if ((opt < 0) || (opt > 2)) {
+                System.out.println("\tInvalid option!");
+                continue;
+            }
 
-                Scanner s = new Scanner(System.in);
-                String strOpt = s.nextLine();
-                int opt = Integer.parseInt(strOpt);
-                //verificacao option
-                if ((opt < 0) || (opt > 2)) {
-                    System.out.println("\tInvalid option! ");
-                    continue;
-                }
-
-                switch (opt) {
-                    case 1:
-                        menuUser(username);
-                        return;
-                    case 2:
-                        writeCritic(username);
-                        return;
-                    case 0:
+            switch (opt) {
+                case 1:
+                    menuUser(username);
+                    return;
+                case 2:
+                    writeCritic(username);
+                    return;
+                case 0:
+                    System.out.println("Logged out!");
+                    //remover
+                    String logout = rmiInterface.removeLoggedUsers(username);
+                    if(logout.equals("deleted")){
                         System.exit(0);
-                        return;
-                }
-            }catch (NumberFormatException e ){
-                System.out.println("Invalid option.");
-            } catch (NoSuchElementException e){} catch (RemoteException e) {
-                e.printStackTrace();
+                    }
+                    else{
+                        System.out.println("és um burro diogo");
+                    }
+                    return;
             }
         }
     }
 
     //menu admin
-    public static void menuAdministrador(String username){
+    public static void menuAdministrador(String username) throws RemoteException {
         while (true) {
+            rmiInterface.checkNotificationsRights(username, client);
             try {
                 System.out.println("\n\t- Administrator Menu -");
                 System.out.println("1. Insert data");
                 System.out.println("2. Change data");
                 System.out.println("3. Remove data");
                 System.out.println("4. Give editor rights ");
-                System.out.println("0. Quit");
+                System.out.println("0. Log Out");
 
                 Scanner s = new Scanner(System.in);
                 String strOpt = s.nextLine();
@@ -158,7 +169,15 @@ public class RMIClient {
                         //change user rights
                         changeRights(username);
                     case 0:
-                        System.exit(0);
+                        System.out.println("Logged out!");
+                        //remover
+                        String logout = rmiInterface.removeLoggedUsers(username);
+                        if(logout.equals("deleted")){
+                            System.exit(0);
+                        }
+                        else{
+                            System.out.println("és um burro diogo");
+                        }
                         return;
                 }
             }catch (NumberFormatException e ){
@@ -330,6 +349,10 @@ public class RMIClient {
 
         if(rmiInterface.checkRegister(username, password)){
             System.out.println("Registered successfully.");
+            clientUsername = username;
+            client.setUsername(clientUsername);
+            //adicionar a lista de logged users no RMI
+            rmiInterface.addLoggedUsers(client);
             menuUser(username);
         }
         else{
@@ -351,10 +374,23 @@ public class RMIClient {
 
         if(rmiInterface.checkLogin(username, password).equals("editor")){
             System.out.println("Logged in as editor.");
+
+            //meter interface com nome de user
+            clientUsername = username;
+            client.setUsername(clientUsername);
+            //adicionar a lista de logged users no RMI
+            rmiInterface.addLoggedUsers(client);
+
             menuAdministrador(username);
         }
         else if(rmiInterface.checkLogin(username, password).equals("user")){
             System.out.println("Logged in as user.");
+
+            clientUsername = username;
+            client.setUsername(clientUsername);
+            //adicionar a lista de logged users no RMI
+            rmiInterface.addLoggedUsers(client);
+
             menuUser(username);
         }
         else{
@@ -368,19 +404,20 @@ public class RMIClient {
         Scanner s = new Scanner(System.in);
         System.out.println("Insert username: ");
         String username = s.nextLine();
-        if(rmiInterface.checkUserRights(username)){
+
+        boolean checker = rmiInterface.checkUserRights(username, client);
+        if(checker){
             System.out.println("Changed rights of user "+username+" to editor.");
             menuAdministrador(user);
+            //mandar notificacao
         }
         else{
             System.out.println("User not found or is already an editor.");
             menuAdministrador(user);
         }
-
-
-
     }
 
+    //write critic
     public static void writeCritic(String username) {
         System.out.println("\n\t- Write Critic -");
         Scanner s = new Scanner(System.in);
@@ -703,7 +740,20 @@ public class RMIClient {
         return uDate;
     }
 
+    //-------INTERFACE----------//
+    //gets client username
+    public String getUsername() throws RemoteException {
+        return clientUsername;
+    }
 
+    //sets client interface username
+    public void setUsername(String username) throws RemoteException {
+        this.clientUsername = username;
+    }
 
+    //notifies rights
+    public void notifyRights(){
+        System.out.println("Your rights have been changed to editor.");
+    }
 }
 

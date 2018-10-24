@@ -31,7 +31,7 @@ public class MulticastServer extends Thread {
         usersArrayList = new CopyOnWriteArrayList<>();
         artistsArrayList = new CopyOnWriteArrayList<>();
         User admin = new User("admin", "admin");
-        admin.setPrivilege(true);
+        admin.setRights(true);
         usersArrayList.add(admin);
         System.out.println("Please enter database UID for this server: ");
         Scanner serverUIDScanner = new Scanner(System.in);
@@ -97,7 +97,7 @@ public class MulticastServer extends Thread {
 
                     flag = login(getUsername, getPassword);
                     if(flag){
-                        check = checkPrivilege(getUsername);
+                        check = checkRights(getUsername);
                         if(check){
                             String sendLogin = "type|status;logged|on;msg|WelcomeToDropMusic|privilege;editor|";
                             byte[] sendBufferLogin = sendLogin.getBytes();
@@ -127,15 +127,33 @@ public class MulticastServer extends Thread {
                     String getUsername = splitString[2];
                     System.out.println("Trying to change rights of user with Username:"+getUsername);
 
-                    boolean check = checkUserRights(getUsername);
-                    if(check){
-                        setPrivilege(getUsername);
+                    boolean check = checkRights(getUsername);
+                    if(!check){
+                        setRights(getUsername);
                         System.out.println("Changed rights of "+getUsername+" to editor.");
                         String sendCheck = "type|check;rights|changed";
                         byte[] sendBufferCheck = sendCheck.getBytes();
                         DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
                         sendSocket.send(sendCheckPacket);
                         System.out.println("Sent to RMI: "+sendCheck);
+
+                        //mensagem para verificar se é preciso atualizar o boolean ou se o user foi notificado
+                        byte[] receiveFeedback = new byte[256];
+                        DatagramPacket receiveFeedbackPacket = new DatagramPacket(receiveFeedback, receiveFeedback.length);
+                        socket.receive(receiveFeedbackPacket);
+                        String receiveFeedbackString = new String(receiveFeedbackPacket.getData(), 0, receiveFeedbackPacket.getLength());
+                        System.out.println("Received from RMI: "+receiveFeedbackString);
+
+                        if(receiveFeedbackString.equals("type|check;rights|notified")){
+                            System.out.println("User has been notified!");
+                        }
+                        else if(receiveFeedbackString.contains("type|store;rights|username;")){
+                            //percorrer a lista com o user e meter lá o bool a true, user vai ser notificado quando
+                            //ficar online
+                            System.out.println("User " + getUsername + " got his/her rights updated.");
+                            notifyLaterRights(getUsername);
+                        }
+
                     }
                     else{
                         String sendCheck = "type|check;rights|error";
@@ -146,25 +164,26 @@ public class MulticastServer extends Thread {
                     }
 
                 }
-                else if(receiveString.contains("type|idle;rights|")){
+                else if(receiveString.contains("type|notification_rights;username|")){
+
                     String [] splitString = receiveString.split(";");
-                    String [] splitString2 = splitString[1].split("\\|");
-                    String getUsername = splitString2[1];
-                    System.out.println("IdleCheck: "+getUsername);
-                    boolean flag = checkPrivilege(getUsername);
-                    if(flag){
-                        String sendIdle = "type|idle;rights|editor";
-                        byte[] sendBufferIdle = sendIdle.getBytes();
-                        DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferIdle, sendBufferIdle.length, group, RMI_PORT);
+                    String getUsername = (splitString[1].split("\\|"))[1];
+
+                    if(checkNotifyLater(getUsername)){
+                        //user tem de ser notificado
+                        String sendNotification = "type|notification_rights;check";
+                        byte[] sendBufferCheck = sendNotification.getBytes();
+                        DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
                         sendSocket.send(sendCheckPacket);
-                        System.out.println("Sent to RMI: "+sendIdle);
+                        System.out.println("Sent to RMI: "+sendNotification);
                     }
                     else{
-                        String sendIdle = "type|idle;rights|user";
-                        byte[] sendIdleCheck = sendIdle.getBytes();
-                        DatagramPacket sendIdlePacket = new DatagramPacket(sendIdleCheck, sendIdleCheck.length, group, RMI_PORT);
-                        sendSocket.send(sendIdlePacket);
-                        System.out.println("Sent to RMI: "+sendIdle);
+                        //user nao precisa de ser notificado
+                        String sendNotification = "type|notification_rights;fail";
+                        byte[] sendBufferCheck = sendNotification.getBytes();
+                        DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
+                        sendSocket.send(sendCheckPacket);
+                        System.out.println("Sent to RMI: "+sendNotification);
                     }
 
                 }
@@ -211,7 +230,6 @@ public class MulticastServer extends Thread {
                     String artistDescription = splitString2[1];
 
                     boolean flag;
-                    boolean check;
                     flag = checkArtistExist(artistName);
                     System.out.println(flag);
                     if(flag){
@@ -561,7 +579,7 @@ public class MulticastServer extends Thread {
             }
         }
         User user = new User(username, password);
-        user.setPrivilege(false);
+        user.setRights(false);
         usersArrayList.add(user);
         return true;
     }
@@ -570,7 +588,6 @@ public class MulticastServer extends Thread {
     public boolean login(String username, String password){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username) && u.getPassword().equals(password)){
-                u.setStatus(true);
                 return true;
             }
         }
@@ -580,27 +597,13 @@ public class MulticastServer extends Thread {
 
     //-------- CHECK--------//
 
-    //check privilege (MEXER NISTO EVENTUALMENTE)
-    public boolean checkPrivilege(String username){
+    //check if user is editor
+    public boolean checkRights(String username){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username)){
-                if(u.isPrivilege()){
+                if(u.isRights()){
                     return true;
                 }
-            }
-        }
-        return false;
-    }
-
-    //check user rights
-    public boolean checkUserRights(String username){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username)){
-                if(u.isPrivilege())
-                    return false;
-                else
-                    return true;
-
             }
         }
         return false;
@@ -650,6 +653,26 @@ public class MulticastServer extends Thread {
         return true;
     }
 
+    //notify later
+    public void notifyLaterRights(String username){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username)){
+                u.setNotifiedRights(true);
+            }
+        }
+    }
+
+    //check notify later
+    public boolean checkNotifyLater(String username){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username)){
+                if(u.isNotifiedRights()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     //-------- ADD --------//
 
@@ -847,11 +870,11 @@ public class MulticastServer extends Thread {
 
     //-------- OTHER --------//
 
-    //set privilege
-    public void setPrivilege(String username){
+    //set rights
+    public void setRights(String username){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username)){
-                u.setPrivilege(true);
+                u.setRights(true);
             }
         }
     }
@@ -875,4 +898,5 @@ public class MulticastServer extends Thread {
         }
         return sum/totalRates;
     }
+
 }
