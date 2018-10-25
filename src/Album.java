@@ -10,7 +10,7 @@ public class Album {
     CopyOnWriteArrayList<Integer> mediaRating;
     CopyOnWriteArrayList<Critic> critics;
     CopyOnWriteArrayList<Song> songs;
-    CopyOnWriteArrayList<Notification> userChanges;
+    CopyOnWriteArrayList<String> userChanges;
 
     Album(){};
 
@@ -69,11 +69,11 @@ public class Album {
         return songs;
     }
 
-    public CopyOnWriteArrayList<Notification> getUserChanges() {
+    public CopyOnWriteArrayList<String> getUserChanges() {
         return userChanges;
     }
 
-    public void setUserChanges(CopyOnWriteArrayList<Notification> userChanges) {
+    public void setUserChanges(CopyOnWriteArrayList<String> userChanges) {
         this.userChanges = userChanges;
     }
 
@@ -101,12 +101,21 @@ public class Album {
         this.musicalGenre = musicalGenre;
     }
 
-    public void addAvgRate( Integer rate) {
+    public void addAvgRate(Integer rate) {
         this.mediaRating.add(rate);
+        System.out.println(mediaRating);
     }
 
     public void addCritics( Critic critic) {
         this.critics.add(critic);
+    }
+    public int seeCriticsUsers(String username){
+        for (Critic c : critics){
+            if(c.getUsername().equals(username)){
+                return 0;
+            }
+        }
+        return 1;
     }
 
     @Override

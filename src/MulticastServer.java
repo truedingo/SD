@@ -37,7 +37,7 @@ public class MulticastServer extends Thread {
         Scanner serverUIDScanner = new Scanner(System.in);
         String serverUID = serverUIDScanner.nextLine();
         int database_uid = Integer.parseInt(serverUID);
-        System.out.println("Database UID for this server: "+database_uid);
+        System.out.println("Database UID for this server: " + database_uid);
         MulticastSocket socket = null;
         MulticastSocket sendSocket = null;
         System.out.println(this.getName() + " running...");
@@ -49,34 +49,33 @@ public class MulticastServer extends Thread {
             socket.joinGroup(group);
 
             //files stuff
-            String file_name = "/Users/dingo/Desktop/SD/DropMusicMerged/test_user"+database_uid+".txt";
+            String file_name = "/Users/dingo/Desktop/SD/DropMusicMerged/test_user" + database_uid + ".txt";
 
             while (true) {
                 byte[] receiveBuffer = new byte[256];
-                DatagramPacket  receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
+                DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
                 socket.receive(receivePacket);
                 String receiveString = new String(receivePacket.getData(), 0, receivePacket.getLength());
-                System.out.println("Received from RMI: "+receiveString);
+                System.out.println("Received from RMI: " + receiveString);
 
-                if(receiveString.contains("type|register")){
-                    String [] splitString = receiveString.split(";");
-                    String [] getUsernameString = splitString[1].split("\\|");
-                    String [] getPasswordString = splitString[2].split("\\|");
+                if (receiveString.contains("type|register")) {
+                    String[] splitString = receiveString.split(";");
+                    String[] getUsernameString = splitString[1].split("\\|");
+                    String[] getPasswordString = splitString[2].split("\\|");
                     String getUsername = getUsernameString[1];
                     String getPassword = getPasswordString[1];
                     boolean flag;
-                    System.out.println("Trying to register user with Username:"+getUsername+" Password:"+getPassword);
+                    System.out.println("Trying to register user with Username:" + getUsername + " Password:" + getPassword);
                     flag = register(getUsername, getPassword);
                     System.out.println(flag);
-                    if(flag){
+                    if (flag) {
                         String sendRegister = "type|status;logged|on;msg|UserRegistered";
                         byte[] sendBufferRegister = sendRegister.getBytes();
                         DatagramPacket sendRegisterPacket = new DatagramPacket(sendBufferRegister, sendBufferRegister.length, group, RMI_PORT);
                         sendSocket.send(sendRegisterPacket);
                         System.out.println();
-                        System.out.println("Sent to RMI: "+sendRegister);
-                    }
-                    else{
+                        System.out.println("Sent to RMI: " + sendRegister);
+                    } else {
                         System.out.println("Username already in use");
                         String sendError = "type|status;logged|off;msg|ErrorWithUsername";
                         byte[] sendBufferError = sendError.getBytes();
@@ -84,115 +83,106 @@ public class MulticastServer extends Thread {
                         sendSocket.send(sendErrorPacket);
                         System.out.println("Sent to RMI: " + sendError);
                     }
-                }
-                else if(receiveString.contains("type|login")){
-                    String [] splitString = receiveString.split(";");
-                    String [] getUsernameString = splitString[1].split("\\|");
-                    String [] getPasswordString = splitString[2].split("\\|");
+                } else if (receiveString.contains("type|login")) {
+                    String[] splitString = receiveString.split(";");
+                    String[] getUsernameString = splitString[1].split("\\|");
+                    String[] getPasswordString = splitString[2].split("\\|");
                     String getUsername = getUsernameString[1];
                     String getPassword = getPasswordString[1];
                     boolean flag;
                     boolean check;
-                    System.out.println("Trying to login user with Username:"+getUsername+" Password:"+getPassword);
+                    System.out.println("Trying to login user with Username:" + getUsername + " Password:" + getPassword);
 
                     flag = login(getUsername, getPassword);
-                    if(flag){
+                    if (flag) {
                         check = checkRights(getUsername);
-                        if(check){
+                        if (check) {
                             String sendLogin = "type|status;logged|on;msg|WelcomeToDropMusic|privilege;editor|";
                             byte[] sendBufferLogin = sendLogin.getBytes();
                             DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
                             sendSocket.send(sendLoginPacket);
-                            System.out.println("Sent to RMI: "+sendLogin);
-                        }
-                        else{
+                            System.out.println("Sent to RMI: " + sendLogin);
+                        } else {
                             String sendLogin = "type|status;logged|on;msg|WelcomeToDropMusic|privilege;user|";
                             byte[] sendBufferLogin = sendLogin.getBytes();
                             DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
                             sendSocket.send(sendLoginPacket);
-                            System.out.println("Sent to RMI: "+sendLogin);
+                            System.out.println("Sent to RMI: " + sendLogin);
                         }
-                    }
-                    else{
+                    } else {
                         String sendLogin = "type|status;logged|on;msg|ErrorWithLogin";
                         byte[] sendBufferLogin = sendLogin.getBytes();
                         DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
                         sendSocket.send(sendLoginPacket);
-                        System.out.println("Sent to RMI: "+sendLogin);
+                        System.out.println("Sent to RMI: " + sendLogin);
                     }
 
-                }
-                else if(receiveString.contains("type|check;rights")){
-                    String [] splitString = receiveString.split(";");
+                } else if (receiveString.contains("type|check;rights")) {
+                    String[] splitString = receiveString.split(";");
                     String getUsername = splitString[2];
-                    System.out.println("Trying to change rights of user with Username:"+getUsername);
+                    System.out.println("Trying to change rights of user with Username:" + getUsername);
 
                     boolean check = checkRights(getUsername);
-                    if(!check){
+                    if (!check) {
                         setRights(getUsername);
-                        System.out.println("Changed rights of "+getUsername+" to editor.");
+                        System.out.println("Changed rights of " + getUsername + " to editor.");
                         String sendCheck = "type|check;rights|changed";
                         byte[] sendBufferCheck = sendCheck.getBytes();
                         DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
                         sendSocket.send(sendCheckPacket);
-                        System.out.println("Sent to RMI: "+sendCheck);
+                        System.out.println("Sent to RMI: " + sendCheck);
 
                         //mensagem para verificar se é preciso atualizar o boolean ou se o user foi notificado
                         byte[] receiveFeedback = new byte[256];
                         DatagramPacket receiveFeedbackPacket = new DatagramPacket(receiveFeedback, receiveFeedback.length);
                         socket.receive(receiveFeedbackPacket);
                         String receiveFeedbackString = new String(receiveFeedbackPacket.getData(), 0, receiveFeedbackPacket.getLength());
-                        System.out.println("Received from RMI: "+receiveFeedbackString);
+                        System.out.println("Received from RMI: " + receiveFeedbackString);
 
-                        if(receiveFeedbackString.equals("type|check;rights|notified")){
+                        if (receiveFeedbackString.equals("type|check;rights|notified")) {
                             System.out.println("User has been notified!");
                             notifyRights(getUsername);
 
-                        }
-                        else if(receiveFeedbackString.contains("type|store;rights|username;")){
+                        } else if (receiveFeedbackString.contains("type|store;rights|username;")) {
                             //percorrer a lista com o user e meter lá o bool a true, user vai ser notificado quando
                             //ficar online
                             System.out.println("User " + getUsername + " got his/her rights updated.");
                             notifyRights(getUsername);
                         }
 
-                    }
-                    else{
+                    } else {
                         String sendCheck = "type|check;rights|error";
                         byte[] sendBufferCheck = sendCheck.getBytes();
                         DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
                         sendSocket.send(sendCheckPacket);
-                        System.out.println("Sent to RMI: "+sendCheck);
+                        System.out.println("Sent to RMI: " + sendCheck);
                     }
 
-                }
-                else if(receiveString.contains("type|notification_rights;username|")){
+                } else if (receiveString.contains("type|notification_rights;username|")) {
 
-                    String [] splitString = receiveString.split(";");
+                    String[] splitString = receiveString.split(";");
                     String getUsername = (splitString[1].split("\\|"))[1];
 
-                    if(checkNotifyLater(getUsername)){
+                    if (checkNotifyLater(getUsername)) {
                         //user tem de ser notificado
                         String sendNotification = "type|notification_rights;check";
                         byte[] sendBufferCheck = sendNotification.getBytes();
                         DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
                         sendSocket.send(sendCheckPacket);
-                        System.out.println("Sent to RMI: "+sendNotification);
+                        System.out.println("Sent to RMI: " + sendNotification);
                         //meter bool a false
                         setNotifyRights(getUsername);
-                    }
-                    else{
+                    } else {
                         //user nao precisa de ser notificado
                         String sendNotification = "type|notification_rights;fail";
                         byte[] sendBufferCheck = sendNotification.getBytes();
                         DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
                         sendSocket.send(sendCheckPacket);
-                        System.out.println("Sent to RMI: "+sendNotification);
+                        System.out.println("Sent to RMI: " + sendNotification);
                     }
 
-                }
-                else if(receiveString.contains("type|insert_album")){
-                    String [] splitString = receiveString.split(";");
+                } else if (receiveString.contains("type|insert_album")) {
+                    String[] splitString = receiveString.split(";");
 
                     String getAlbumName = (splitString[1].split("\\|"))[1];
 
@@ -207,58 +197,54 @@ public class MulticastServer extends Thread {
                     boolean flag;
                     flag = checkArtistExist(getArtistName);
                     System.out.println(flag);
-                    if(!flag){
+                    if (!flag) {
                         addAlbum(getAlbumName, getDescription, getMusicGenre, getDate, getArtistName);
-                        String sendAlbum= "type|insert_album;successful";
+                        String sendAlbum = "type|insert_album;successful";
 
                         byte[] sendBufferAlbum = sendAlbum.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferAlbum, sendBufferAlbum.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
-                        System.out.println("Sent to RMI: "+ sendAlbum);
-                    }
-                    else{
-                        String sendArtist= "type|insert_album;error in insert album";
+                        System.out.println("Sent to RMI: " + sendAlbum);
+                    } else {
+                        String sendArtist = "type|insert_album;error in insert album";
 
                         byte[] sendBufferAlbum = sendArtist.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferAlbum, sendBufferAlbum.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
-                        System.out.println("Sent to RMI: "+ sendArtist);
+                        System.out.println("Sent to RMI: " + sendArtist);
                     }
 
 
-                }
-                else if(receiveString.contains("type|insert_artist")){
-                    String [] splitString = receiveString.split(";");
+                } else if (receiveString.contains("type|insert_artist")) {
+                    String[] splitString = receiveString.split(";");
                     String artistName = splitString[1];
-                    String [] splitString2 = splitString[2].split("\\|");
+                    String[] splitString2 = splitString[2].split("\\|");
                     String artistDescription = splitString2[1];
 
                     boolean flag;
                     flag = checkArtistExist(artistName);
                     System.out.println(flag);
-                    if(flag){
+                    if (flag) {
                         //Adiciona artista a lista
-                        addArtist(artistName,artistDescription);
-                        String sendArtist= "type|insert_artist;successful";
+                        addArtist(artistName, artistDescription);
+                        String sendArtist = "type|insert_artist;successful";
 
                         byte[] sendBufferArtist = sendArtist.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
-                        System.out.println("Sent to RMI: "+ sendArtist);
-                    }
-                    else{
-                        String sendArtist= "type|insert_artist;error in insert artist";
+                        System.out.println("Sent to RMI: " + sendArtist);
+                    } else {
+                        String sendArtist = "type|insert_artist;error in insert artist";
 
                         byte[] sendBufferArtist = sendArtist.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
-                        System.out.println("Sent to RMI: "+ sendArtist);
+                        System.out.println("Sent to RMI: " + sendArtist);
                     }
 
 
-                }
-                else if(receiveString.contains("type|insert_music")){
-                    String [] splitString = receiveString.split(";");
+                } else if (receiveString.contains("type|insert_music")) {
+                    String[] splitString = receiveString.split(";");
 
                     String getMusicName = (splitString[1].split("\\|"))[1];
 
@@ -282,38 +268,36 @@ public class MulticastServer extends Thread {
 
                     flag = checkArtistExist(getArtistName);
                     check = checkAlbumExist(getAlbumName, getArtistName);
-                    check2 = checkMusicRepetition(getArtistName,getAlbumName,getMusicName);
+                    check2 = checkMusicRepetition(getArtistName, getAlbumName, getMusicName);
 
                     System.out.println(flag);
-                    if(!flag && !check && check2){
+                    if (!flag && !check && check2) {
                         //Adiciona musica a lista
-                        addSong(getMusicName, getMusicGenre, getDuration,getDate, getLyrics, getAlbumName, getArtistName);
-                        String sendArtist= "type|insert_music;successful";
+                        addSong(getMusicName, getMusicGenre, getDuration, getDate, getLyrics, getAlbumName, getArtistName);
+                        String sendArtist = "type|insert_music;successful";
 
                         byte[] sendBufferArtist = sendArtist.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
-                        System.out.println("Sent to RMI: "+ sendArtist);
-                    }
-                    else{
-                        String sendArtist= "type|insert_music;error in insert music";
+                        System.out.println("Sent to RMI: " + sendArtist);
+                    } else {
+                        String sendArtist = "type|insert_music;error in insert music";
 
                         byte[] sendBufferArtist = sendArtist.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
-                        System.out.println("Sent to RMI: "+ sendArtist);
+                        System.out.println("Sent to RMI: " + sendArtist);
                     }
-                }
-                else if(receiveString.contains("type|remove_music")){
-                    String [] splitString = receiveString.split(";");
+                } else if (receiveString.contains("type|remove_music")) {
+                    String[] splitString = receiveString.split(";");
                     //nome musica
-                    String [] splitString1 =splitString[1].split("\\|");
+                    String[] splitString1 = splitString[1].split("\\|");
                     String musicName = splitString1[1];
                     //artista
-                    String [] splitString2 = splitString[2].split("\\|");
+                    String[] splitString2 = splitString[2].split("\\|");
                     String artistName = splitString2[1];
                     //album
-                    String [] splitString3 = splitString[3].split("\\|");
+                    String[] splitString3 = splitString[3].split("\\|");
                     String albumName = splitString3[1];
 
                     boolean flag;
@@ -326,33 +310,31 @@ public class MulticastServer extends Thread {
                     check = checkAlbumExist(albumName, artistName);
 
                     System.out.println(flag);
-                    if(!flag && !check){
-                        removeMusic(musicName,artistName,albumName);
-                        String sendArtist= "type|remove_music;successful";
+                    if (!flag && !check) {
+                        removeMusic(musicName, artistName, albumName);
+                        String sendArtist = "type|remove_music;successful";
                         byte[] sendBufferRemoveMusic = sendArtist.getBytes();
                         DatagramPacket removeMusicPacket = new DatagramPacket(sendBufferRemoveMusic, sendBufferRemoveMusic.length, group, RMI_PORT);
                         sendSocket.send(removeMusicPacket);
-                        System.out.println("Sent to RMI: "+ sendArtist);
-                    }
-                    else{
-                        String sendArtist= "type|remove_music;error in remove music";
+                        System.out.println("Sent to RMI: " + sendArtist);
+                    } else {
+                        String sendArtist = "type|remove_music;error in remove music";
 
                         byte[] sendBufferArtist = sendArtist.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
-                        System.out.println("Sent to RMI: "+ sendArtist);
+                        System.out.println("Sent to RMI: " + sendArtist);
                     }
 
 
-                }
-                else if(receiveString.contains("type|remove_album")) {
+                } else if (receiveString.contains("type|remove_album")) {
                     String[] splitString = receiveString.split(";");
                     //album
-                    String [] splitString1 =splitString[1].split("\\|");
+                    String[] splitString1 = splitString[1].split("\\|");
                     String albumName = splitString1[1];
 
                     //artista
-                    String [] splitString2 = splitString[2].split("\\|");
+                    String[] splitString2 = splitString[2].split("\\|");
                     String artistName = splitString2[1];
 
                     boolean flag;
@@ -365,7 +347,7 @@ public class MulticastServer extends Thread {
 
                     System.out.println(flag);
                     if (!flag && !check) {
-                        removeAlbum(artistName,albumName);
+                        removeAlbum(artistName, albumName);
 
                         String sendArtist = "type|remove_album;successful";
                         byte[] sendBufferRemoveMusic = sendArtist.getBytes();
@@ -380,11 +362,10 @@ public class MulticastServer extends Thread {
                         sendSocket.send(artistPacket);
                         System.out.println("Sent to RMI: " + sendArtist);
                     }
-                }
-                else if(receiveString.contains("type|remove_artist")) {
+                } else if (receiveString.contains("type|remove_artist")) {
                     String[] splitString = receiveString.split(";");
                     //album
-                    String [] splitString1 =splitString[1].split("\\|");
+                    String[] splitString1 = splitString[1].split("\\|");
                     String artistName = splitString1[1];
 
                     boolean flag;
@@ -407,10 +388,9 @@ public class MulticastServer extends Thread {
                         sendSocket.send(artistPacket);
                         System.out.println("Sent to RMI: " + sendArtist);
                     }
-                }
-                else if(receiveString.contains("type|edit_artist")){
+                } else if (receiveString.contains("type|edit_artist")) {
 
-                    String [] splitString = receiveString.split(";");
+                    String[] splitString = receiveString.split(";");
 
                     System.out.println(splitString[0]);
                     System.out.println(splitString[1]);
@@ -443,10 +423,9 @@ public class MulticastServer extends Thread {
                         System.out.println("Sent to RMI: " + sendEditArtist);
                     }
 
-                }
-                else if(receiveString.contains("type|edit_album")){
+                } else if (receiveString.contains("type|edit_album")) {
 
-                    String [] splitString = receiveString.split(";");
+                    String[] splitString = receiveString.split(";");
 
                     String getArtistName = (splitString[1].split("\\|"))[1];
 
@@ -477,8 +456,7 @@ public class MulticastServer extends Thread {
                         System.out.println("Sent to RMI: " + sendEditAlbum);
                     }
 
-                }
-                else if(receiveString.contains("type|edit_music")){
+                } else if (receiveString.contains("type|edit_music")) {
 
                     String[] splitString = receiveString.split(";");
 
@@ -516,35 +494,34 @@ public class MulticastServer extends Thread {
                         System.out.println("Sent to RMI: " + sendEditMusic);
                     }
 
-                }
-                else if(receiveString.contains("type|write_critic")){
+                } else if (receiveString.contains("type|write_critic")) {
 
-                    String [] splitString = receiveString.split(";");
+                    String[] splitString = receiveString.split(";");
                     //user
-                    String [] splitString1 =splitString[1].split("\\|");
+                    String[] splitString1 = splitString[1].split("\\|");
                     String username = splitString1[1];
                     //artista
-                    String [] splitString2 =splitString[2].split("\\|");
+                    String[] splitString2 = splitString[2].split("\\|");
                     String artistName = splitString2[1];
                     //album
-                    String [] splitString3 =splitString[3].split("\\|");
+                    String[] splitString3 = splitString[3].split("\\|");
                     String albumName = splitString3[1];
                     //rate
-                    String [] splitString4 =splitString[4].split("\\|");
+                    String[] splitString4 = splitString[4].split("\\|");
                     String rate = splitString4[1];
                     //Desc
-                    String [] splitString5=splitString[5].split("\\|");
+                    String[] splitString5 = splitString[5].split("\\|");
                     String descricao = splitString5[1];
 
                     int intRate = Integer.parseInt(rate);
 
-                    boolean flag = checkAlbumExist(albumName,artistName);
+                    boolean flag = checkAlbumExist(albumName, artistName);
                     boolean flag2 = checkArtistExist(artistName);
 
                     System.out.println(flag);
                     if (!flag && !flag2) {
                         //add critic
-                        addCritic(username,artistName,albumName,intRate,descricao);
+                        addCritic(username, artistName, albumName, intRate, descricao);
                         String sendWriteCritic = "type|write_critic;successful";
                         byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
                         DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
@@ -558,11 +535,207 @@ public class MulticastServer extends Thread {
                         System.out.println("Sent to RMI: " + sendWriteCritic);
                     }
 
+                } else if (receiveString.contains("type|write_critic")) {
+
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    //artista
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String artistName = splitString2[1];
+                    //album
+                    String[] splitString3 = splitString[3].split("\\|");
+                    String albumName = splitString3[1];
+                    //rate
+                    String[] splitString4 = splitString[4].split("\\|");
+                    String rate = splitString4[1];
+                    //Desc
+                    String[] splitString5 = splitString[5].split("\\|");
+                    String descricao = splitString5[1];
+
+                    int intRate = Integer.parseInt(rate);
+
+                    boolean flag = checkAlbumExist(albumName, artistName);
+                    boolean flag2 = checkArtistExist(artistName);
+                    boolean flag3 = checkCritics(artistName, albumName, username);
+
+                    //System.out.println(flag);
+                    if (!flag && !flag2 && flag3) {
+                        //add critic
+                        addCritic(username, artistName, albumName, intRate, descricao);
+                        String sendWriteCritic = "type|write_critic;successful";
+                        byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
+                        DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
+                        sendSocket.send(sendWriteCriticPacket);
+                        System.out.println("Sent to RMI: " + sendWriteCritic);
+                    } else {
+                        String sendWriteCritic = "type|write_critic;error in write critic";
+                        byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
+                        DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
+                        sendSocket.send(sendWriteCriticPacket);
+                        System.out.println("Sent to RMI: " + sendWriteCritic);
+                    }
+
+                } else if (receiveString.contains("type|search_album_name")) {
+
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    //albumName
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String albumName = splitString2[1];
+
+                    boolean flag = checkAlbum2(albumName);
+
+
+                    System.out.println(flag);
+                    if (flag) {
+                        //search albuns
+                        String sendEditArtist = searchForAlbumName(albumName);
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    } else {
+                        String sendEditArtist = "type|search_album_name;error in search_album_name";
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    }
+
+                } else if (receiveString.contains("type|search_album_artist")) {
+
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    //artistName
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String artist = splitString2[1];
+
+                    boolean flag = checkArtistExist(artist);
+
+
+                    System.out.println(flag);
+                    if (!flag) {
+                        //search albuns
+                        String sendEditArtist = searchForArtistName(artist);
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    } else {
+                        String sendEditArtist = "type|search_album_artist;error in search_album_artist";
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    }
+
+                } else if (receiveString.contains("type|view_artist_details")) {
+
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    //artistName
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String artist = splitString2[1];
+
+                    boolean flag = checkArtistExist(artist);
+
+
+                    System.out.println(!flag);
+                    if (!flag) {
+                        //search albuns
+                        String sendEditArtist = artistDetails(artist);
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    } else {
+                        String sendEditArtist = "type|view_artist_details;error in view_artist_details";
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    }
+
+                } else if (receiveString.contains("type|view_album_details")) {
+
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    //artistName
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String artist = splitString2[1];
+                    //albumName
+                    String[] splitString3 = splitString[3].split("\\|");
+                    String albumName = splitString3[1];
+
+                    boolean flag = checkArtistExist(artist);
+                    boolean flag2 = checkAlbumExist(albumName, artist);
+
+
+                    System.out.println(!flag && !flag2);
+                    if (!flag2) {
+                        //search albuns
+                        String sendEditArtist = albumDetails(artist, albumName);
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    } else {
+                        String sendEditArtist = "type|view_album_details;error_in_view_album_details";
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    }
+
+                } else if (receiveString.contains("type|view_album_critics")) {
+
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    //artistName
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String artist = splitString2[1];
+                    //albumName
+                    String[] splitString3 = splitString[3].split("\\|");
+                    String albumName = splitString3[1];
+
+                    boolean flag = checkArtistExist(artist);
+                    boolean flag2 = checkAlbumExist(albumName, artist);
+
+
+                    System.out.println(!flag && !flag2);
+                    if (!flag2) {
+                        //search albuns
+                        String sendEditArtist = albumCritics(artist, albumName);
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    } else {
+                        String sendEditArtist = "type|view_album_critics;error_in_view_album_critics";
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    }
                 }
 
 
-
-                try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
+                try {
+                    sleep((long) (Math.random() * SLEEP_TIME));
+                } catch (InterruptedException e) {
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -576,9 +749,9 @@ public class MulticastServer extends Thread {
     //-------- LOGIN/REGISTER--------//
 
     //register
-    public boolean register(String username, String password){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username)){
+    public boolean register(String username, String password) {
+        for (User u : usersArrayList) {
+            if (u.getUsername().equals(username)) {
                 return false;
             }
         }
@@ -589,9 +762,9 @@ public class MulticastServer extends Thread {
     }
 
     //login
-    public boolean login(String username, String password){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username) && u.getPassword().equals(password)){
+    public boolean login(String username, String password) {
+        for (User u : usersArrayList) {
+            if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
                 return true;
             }
         }
@@ -599,13 +772,72 @@ public class MulticastServer extends Thread {
     }
 
 
+    // --------- SEARCH (send) ------------ //
+
+    public int countItems(String albumName) {
+        int itemCount = 0;
+        for (Artist a : artistsArrayList) {
+            for (Album alb : a.getAlbums()) {
+                if (alb.getAlbumName().equals(albumName)) {
+                    itemCount++;
+
+                }
+            }
+
+        }
+        return itemCount;
+    }
+
+    public String searchForAlbumName(String albumName) {
+        int itemCount = countItems(albumName);
+        String stringFinal = "type|search_album_name;item_count|" + itemCount + ";";
+        int i = 0;
+        for (Artist a : artistsArrayList) {
+            for (Album alb : a.getAlbums()) {
+                if (alb.getAlbumName().equals(albumName)) {
+                    stringFinal += "album_" + i + "_name|" + albumName + ";artist_" + i + "_name|" + a.getArtistName() + ";";
+                    i++;
+                }
+            }
+        }
+        return stringFinal;
+    }
+
+    public int countAlbums(String artistName) {
+        int itemCount = 0;
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                for (Album alb : a.getAlbums()) {
+                    itemCount++;
+                }
+            }
+        }
+        return itemCount;
+    }
+
+    public String searchForArtistName(String artistName) {
+        int itemCount = countAlbums(artistName);
+        String stringFinal = "type|search_album_artist;artist_name|" + artistName + ";item_count|" + itemCount + ";";
+        int i = 0;
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                for (Album alb : a.getAlbums()) {
+                    stringFinal += "album_" + i + "_name|" + alb.getAlbumName() + ";";
+                    i++;
+                }
+            }
+        }
+        return stringFinal;
+    }
+
+
     //-------- CHECK--------//
 
     //check if user is editor
-    public boolean checkRights(String username){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username)){
-                if(u.isRights()){
+    public boolean checkRights(String username) {
+        for (User u : usersArrayList) {
+            if (u.getUsername().equals(username)) {
+                if (u.isRights()) {
                     return true;
                 }
             }
@@ -627,10 +859,10 @@ public class MulticastServer extends Thread {
 
     //check album - Se ja existir um album com esse nome retorna falso
     public boolean checkAlbumExist(String albumName, String artistName) {
-        for(Artist a: artistsArrayList){
-            if(a.getArtistName().equals(artistName)){
-                for(Album alb: a.getAlbums()){
-                    if(alb.getAlbumName().equals(albumName)){
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                for (Album alb : a.getAlbums()) {
+                    if (alb.getAlbumName().equals(albumName)) {
                         return false;
                     }
                 }
@@ -640,13 +872,13 @@ public class MulticastServer extends Thread {
     }
 
     //check music - se ja existir uma musica desse artista com esse nome falso
-    public boolean checkMusicRepetition(String artistName,String albumName,String musicName){
-        for (Artist a: artistsArrayList){
-            if(a.getArtistName().equals(artistName)){
-                for(Album alb : a.getAlbums()){
-                    if(alb.getAlbumName().equals(albumName)){
-                        for(Song s : alb.getSongs()){
-                            if(s.getSongName().equals(musicName)){
+    public boolean checkMusicRepetition(String artistName, String albumName, String musicName) {
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                for (Album alb : a.getAlbums()) {
+                    if (alb.getAlbumName().equals(albumName)) {
+                        for (Song s : alb.getSongs()) {
+                            if (s.getSongName().equals(musicName)) {
                                 return false;
                             }
                         }
@@ -658,19 +890,31 @@ public class MulticastServer extends Thread {
     }
 
     //notify later
-    public void notifyRights(String username){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username)){
+    public void notifyRights(String username) {
+        for (User u : usersArrayList) {
+            if (u.getUsername().equals(username)) {
                 u.setNotifiedRights(true);
             }
         }
     }
 
     //check notify later
-    public boolean checkNotifyLater(String username){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username)){
-                if(u.isNotifiedRights()){
+    public boolean checkNotifyLater(String username) {
+        for (User u : usersArrayList) {
+            if (u.getUsername().equals(username)) {
+                if (u.isNotifiedRights()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //check album 2
+    public boolean checkAlbum2(String albumName) {
+        for (Artist a : artistsArrayList) {
+            for (Album alb : a.getAlbums()) {
+                if (alb.getAlbumName().equals(albumName)) {
                     return true;
                 }
             }
@@ -679,17 +923,18 @@ public class MulticastServer extends Thread {
     }
 
     //changes boolean to false
-    public void setNotifyRights(String username){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username)){
+    public void setNotifyRights(String username) {
+        for (User u : usersArrayList) {
+            if (u.getUsername().equals(username)) {
                 u.setNotifiedRights(false);
             }
         }
     }
+
     //-------- ADD --------//
 
     //add artist
-    public void addArtist(String name, String description){
+    public void addArtist(String name, String description) {
         Artist a;
         a = new Artist(name, description);
         artistsArrayList.add(a);
@@ -699,12 +944,12 @@ public class MulticastServer extends Thread {
     }
 
     //add song
-    public void addSong(String name, String genre, String duration, String udate, String lyrics, String albumName, String artistName){
+    public void addSong(String name, String genre, String duration, String udate, String lyrics, String albumName, String artistName) {
 
-        for(Artist a: artistsArrayList){
-            if(a.getArtistName().equals(artistName)){
-                for(Album alb : a.getAlbums()){
-                    if(alb.getAlbumName().equals(albumName)){
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                for (Album alb : a.getAlbums()) {
+                    if (alb.getAlbumName().equals(albumName)) {
                         Song s = new Song(name, genre, duration, udate, lyrics);
                         alb.addSongs(s);
                         //DEBUG
@@ -716,9 +961,9 @@ public class MulticastServer extends Thread {
     }
 
     //add album
-    public void addAlbum(String albumName, String desc, String musicGenre, String date, String artistName){
-        for(Artist a: artistsArrayList){
-            if(a.getArtistName().equals(artistName)){
+    public void addAlbum(String albumName, String desc, String musicGenre, String date, String artistName) {
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
                 Album album = new Album(albumName, desc, date, musicGenre);
                 a.addAlbums(album);
                 //DEBUG
@@ -728,11 +973,11 @@ public class MulticastServer extends Thread {
     }
 
     //add critic
-    public void addCritic(String username,String artistName, String albumName, int rate, String critic){
-        for(Artist a: artistsArrayList){
-            if(a.getArtistName().equals(artistName)){
-                for(Album alb : a.getAlbums()){
-                    if(alb.getAlbumName().equals(albumName)){
+    public void addCritic(String username, String artistName, String albumName, int rate, String critic) {
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                for (Album alb : a.getAlbums()) {
+                    if (alb.getAlbumName().equals(albumName)) {
                         Critic c = new Critic(rate, username, critic);
                         alb.addCritics(c);
                         alb.addAvgRate(rate);
@@ -773,7 +1018,7 @@ public class MulticastServer extends Thread {
     }
 
     //remove album
-    public void removeAlbum(String artistName,String albumName) {
+    public void removeAlbum(String artistName, String albumName) {
         Artist getArtist = null;
         Album removeAlbum = null;
         if (!artistsArrayList.isEmpty()) {
@@ -825,7 +1070,7 @@ public class MulticastServer extends Thread {
     }
 
     //edit album
-    public boolean editAlbum(String artistName, String OldAlbumName, String newAlbumName, String description, String musicGenre, String udate){
+    public boolean editAlbum(String artistName, String OldAlbumName, String newAlbumName, String description, String musicGenre, String udate) {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(artistName)) {
@@ -848,7 +1093,7 @@ public class MulticastServer extends Thread {
     }
 
     //edit music
-    public boolean editMusic(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics){
+    public boolean editMusic(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics) {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(artistName)) {
@@ -878,37 +1123,133 @@ public class MulticastServer extends Thread {
     }
 
 
-
-
     //-------- OTHER --------//
 
     //set rights
-    public void setRights(String username){
-        for(User u: usersArrayList){
-            if(u.getUsername().equals(username)){
+    public void setRights(String username) {
+        for (User u : usersArrayList) {
+            if (u.getUsername().equals(username)) {
                 u.setRights(true);
             }
         }
     }
 
     //avg rate calc
-    public float calAvgRate(String artistName, String albumName){
+    public float calAvgRate(String artistName, String albumName) {
         int sum = 0;
         float totalRates = 0;
-        for(Artist a: artistsArrayList){
-            if(a.getArtistName().equals(artistName)){
-                for(Album alb : a.getAlbums()){
-                    if(alb.getAlbumName().equals(albumName)){
-                        for (int i = 0; i < alb.getMediaRating().size() ; i++) {
-                            sum+= alb.getMediaRating().get(i);
-                            totalRates++;
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                for (Album alb : a.getAlbums()) {
+                    if (alb.getAlbumName().equals(albumName)) {
+                        if (!alb.getMediaRating().isEmpty()) {
+                            for (int i = 0; i < alb.getMediaRating().size(); i++) {
+                                sum += alb.getMediaRating().get(i);
+                                totalRates++;
 
+                            }
+                        } else {
+                            return 0;
                         }
                     }
                 }
             }
         }
-        return sum/totalRates;
+        return sum / totalRates;
     }
+
+    //retorna false caso o user ja tena ter feito uma critica
+    public boolean checkCritics(String artistName, String albumName,String username){
+        int result = 0;
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(albumName)) {
+                            result = alb.seeCriticsUsers(username);
+                        }
+                    }
+                }
+            }
+        }
+        //Este user ja fez uma critica
+        if(result == 0){
+            return false;
+        }
+        else
+            return true;
+
+    }
+
+    // --------------- VIEW DATA (send) ----------------- //
+
+    //Albuns de um artista
+    public String artistDetails(String artistName){
+        int i = 0;
+        String stringFinal = "type|view_artist_details;artist_name|"+ artistName +";description|";
+        for(Artist a: artistsArrayList){
+            if(a.getArtistName().equals(artistName)){
+                stringFinal+=a.getDescArtist() +";";
+                //ver albuns de um artista
+                for (Album alb : a.getAlbums()) {
+                    stringFinal += "album_" + i + "_name|" + alb.getAlbumName() + ";";
+                    i++;
+                }
+            }
+        }
+
+        return stringFinal;
+    }
+
+    //Albuns de um artista
+    public String albumDetails(String artistName, String albumName){
+        int i = 0;
+        String stringFinal = "type|view_album_details;artist_name|"+ artistName +";album_name|" + albumName + ";";
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(albumName)) {
+                            if (!alb.getSongs().isEmpty()) {
+                                for (Song s : alb.getSongs()) {
+                                    stringFinal += "song_" + i + "_name|" + s.getSongName() + ";";
+                                    i++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return stringFinal;
+    }
+
+    //Albuns de um artista
+    public String albumCritics(String artistName, String albumName){
+        float criticsAvg = calAvgRate(artistName,albumName);
+        System.out.println("sajfsdufdshiu" + criticsAvg);
+        String avgString = Float.toString(criticsAvg);
+
+        //String avgString = "2";
+
+        String stringFinal = "type|view_album_critics;artist_name|"+ artistName +";album_name|" + albumName + ";avg_rate|" + avgString + ";";
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(albumName)) {
+                            if (!alb.getCritics().isEmpty()) {
+                                for (Critic critic : alb.getCritics()) {
+                                    stringFinal += "critic_username|" + critic.getUsername() + ";description|" + critic.getDescCritic() + ";";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return stringFinal;
+    }
+
 
 }

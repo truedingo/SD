@@ -1,3 +1,8 @@
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.UnknownHostException;
 import java.rmi.*;
 public interface RMI extends Remote {
     String sayHello() throws java.rmi.RemoteException;
@@ -28,6 +33,16 @@ public interface RMI extends Remote {
 
     boolean checkCritic(String username, String artistName, String albumName, int rate, String critic) throws java.rmi.RemoteException;
 
+    String checkFromAlbumName(String username, String albumName) throws RemoteException;
+
+    String checkFromArtistName(String username, String artistName) throws RemoteException;
+
+    String checkViewArtistDetails(String username, String artistName) throws RemoteException;
+
+    String checkViewAlbumDetails(String username, String artistName, String albumName) throws RemoteException;
+
+    String checkViewAlbumCritics(String username, String artistName, String albumName) throws RemoteException;
+
     void addLoggedUsers(ClientInterface c) throws java.rmi.RemoteException;
 
     String removeLoggedUsers(String username) throws RemoteException;
@@ -35,7 +50,6 @@ public interface RMI extends Remote {
     boolean searchOnlineListRights(String username) throws RemoteException;
 
     ClientInterface fetchClientOnlineListRighs(String username) throws RemoteException;
-
 
     boolean checkNotificationsRights(String username, ClientInterface client) throws  RemoteException;
 

@@ -569,6 +569,191 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return false;
     }
 
+    public synchronized String checkFromAlbumName(String username, String albumName){
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        String receiveEditArtist = "";
+
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringCritic = "type|search_album_name;username|" + username + ";album_name|" + albumName;
+            System.out.println(stringCritic);
+            byte[] bufferEditArtist = stringCritic.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditArtist, bufferEditArtist.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringCritic);
+
+            byte[] bufferReceiveEditArtist = new byte[256];
+            DatagramPacket receiveEditArtistPacket = new DatagramPacket(bufferReceiveEditArtist, bufferReceiveEditArtist.length);
+            socket.receive(receiveEditArtistPacket);
+            receiveEditArtist = new String(receiveEditArtistPacket.getData(), 0, receiveEditArtistPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditArtist);
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+            sendSocket.close();
+        }
+
+        return receiveEditArtist;
+    }
+
+    public synchronized String checkFromArtistName(String username, String artistName){
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        String receiveEditArtist = "";
+
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringCritic = "type|search_album_artist;username|" + username + ";artist_name|" + artistName;
+            System.out.println(stringCritic);
+            byte[] bufferEditArtist = stringCritic.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditArtist, bufferEditArtist.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringCritic);
+
+            byte[] bufferReceiveEditArtist = new byte[256];
+            DatagramPacket receiveEditArtistPacket = new DatagramPacket(bufferReceiveEditArtist, bufferReceiveEditArtist.length);
+            socket.receive(receiveEditArtistPacket);
+            receiveEditArtist = new String(receiveEditArtistPacket.getData(), 0, receiveEditArtistPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditArtist);
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+            sendSocket.close();
+        }
+
+        return receiveEditArtist;
+    }
+
+    public synchronized String checkViewArtistDetails(String username, String artistName){
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        String receiveEditArtist = "";
+
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringCritic = "type|view_artist_details;username|" + username + ";artist_name|" + artistName;
+            System.out.println(stringCritic);
+            byte[] bufferEditArtist = stringCritic.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditArtist, bufferEditArtist.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringCritic);
+
+            byte[] bufferReceiveEditArtist = new byte[256];
+            DatagramPacket receiveEditArtistPacket = new DatagramPacket(bufferReceiveEditArtist, bufferReceiveEditArtist.length);
+            socket.receive(receiveEditArtistPacket);
+            receiveEditArtist = new String(receiveEditArtistPacket.getData(), 0, receiveEditArtistPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditArtist);
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+            sendSocket.close();
+        }
+
+        return receiveEditArtist;
+    }
+
+    public synchronized String checkViewAlbumDetails(String username, String artistName, String albumName){
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        String receiveEditArtist = "";
+
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringCritic = "type|view_album_details;username|" + username + ";artist_name|" + artistName + ";album_name|" + albumName;
+            System.out.println(stringCritic);
+            byte[] bufferEditArtist = stringCritic.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditArtist, bufferEditArtist.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringCritic);
+
+            byte[] bufferReceiveEditArtist = new byte[256];
+            DatagramPacket receiveEditArtistPacket = new DatagramPacket(bufferReceiveEditArtist, bufferReceiveEditArtist.length);
+            socket.receive(receiveEditArtistPacket);
+            receiveEditArtist = new String(receiveEditArtistPacket.getData(), 0, receiveEditArtistPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditArtist);
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+            sendSocket.close();
+        }
+
+        return receiveEditArtist;
+    }
+
+    public synchronized String checkViewAlbumCritics(String username, String artistName, String albumName){
+        MulticastSocket socket = null;
+        MulticastSocket sendSocket = null;
+        String receiveEditArtist = "";
+
+        try {
+            //server stuff
+            socket = new MulticastSocket(PORT);  // create socket without binding it (only for sending)
+            sendSocket = new MulticastSocket();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            String stringCritic = "type|view_album_critics;username|" + username + ";artist_name|" + artistName + ";album_name|" + albumName;
+            System.out.println(stringCritic);
+            byte[] bufferEditArtist = stringCritic.getBytes();
+            DatagramPacket rmiPacket = new DatagramPacket(bufferEditArtist, bufferEditArtist.length, group, MULTICAST_PORT);
+            sendSocket.send(rmiPacket);
+            System.out.println("Sent to Multicast: " + stringCritic);
+
+            byte[] bufferReceiveEditArtist = new byte[256];
+            DatagramPacket receiveEditArtistPacket = new DatagramPacket(bufferReceiveEditArtist, bufferReceiveEditArtist.length);
+            socket.receive(receiveEditArtistPacket);
+            receiveEditArtist = new String(receiveEditArtistPacket.getData(), 0, receiveEditArtistPacket.getLength());
+            System.out.println("Received from Multicast: " + receiveEditArtist);
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+            sendSocket.close();
+        }
+
+        return receiveEditArtist;
+    }
+
     public synchronized void addLoggedUsers(ClientInterface c){
         loggedUsers.add(c);
     }

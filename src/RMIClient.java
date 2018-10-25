@@ -110,7 +110,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
             switch (opt) {
                 case 1:
-                    menuUser(username);
+                    viewData(username);
                     return;
                 case 2:
                     writeCritic(username);
@@ -334,6 +334,100 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         }
     }
 
+    //menu search data
+    public static void searchData(String username) {
+        while (true) {
+            try {
+                System.out.println("\n\t- Search Data -");
+                System.out.println("1. Search album from artist.");
+                System.out.println("2. Search album from album name.");
+                System.out.println("0. Quit");
+                Scanner s = new Scanner(System.in);
+                String strOpt = s.nextLine();
+                int opt = Integer.parseInt(strOpt);
+
+                //verificacao option
+                if ((opt < 0) || (opt > 2)) {
+                    System.out.println("\tInvalid option! ");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        //search album from artist
+                        searchAlbumfromArtist(username);
+                        return;
+                    case 2:
+                        //search album from album name
+                        searchAlbumfromAlbumName(username);
+                        return;
+                    case 0:
+                        System.exit(0);
+                        return;
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid option.");
+            } catch (NoSuchElementException e) {
+            }
+        }
+    }
+
+    //menu search data
+    public static void viewData(String username) {
+        while (true) {
+            try {
+                System.out.println("\n\t- View Data -");
+                System.out.println("1. View album details.");
+                System.out.println("2. View artist details.");
+                System.out.println("3. View album critics.");
+                System.out.println("4. Back to main menu");
+
+                System.out.println("0. Quit");
+                Scanner s = new Scanner(System.in);
+                String strOpt = s.nextLine();
+                int opt = Integer.parseInt(strOpt);
+
+                //verificacao option
+                if ((opt < 0) || (opt > 4)) {
+                    System.out.println("\tInvalid option! ");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        //search album from artist
+                        viewAlbumDetails(username);
+                        viewData(username);
+                        return;
+                    case 2:
+                        //search album from album name
+                        viewArtistDetails(username);
+                        viewData(username);
+                        return;
+                    case 3:
+                        //view album critics
+                        viewAlbumCritics(username);
+                        viewData(username);
+                        return;
+
+                    case 4:
+                        menuUser(username);
+                        return;
+                    case 0:
+                        System.exit(0);
+                        return;
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid option.");
+            } catch (NoSuchElementException e) {
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     //-------- MENU FUNCTIONS--------//
 
@@ -457,7 +551,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
 
-
     //-------- INSERT FUNCTIONS--------//
 
     //insert music
@@ -548,6 +641,214 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
             menuAdministrador(username);
 
         }
+    }
+
+
+
+    // ------- SEARCH FUNCTIONS -------- //
+
+    public static void searchAlbumfromAlbumName(String username) {
+        System.out.println("\n\t- Search Album from Album Name -");
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Album name:");
+        String albumName = s.nextLine();
+
+
+        try {
+            String result = rmiInterface.checkFromAlbumName(username, albumName);
+            if (result.equals("type|search_album_name;error in search_album_name")) {
+                System.out.println("An error ocurred... Try again!");
+                menuUser(username);
+            } else {
+                System.out.println("\t-Results-");
+                //Aqui correu tudo bem
+                String[] splitStringAll = result.split(";");
+                //get item count
+                String[] splitString1 = splitStringAll[1].split("\\|");
+                int itemCount = Integer.parseInt(splitString1[1]);
+                //get albums
+                int j = 2, size = splitStringAll.length;
+                while (j < size) {
+                    String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                    System.out.println("Album Name: " + splitStringAlbumName[1]);
+                    String[] splitStringArtistName = splitStringAll[j + 1].split("\\|");
+                    System.out.println("Artist Name: " + splitStringArtistName[1]);
+                    System.out.println("");
+                    j += 2;
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void searchAlbumfromArtist(String username) {
+        System.out.println("\n\t- Search Album from Artist -");
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Artist name:");
+        String artist = s.nextLine();
+
+
+        try {
+            String result = rmiInterface.checkFromArtistName(username, artist);
+            if (result.equals("type|search_album_artist;error in search_album_artist")) {
+                System.out.println("An error ocurred... Try again!");
+                menuUser(username);
+            } else {
+                String[] splitStringAll = result.split(";");
+
+                System.out.println("\t-Results-");
+
+                String[] splitStringName = splitStringAll[1].split("\\|");
+                System.out.println("Artist name: " + splitStringName[1]);
+
+                int j = 3, size = splitStringAll.length;
+                while (j < size) {
+                    String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                    System.out.println("Album Name: " + splitStringAlbumName[1]);
+                    j++;
+                }
+                menuUser(username);
+            }
+        } catch (RemoteException e1) {
+            e1.printStackTrace();
+        }
+    }
+
+
+    // -------- VIEW DATA FUCNTIONS -----------------------
+    public static void viewArtistDetails(String username) {
+        System.out.println("\n\t- View Artist Details -");
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Artist name:");
+        String artist = s.nextLine();
+
+
+        try {
+            String result = rmiInterface.checkViewArtistDetails(username, artist);
+            if (result.equals("type|view_artist_details;error in view_artist_details")) {
+                System.out.println("An error ocurred... Try again!");
+                menuUser(username);
+            } else {
+                String[] splitStringAll = result.split(";");
+
+                System.out.println("\t-Artist details-");
+
+                String[] splitStringName = splitStringAll[1].split("\\|");
+                System.out.println("Artist name: " + splitStringName[1]);
+
+                String[] splitStringDescription = splitStringAll[2].split("\\|");
+                System.out.println("Artist Biography: " + splitStringDescription[1]);
+
+
+                int j = 3, size = splitStringAll.length;
+
+                if(size > 0) {
+                    System.out.println("Discography:");
+                }
+
+                while (j < size) {
+                    String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                    System.out.println("Album Name: " + splitStringAlbumName[1]);
+                    j++;
+                }
+
+
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public static void viewAlbumDetails(String username) {
+        System.out.println("\n\t- View Album Details -");
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Artist name:");
+        String artist = s.nextLine();
+        System.out.println("Album name:");
+        String album = s.nextLine();
+
+
+        try {
+            String result = rmiInterface.checkViewAlbumDetails(username,artist,album);
+            if (result.equals("type|view_album_details;error in view_album_details")) {
+                System.out.println("An error ocurred... Try again!");
+                menuUser(username);
+            } else {
+                String[] splitStringAll = result.split(";");
+
+                System.out.println("\t-Album details-");
+
+                String[] splitStringName = splitStringAll[1].split("\\|");
+                System.out.println("Artist name: " + splitStringName[1]);
+
+                int j = 3, size = splitStringAll.length;
+
+                if(size > 2) {
+                    System.out.println("Songs:");
+                    while (j < size) {
+                        String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                        System.out.println("Music Name: " + splitStringAlbumName[1]);
+                        j++;
+                    }
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public static void viewAlbumCritics(String username){
+        System.out.println("\n\t- View Album Critics -");
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Artist name:");
+        String artist = s.nextLine();
+        System.out.println("Album name:");
+        String album = s.nextLine();
+
+
+        try {
+            String result = rmiInterface.checkViewAlbumCritics(username,artist,album);
+            if (result.equals("type|view_album_critics;error in view_album_critics")) {
+                System.out.println("An error ocurred... Try again!");
+                menuUser(username);
+            } else {
+                String[] splitStringAll = result.split(";");
+
+                System.out.println("\t-Album critics-");
+
+                String[] splitStringName = splitStringAll[1].split("\\|");
+                System.out.println("Artist name: " + splitStringName[1]);
+
+                String [] splitString3 =splitStringAll[3].split("\\|");
+                System.out.println("Average Rate: " + splitString3[1]);
+
+                if(splitStringAll.length > 3) {
+                    int j = 4, size = splitStringAll.length;
+                    while(j < size) {
+                        String[] splitStringArtistName = splitStringAll[j + 1].split("\\|");
+                        String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                        System.out.println("Critic: "+splitStringArtistName[1]);
+                        System.out.println("Username: " + splitStringAlbumName[1]);
+                        j += 2;
+
+                    }
+                }
+
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
