@@ -146,12 +146,14 @@ public class MulticastServer extends Thread {
 
                         if(receiveFeedbackString.equals("type|check;rights|notified")){
                             System.out.println("User has been notified!");
+                            notifyRights(getUsername);
+
                         }
                         else if(receiveFeedbackString.contains("type|store;rights|username;")){
                             //percorrer a lista com o user e meter lá o bool a true, user vai ser notificado quando
                             //ficar online
                             System.out.println("User " + getUsername + " got his/her rights updated.");
-                            notifyLaterRights(getUsername);
+                            notifyRights(getUsername);
                         }
 
                     }
@@ -176,6 +178,8 @@ public class MulticastServer extends Thread {
                         DatagramPacket sendCheckPacket = new DatagramPacket(sendBufferCheck, sendBufferCheck.length, group, RMI_PORT);
                         sendSocket.send(sendCheckPacket);
                         System.out.println("Sent to RMI: "+sendNotification);
+                        //meter bool a false
+                        setNotifyRights(getUsername);
                     }
                     else{
                         //user nao precisa de ser notificado
@@ -654,7 +658,7 @@ public class MulticastServer extends Thread {
     }
 
     //notify later
-    public void notifyLaterRights(String username){
+    public void notifyRights(String username){
         for(User u: usersArrayList){
             if(u.getUsername().equals(username)){
                 u.setNotifiedRights(true);
@@ -674,6 +678,14 @@ public class MulticastServer extends Thread {
         return false;
     }
 
+    //changes boolean to false
+    public void setNotifyRights(String username){
+        for(User u: usersArrayList){
+            if(u.getUsername().equals(username)){
+                u.setNotifiedRights(false);
+            }
+        }
+    }
     //-------- ADD --------//
 
     //add artist

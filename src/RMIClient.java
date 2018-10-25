@@ -409,7 +409,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         if(checker){
             System.out.println("Changed rights of user "+username+" to editor.");
             menuAdministrador(user);
-            //mandar notificacao
         }
         else{
             System.out.println("User not found or is already an editor.");
