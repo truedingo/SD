@@ -14,8 +14,8 @@ public class MulticastServer extends Thread {
     private int RMI_PORT = 7000;
     private int database_uid = 0;
 
-    private CopyOnWriteArrayList<User> usersArrayList;
-    private CopyOnWriteArrayList<Artist> artistsArrayList;
+    private CopyOnWriteArrayList<User> usersArrayList = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<Artist> artistsArrayList = new CopyOnWriteArrayList<>();
 
     public static void main(String[] args) {
         MulticastServer server = new MulticastServer();
@@ -28,8 +28,6 @@ public class MulticastServer extends Thread {
 
     public void run() {
         /*---*/
-        usersArrayList = new CopyOnWriteArrayList<>();
-        artistsArrayList = new CopyOnWriteArrayList<>();
         User admin = new User("admin", "admin");
         admin.setRights(true);
         usersArrayList.add(admin);
@@ -49,7 +47,19 @@ public class MulticastServer extends Thread {
             socket.joinGroup(group);
 
             //files stuff
-            String file_name = "/Users/dingo/Desktop/SD/DropMusicMerged/test_user" + database_uid + ".txt";
+            String userFilesString = "/Users/dingo/Desktop/SD/DropMusicMerged/users" + database_uid + ".txt";
+            String databaseFilesString = "/Users/dingo/Desktop/SD/DropMusicMerged/database" + database_uid + ".txt";
+
+            File userFiles = new File(userFilesString);
+            File databaseFiles = new File(databaseFilesString);
+
+            if(databaseFiles.exists() && databaseFiles.length() != 0){
+                readFromDatabaseFile(databaseFiles);
+            }
+
+            if(userFiles.exists() && userFiles.length()!= 0){
+                readFromUsersFile(userFiles);
+            }
 
             while (true) {
                 byte[] receiveBuffer = new byte[256];
@@ -66,7 +76,7 @@ public class MulticastServer extends Thread {
                     String getPassword = getPasswordString[1];
                     boolean flag;
                     System.out.println("Trying to register user with Username:" + getUsername + " Password:" + getPassword);
-                    flag = register(getUsername, getPassword);
+                    flag = register(getUsername, getPassword, userFiles);
                     System.out.println(flag);
                     if (flag) {
                         String sendRegister = "type|status;logged|on;msg|UserRegistered";
@@ -124,7 +134,8 @@ public class MulticastServer extends Thread {
 
                     boolean check = checkRights(getUsername);
                     if (!check) {
-                        setRights(getUsername);
+                        setRights(getUsername, userFiles);
+
                         System.out.println("Changed rights of " + getUsername + " to editor.");
                         String sendCheck = "type|check;rights|changed";
                         byte[] sendBufferCheck = sendCheck.getBytes();
@@ -171,7 +182,7 @@ public class MulticastServer extends Thread {
                         sendSocket.send(sendCheckPacket);
                         System.out.println("Sent to RMI: " + sendNotification);
                         //meter bool a false
-                        setNotifyRights(getUsername);
+                        setNotifyRights(getUsername, userFiles);
                     } else {
                         //user nao precisa de ser notificado
                         String sendNotification = "type|notification_rights;fail";
@@ -198,7 +209,7 @@ public class MulticastServer extends Thread {
                     flag = checkArtistExist(getArtistName);
                     System.out.println(flag);
                     if (!flag) {
-                        addAlbum(getAlbumName, getDescription, getMusicGenre, getDate, getArtistName);
+                        addAlbum(getAlbumName, getDescription, getMusicGenre, getDate, getArtistName, databaseFiles);
                         String sendAlbum = "type|insert_album;successful";
 
                         byte[] sendBufferAlbum = sendAlbum.getBytes();
@@ -226,7 +237,7 @@ public class MulticastServer extends Thread {
                     System.out.println(flag);
                     if (flag) {
                         //Adiciona artista a lista
-                        addArtist(artistName, artistDescription);
+                        addArtist(artistName, artistDescription, databaseFiles);
                         String sendArtist = "type|insert_artist;successful";
 
                         byte[] sendBufferArtist = sendArtist.getBytes();
@@ -273,7 +284,7 @@ public class MulticastServer extends Thread {
                     System.out.println(flag);
                     if (!flag && !check && check2) {
                         //Adiciona musica a lista
-                        addSong(getMusicName, getMusicGenre, getDuration, getDate, getLyrics, getAlbumName, getArtistName);
+                        addSong(getMusicName, getMusicGenre, getDuration, getDate, getLyrics, getAlbumName, getArtistName, databaseFiles);
                         String sendArtist = "type|insert_music;successful";
 
                         byte[] sendBufferArtist = sendArtist.getBytes();
@@ -311,7 +322,7 @@ public class MulticastServer extends Thread {
 
                     System.out.println(flag);
                     if (!flag && !check) {
-                        removeMusic(musicName, artistName, albumName);
+                        removeMusic(musicName, artistName, albumName, databaseFiles);
                         String sendArtist = "type|remove_music;successful";
                         byte[] sendBufferRemoveMusic = sendArtist.getBytes();
                         DatagramPacket removeMusicPacket = new DatagramPacket(sendBufferRemoveMusic, sendBufferRemoveMusic.length, group, RMI_PORT);
@@ -347,7 +358,7 @@ public class MulticastServer extends Thread {
 
                     System.out.println(flag);
                     if (!flag && !check) {
-                        removeAlbum(artistName, albumName);
+                        removeAlbum(artistName, albumName, databaseFiles);
 
                         String sendArtist = "type|remove_album;successful";
                         byte[] sendBufferRemoveMusic = sendArtist.getBytes();
@@ -374,7 +385,7 @@ public class MulticastServer extends Thread {
 
                     System.out.println(flag);
                     if (!flag) {
-                        removeArtist(artistName);
+                        removeArtist(artistName, databaseFiles);
                         String sendArtist = "type|remove_artist;successful";
                         byte[] sendBufferRemoveMusic = sendArtist.getBytes();
                         DatagramPacket removeMusicPacket = new DatagramPacket(sendBufferRemoveMusic, sendBufferRemoveMusic.length, group, RMI_PORT);
@@ -406,7 +417,7 @@ public class MulticastServer extends Thread {
                     String[] splitString4 = splitString[3].split("\\|");
                     String getDescription = splitString4[0];
 
-                    boolean flag = editArtist(getOldArtistName, getNewArtistName, getDescription);
+                    boolean flag = editArtist(getOldArtistName, getNewArtistName, getDescription, databaseFiles);
 
                     System.out.println(flag);
                     if (flag) {
@@ -439,7 +450,7 @@ public class MulticastServer extends Thread {
 
                     String getDate = (splitString[6].split("\\|"))[1];
 
-                    boolean flag = editAlbum(getArtistName, getOldAlbumName, getNewAlbumName, getDescription, getMusicGenre, getDate);
+                    boolean flag = editAlbum(getArtistName, getOldAlbumName, getNewAlbumName, getDescription, getMusicGenre, getDate, databaseFiles);
 
                     System.out.println(flag);
                     if (flag) {
@@ -476,7 +487,7 @@ public class MulticastServer extends Thread {
 
                     String getLyrics = (splitString[8].split("\\|"))[1];
 
-                    boolean flag = editMusic(getArtistName, getAlbumName, getOldMusicName, getNewMusicName, getGenre, getDuration, getDate, getLyrics);
+                    boolean flag = editMusic(getArtistName, getAlbumName, getOldMusicName, getNewMusicName, getGenre, getDuration, getDate, getLyrics, databaseFiles);
 
                     System.out.println(flag);
 
@@ -521,7 +532,7 @@ public class MulticastServer extends Thread {
                     System.out.println(flag);
                     if (!flag && !flag2) {
                         //add critic
-                        addCritic(username, artistName, albumName, intRate, descricao);
+                        addCritic(username, artistName, albumName, intRate, descricao, databaseFiles);
                         String sendWriteCritic = "type|write_critic;successful";
                         byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
                         DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
@@ -563,7 +574,7 @@ public class MulticastServer extends Thread {
                     //System.out.println(flag);
                     if (!flag && !flag2 && flag3) {
                         //add critic
-                        addCritic(username, artistName, albumName, intRate, descricao);
+                        addCritic(username, artistName, albumName, intRate, descricao, databaseFiles);
                         String sendWriteCritic = "type|write_critic;successful";
                         byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
                         DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
@@ -739,6 +750,8 @@ public class MulticastServer extends Thread {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         } finally {
             socket.close();
             sendSocket.close();
@@ -749,7 +762,7 @@ public class MulticastServer extends Thread {
     //-------- LOGIN/REGISTER--------//
 
     //register
-    public boolean register(String username, String password) {
+    public boolean register(String username, String password, File file) throws IOException {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 return false;
@@ -758,6 +771,7 @@ public class MulticastServer extends Thread {
         User user = new User(username, password);
         user.setRights(false);
         usersArrayList.add(user);
+        writeToUsersFile(file);
         return true;
     }
 
@@ -923,10 +937,11 @@ public class MulticastServer extends Thread {
     }
 
     //changes boolean to false
-    public void setNotifyRights(String username) {
+    public void setNotifyRights(String username, File file) throws IOException {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 u.setNotifiedRights(false);
+                writeToUsersFile(file);
             }
         }
     }
@@ -934,17 +949,18 @@ public class MulticastServer extends Thread {
     //-------- ADD --------//
 
     //add artist
-    public void addArtist(String name, String description) {
+    public void addArtist(String name, String description, File file) throws IOException {
         Artist a;
         a = new Artist(name, description);
         artistsArrayList.add(a);
+        writeToDatabaseFile(file);
 
         //DEBUG
         System.out.println(a);
     }
 
     //add song
-    public void addSong(String name, String genre, String duration, String udate, String lyrics, String albumName, String artistName) {
+    public void addSong(String name, String genre, String duration, String udate, String lyrics, String albumName, String artistName, File file) throws IOException {
 
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
@@ -952,6 +968,7 @@ public class MulticastServer extends Thread {
                     if (alb.getAlbumName().equals(albumName)) {
                         Song s = new Song(name, genre, duration, udate, lyrics);
                         alb.addSongs(s);
+                        writeToDatabaseFile(file);
                         //DEBUG
                         System.out.println(s);
                     }
@@ -961,11 +978,12 @@ public class MulticastServer extends Thread {
     }
 
     //add album
-    public void addAlbum(String albumName, String desc, String musicGenre, String date, String artistName) {
+    public void addAlbum(String albumName, String desc, String musicGenre, String date, String artistName, File file) throws IOException {
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
                 Album album = new Album(albumName, desc, date, musicGenre);
                 a.addAlbums(album);
+                writeToDatabaseFile(file);
                 //DEBUG
                 System.out.println(album);
             }
@@ -973,7 +991,7 @@ public class MulticastServer extends Thread {
     }
 
     //add critic
-    public void addCritic(String username, String artistName, String albumName, int rate, String critic) {
+    public void addCritic(String username, String artistName, String albumName, int rate, String critic, File file) throws IOException {
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
                 for (Album alb : a.getAlbums()) {
@@ -982,6 +1000,7 @@ public class MulticastServer extends Thread {
                         alb.addCritics(c);
                         alb.addAvgRate(rate);
 
+                        writeToDatabaseFile(file);
                         //DEBUG
                         System.out.println(c);
                     }
@@ -993,7 +1012,7 @@ public class MulticastServer extends Thread {
     //-------- REMOVE --------//
 
     //remove music
-    public void removeMusic(String musicName, String artistName, String albumName) {
+    public void removeMusic(String musicName, String artistName, String albumName, File file) throws IOException {
         Album getAlbum = null;
         Song removeSong = null;
         if (!artistsArrayList.isEmpty()) {
@@ -1015,10 +1034,11 @@ public class MulticastServer extends Thread {
             }
         }
         getAlbum.removeSongs(removeSong);
+        writeToDatabaseFile(file);
     }
 
     //remove album
-    public void removeAlbum(String artistName, String albumName) {
+    public void removeAlbum(String artistName, String albumName, File file) throws IOException {
         Artist getArtist = null;
         Album removeAlbum = null;
         if (!artistsArrayList.isEmpty()) {
@@ -1034,10 +1054,11 @@ public class MulticastServer extends Thread {
             }
         }
         getArtist.removeAlbum(removeAlbum);
+        writeToDatabaseFile(file);
     }
 
     //remove artist
-    public void removeArtist(String artistName) {
+    public void removeArtist(String artistName, File file) throws IOException {
         Artist removeArtist = null;
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
@@ -1047,13 +1068,14 @@ public class MulticastServer extends Thread {
             }
         }
         artistsArrayList.remove(removeArtist);
+        writeToDatabaseFile(file);
     }
 
 
     //-------- EDIT --------//
 
     //edit artist
-    public boolean editArtist(String oldArtistName, String newArtistName, String description) {
+    public boolean editArtist(String oldArtistName, String newArtistName, String description, File file) throws IOException {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(oldArtistName)) {
@@ -1062,6 +1084,7 @@ public class MulticastServer extends Thread {
 
                     //DEBUG
                     System.out.println(a);
+                    writeToDatabaseFile(file);
                     return true;
                 }
             }
@@ -1070,7 +1093,7 @@ public class MulticastServer extends Thread {
     }
 
     //edit album
-    public boolean editAlbum(String artistName, String OldAlbumName, String newAlbumName, String description, String musicGenre, String udate) {
+    public boolean editAlbum(String artistName, String OldAlbumName, String newAlbumName, String description, String musicGenre, String udate, File file) throws IOException {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(artistName)) {
@@ -1083,6 +1106,7 @@ public class MulticastServer extends Thread {
 
                             //DEBUG
                             System.out.println(alb);
+                            writeToDatabaseFile(file);
                             return true;
                         }
                     }
@@ -1093,7 +1117,7 @@ public class MulticastServer extends Thread {
     }
 
     //edit music
-    public boolean editMusic(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics) {
+    public boolean editMusic(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics, File file) throws IOException {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(artistName)) {
@@ -1110,6 +1134,7 @@ public class MulticastServer extends Thread {
 
                                         //DEBUG
                                         System.out.println(s);
+                                        writeToDatabaseFile(file);
                                         return true;
                                     }
                                 }
@@ -1126,10 +1151,11 @@ public class MulticastServer extends Thread {
     //-------- OTHER --------//
 
     //set rights
-    public void setRights(String username) {
+    public void setRights(String username, File file) throws IOException {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 u.setRights(true);
+                writeToUsersFile(file);
             }
         }
     }
@@ -1249,6 +1275,65 @@ public class MulticastServer extends Thread {
             }
         }
         return stringFinal;
+    }
+
+    // --------------- OBJECT FILES STUFF ----------------- //
+
+
+    //write from array users to file
+    public void writeToUsersFile(File file) throws IOException {
+        FileOutputStream f = new FileOutputStream(file);
+        ObjectOutputStream o = new ObjectOutputStream(f);
+
+        for(User u : usersArrayList){
+            o.writeObject(u);
+        }
+        o.close();
+        f.close();
+    }
+
+    //reads from user file and stores into an array
+    public CopyOnWriteArrayList<User> readFromUsersFile(File file) throws IOException, ClassNotFoundException {
+        FileInputStream fi = new FileInputStream(file);
+        ObjectInputStream oi = new ObjectInputStream(fi);
+        while(true){
+            try{
+                User addUser = (User) oi.readObject();
+                usersArrayList.add(addUser);
+            } catch (EOFException e) {
+                oi.close();
+                fi.close();
+                return usersArrayList;
+            }
+        }
+    }
+
+    //write from database users to file
+    public void writeToDatabaseFile(File file) throws IOException {
+        FileOutputStream f = new FileOutputStream(file);
+        ObjectOutputStream o = new ObjectOutputStream(f);
+
+        for(Artist u : artistsArrayList){
+            o.writeObject(u);
+        }
+        o.close();
+        f.close();
+    }
+
+    //reads from database file and stores into an array
+    public CopyOnWriteArrayList<Artist> readFromDatabaseFile(File file) throws IOException, ClassNotFoundException {
+        FileInputStream fi = new FileInputStream(file);
+        ObjectInputStream oi = new ObjectInputStream(fi);
+        while(true){
+            try{
+                Artist addArtist = (Artist) oi.readObject();
+                artistsArrayList.add(addArtist);
+            } catch (EOFException e) {
+                oi.close();
+                fi.close();
+                return artistsArrayList;
+            }
+        }
     }
 
 
