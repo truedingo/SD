@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Album {
+public class Album implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String albumName;

@@ -415,7 +415,7 @@ public class MulticastServer extends Thread {
                     String getNewArtistName = splitString3[1];
 
                     String[] splitString4 = splitString[3].split("\\|");
-                    String getDescription = splitString4[0];
+                    String getDescription = splitString4[1];
 
                     boolean flag = editArtist(getOldArtistName, getNewArtistName, getDescription, databaseFiles);
 
@@ -968,13 +968,13 @@ public class MulticastServer extends Thread {
                     if (alb.getAlbumName().equals(albumName)) {
                         Song s = new Song(name, genre, duration, udate, lyrics);
                         alb.addSongs(s);
-                        writeToDatabaseFile(file);
                         //DEBUG
                         System.out.println(s);
                     }
                 }
             }
         }
+        writeToDatabaseFile(file);
     }
 
     //add album
@@ -983,11 +983,11 @@ public class MulticastServer extends Thread {
             if (a.getArtistName().equals(artistName)) {
                 Album album = new Album(albumName, desc, date, musicGenre);
                 a.addAlbums(album);
-                writeToDatabaseFile(file);
                 //DEBUG
                 System.out.println(album);
             }
         }
+        writeToDatabaseFile(file);
     }
 
     //add critic
@@ -999,14 +999,13 @@ public class MulticastServer extends Thread {
                         Critic c = new Critic(rate, username, critic);
                         alb.addCritics(c);
                         alb.addAvgRate(rate);
-
-                        writeToDatabaseFile(file);
                         //DEBUG
                         System.out.println(c);
                     }
                 }
             }
         }
+        writeToDatabaseFile(file);
     }
 
     //-------- REMOVE --------//
@@ -1286,6 +1285,7 @@ public class MulticastServer extends Thread {
         ObjectOutputStream o = new ObjectOutputStream(f);
 
         for(User u : usersArrayList){
+            System.out.println(u);
             o.writeObject(u);
         }
         o.close();
@@ -1314,6 +1314,7 @@ public class MulticastServer extends Thread {
         ObjectOutputStream o = new ObjectOutputStream(f);
 
         for(Artist u : artistsArrayList){
+            System.out.println(u);
             o.writeObject(u);
         }
         o.close();
