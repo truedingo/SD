@@ -992,7 +992,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 menuAdministrador(username);
             }
         } catch (RemoteException e) {
-            editMusicLookup(artistName, albumName, oldMusicName, newMusicName, strGenre, strDuration, udate, lyrics, username)
+            editMusicLookup(artistName, albumName, oldMusicName, newMusicName, strGenre, strDuration, udate, lyrics, username);
         }
 
 
@@ -1064,7 +1064,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
             }
         }catch(RemoteException e){
-            editAlbumLookup(artistName, oldAlbumName, newAlbumName, albumDescr, musicalGenre, username);
+            editAlbumLookup(artistName, oldAlbumName, newAlbumName, albumDescr, musicalGenre, udate, username);
         }
     }
 
@@ -1792,7 +1792,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in edit album
-    public static void editAlbumLookup(String artistName, String oldAlbumName, String newAlbumName, String albumDescr, String musicalGenre, String username){
+    public static void editAlbumLookup(String artistName, String oldAlbumName, String newAlbumName, String albumDescr, String musicalGenre, String udate, String username){
         int fails = 0;
         while(fails < 30){
             try{
