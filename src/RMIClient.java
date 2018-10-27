@@ -1,8 +1,6 @@
 import javax.swing.*;
-import java.rmi.ConnectException;
-import java.rmi.Naming;
-import java.rmi.RMISecurityManager;
-import java.rmi.RemoteException;
+import java.net.MalformedURLException;
+import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +22,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         super();
     }
 
-    public static void main(String args[]) throws InterruptedException {
+    public static void main(String args[]) throws RemoteException {
 
         //This might be necessary if you ever need to download classes:
         System.getProperties().put("java.security.policy", "policy.all");
@@ -38,9 +36,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
             client = new RMIClient();
             welcome();
 
-        } catch (Exception e) {
-            System.out.println("Exception in main: " + e);
-            e.printStackTrace();
+        } catch (RemoteException | NotBoundException | MalformedURLException e) {
+            startingLookup();
         }
 
     }
@@ -85,46 +82,57 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
             }catch (NumberFormatException e ){
                 System.out.println("Invalid option.");
             } catch (NoSuchElementException e){} catch (RemoteException e) {
-                e.printStackTrace();
+                e.getMessage();
             }
         }
     }
 
     //menu user
     public static void menuUser(String username) throws RemoteException {
-
         while (true) {
-            if(rmiInterface.checkNotificationsRights(username, client)){
-                menuAdministrador(username);
-            }
-            System.out.println("\t- User Menu -");
-            System.out.println("1. View Data");
-            System.out.println("2. Write Critic");
-            System.out.println("0. Log Out");
-            Scanner s = new Scanner(System.in);
-            String strOpt = s.nextLine();
-            int opt = Integer.parseInt(strOpt);
-            //verificacao option
-            if ((opt < 0) || (opt > 2)) {
-                System.out.println("\tInvalid option!");
-                continue;
-            }
+            int lookupOpt = 0;
+            try {
+                if (rmiInterface.checkNotificationsRights(username, client)) {
+                    menuAdministrador(username);
+                }
+                System.out.println("\t- User Menu -");
+                System.out.println("1. View Data");
+                System.out.println("2. Search Data");
+                System.out.println("3. Write Critic");
+                System.out.println("4. Upload File");
+                System.out.println("5. Download File");
+                System.out.println("0. Log Out");
+                Scanner s = new Scanner(System.in);
+                String strOpt = s.nextLine();
+                int opt = Integer.parseInt(strOpt);
+                lookupOpt = opt;
+                //verificacao option
+                if ((opt < 0) || (opt > 5)) {
+                    System.out.println("\tInvalid option!");
+                    continue;
+                }
 
-            switch (opt) {
-                case 1:
-                    viewData(username);
-                    return;
-                case 2:
-                    writeCritic(username);
-                    return;
-                case 0:
-                    System.out.println("Logged out!");
-                    //remover
-                    String logout = rmiInterface.removeLoggedUsers(username);
-                    if(logout.equals("deleted")){
-                        System.exit(0);
-                    }
-                    return;
+                switch (opt) {
+                    case 1:
+                        viewData(username);
+                        return;
+                    case 2:
+                        searchData(username);
+                        return;
+                    case 3:
+                        writeCritic(username);
+                        return;
+                    case 0:
+                        System.out.println("Logged out!");
+                        //remover
+                        String logout = rmiInterface.removeLoggedUsers(username);
+                        if (logout.equals("deleted")) {
+                            System.exit(0);
+                        }
+                        return;
+                }
+            }catch(RemoteException e){
+                menuUserLookup(lookupOpt, username);
             }
         }
     }
@@ -132,8 +140,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     //menu admin
     public static void menuAdministrador(String username) throws RemoteException {
         while (true) {
-            rmiInterface.checkNotificationsRights(username, client);
+            int lookupOpt = 0;
             try {
+                rmiInterface.checkNotificationsRights(username, client);
                 System.out.println("\n\t- Administrator Menu -");
                 System.out.println("1. Insert data");
                 System.out.println("2. Change data");
@@ -144,6 +153,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 Scanner s = new Scanner(System.in);
                 String strOpt = s.nextLine();
                 int opt = Integer.parseInt(strOpt);
+                lookupOpt = opt;
                 //verificacao option
                 if ((opt < 0) || (opt > 4)) {
                     System.out.println("\n\tInvalid option! ");
@@ -174,15 +184,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                         if(logout.equals("deleted")){
                             System.exit(0);
                         }
-                        else{
-                            System.out.println("és um burro diogo");
-                        }
                         return;
                 }
             }catch (NumberFormatException e ){
                 System.out.println("Invalid option.");
             } catch (NoSuchElementException e){} catch (RemoteException e) {
-                e.printStackTrace();
+                menuAdminLookup(lookupOpt, username);
             }
         }
     }
@@ -231,7 +238,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
             }catch (NumberFormatException e ){
                 System.out.println("Invalid option.");
             } catch (NoSuchElementException e){} catch (RemoteException e) {
-                e.printStackTrace();
+                e.getMessage();
             }
         }
     }
@@ -331,10 +338,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 e.printStackTrace();
             }
         }
-    }
+        }
 
     //menu search data
-    public static void searchData(String username) {
+    public static void searchData(String username){
         while (true) {
             try {
                 System.out.println("\n\t- Search Data -");
@@ -367,13 +374,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
             } catch (NumberFormatException e) {
                 System.out.println("Invalid option.");
-            } catch (NoSuchElementException e) {
+            } catch (NoSuchElementException e) {} catch (RemoteException e) {
+                e.printStackTrace();
             }
+
         }
-    }
+        }
 
     //menu search data
-    public static void viewData(String username) {
+    public static void viewData(String username){
         while (true) {
             try {
                 System.out.println("\n\t- View Data -");
@@ -453,8 +462,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 welcome();
             }
         }catch(RemoteException e){
-            System.out.println("O meu username é: "+username);
-            System.out.println("A minha password é: "+password);
+            registerLookup(username, password);
         }
 
 
@@ -468,31 +476,33 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
         System.out.println("Password: ");
         String password = s.nextLine();
+        try {
+            if (rmiInterface.checkLogin(username, password).equals("editor")) {
+                System.out.println("Logged in as editor.");
 
-        if(rmiInterface.checkLogin(username, password).equals("editor")){
-            System.out.println("Logged in as editor.");
+                //meter interface com nome de user
+                clientUsername = username;
+                client.setUsername(clientUsername);
+                //adicionar a lista de logged users no RMI
+                rmiInterface.addLoggedUsers(client);
 
-            //meter interface com nome de user
-            clientUsername = username;
-            client.setUsername(clientUsername);
-            //adicionar a lista de logged users no RMI
-            rmiInterface.addLoggedUsers(client);
+                menuAdministrador(username);
+            } else if (rmiInterface.checkLogin(username, password).equals("user")) {
+                System.out.println("Logged in as user.");
 
-            menuAdministrador(username);
-        }
-        else if(rmiInterface.checkLogin(username, password).equals("user")){
-            System.out.println("Logged in as user.");
+                clientUsername = username;
+                client.setUsername(clientUsername);
+                //adicionar a lista de logged users no RMI
+                rmiInterface.addLoggedUsers(client);
 
-            clientUsername = username;
-            client.setUsername(clientUsername);
-            //adicionar a lista de logged users no RMI
-            rmiInterface.addLoggedUsers(client);
+                menuUser(username);
+            } else {
+                System.out.println("Error with login.");
+                welcome();
+            }
+        }catch(RemoteException e){
+            loginLookup(username, password);
 
-            menuUser(username);
-        }
-        else{
-            System.out.println("Error with login.");
-            welcome();
         }
     }
 
@@ -502,19 +512,22 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("Insert username: ");
         String username = s.nextLine();
 
-        boolean checker = rmiInterface.checkUserRights(username, client);
-        if(checker){
-            System.out.println("Changed rights of user "+username+" to editor.");
-            menuAdministrador(user);
-        }
-        else{
-            System.out.println("User not found or is already an editor.");
-            menuAdministrador(user);
+        try {
+            boolean checker = rmiInterface.checkUserRights(username, client);
+            if (checker) {
+                System.out.println("Changed rights of user " + username + " to editor.");
+                menuAdministrador(user);
+            } else {
+                System.out.println("User not found or is already an editor.");
+                menuAdministrador(user);
+            }
+        }catch(RemoteException e){
+            changeRightsLookup(user, username);
         }
     }
 
     //write critic
-    public static void writeCritic(String username) {
+    public static void writeCritic(String username) throws RemoteException{
         System.out.println("\n\t- Write Critic -");
         Scanner s = new Scanner(System.in);
 
@@ -549,7 +562,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 menuUser(username);
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            writeCriticLookup(strArtistName, strAlbumName, rate, strCritic, username);
         }
     }
 
@@ -557,7 +570,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     //-------- INSERT FUNCTIONS--------//
 
     //insert music
-    public static void insertMusic(String username) {
+    public static void insertMusic(String username) throws RemoteException {
         System.out.println("\n\t- Insert Music -");
         System.out.println("Music name:");
         Scanner s = new Scanner(System.in);
@@ -591,7 +604,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 menuAdministrador(username);
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            insertMusicLookup(strName, strGenre, strDuration, udate, lyrics, strArtistName, strAlbumName, username);
         }
 
 
@@ -606,13 +619,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         String artistName = s.nextLine();
         System.out.println("Artist description:");
         String artistDesc = s.nextLine();
-
-        if (rmiInterface.checkArtist(artistName, artistDesc)) {
-            System.out.println("Artist added.");
-            menuAdministrador(username);
-        } else {
-            System.out.println("Error adding artist.");
-            menuAdministrador(username);
+        try {
+            if (rmiInterface.checkArtist(artistName, artistDesc)) {
+                System.out.println("Artist added.");
+                menuAdministrador(username);
+            } else {
+                System.out.println("Error adding artist.");
+                menuAdministrador(username);
+            }
+        }
+        catch(RemoteException e){
+            inserArtistLookup(artistName, artistDesc, username);
         }
     }
 
@@ -636,13 +653,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         String artistName = s.nextLine();
 
 
-        if (rmiInterface.checkAlbum(albumName, albumDescr, musicalGenre, udate, artistName)) {
-            System.out.println("Album added.");
-            menuAdministrador(username);
-        } else {
-            System.out.println("Error adding Album.");
-            menuAdministrador(username);
+        try {
+            if (rmiInterface.checkAlbum(albumName, albumDescr, musicalGenre, udate, artistName)) {
+                System.out.println("Album added.");
+                menuAdministrador(username);
+            } else {
+                System.out.println("Error adding Album.");
+                menuAdministrador(username);
 
+            }
+        }catch(RemoteException e){
+            insertAlbumLookup(albumName, albumDescr, musicalGenre, udate, artistName, username);
         }
     }
 
@@ -650,7 +671,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     // ------- SEARCH FUNCTIONS -------- //
 
-    public static void searchAlbumfromAlbumName(String username) {
+    public static void searchAlbumfromAlbumName(String username) throws RemoteException {
         System.out.println("\n\t- Search Album from Album Name -");
         Scanner s = new Scanner(System.in);
 
@@ -682,11 +703,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 }
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            searchAlbumFromAlbumNameLookup(albumName, username);
         }
     }
 
-    public static void searchAlbumfromArtist(String username) {
+    public static void searchAlbumfromArtist(String username) throws RemoteException {
         System.out.println("\n\t- Search Album from Artist -");
         Scanner s = new Scanner(System.in);
 
@@ -716,13 +737,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 menuUser(username);
             }
         } catch (RemoteException e1) {
-            e1.printStackTrace();
+            searchAlbumfromArtistLookup(artist, username);
         }
     }
 
 
     // -------- VIEW DATA FUCNTIONS -----------------------
-    public static void viewArtistDetails(String username) {
+    public static void viewArtistDetails(String username) throws RemoteException {
         System.out.println("\n\t- View Artist Details -");
         Scanner s = new Scanner(System.in);
 
@@ -762,13 +783,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            viewArtistDetailsLookup(artist, username);
         }
 
 
     }
 
-    public static void viewAlbumDetails(String username) {
+    public static void viewAlbumDetails(String username) throws RemoteException {
         System.out.println("\n\t- View Album Details -");
         Scanner s = new Scanner(System.in);
 
@@ -803,13 +824,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 }
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            viewAlbumDetailsLookup(artist, album, username);
         }
 
 
     }
 
-    public static void viewAlbumCritics(String username){
+    public static void viewAlbumCritics(String username) throws RemoteException{
         System.out.println("\n\t- View Album Critics -");
         Scanner s = new Scanner(System.in);
 
@@ -849,7 +870,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            viewAlbumCriticsLookup(artist, album, username);
         }
 
     }
@@ -868,14 +889,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         String artistName = s.nextLine();
         System.out.println("Album name:");
         String albumName = s.nextLine();
+        try {
+            if (rmiInterface.checkRemoveMusic(musicName, artistName, albumName)) {
+                System.out.println("Music removed.");
+                menuAdministrador(username);
+            } else {
+                System.out.println("Error removing music.");
+                menuAdministrador(username);
 
-        if (rmiInterface.checkRemoveMusic(musicName,artistName,albumName)) {
-            System.out.println("Music removed.");
-            menuAdministrador(username);
-        } else {
-            System.out.println("Error removing music.");
-            menuAdministrador(username);
-
+            }
+        }catch(RemoteException e){
+            removeMusicLookup(musicName, artistName, albumName, username);
         }
     }
 
@@ -921,7 +945,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     //-------- EDIT FUNCTIONS--------//
 
-    public static void editMusic(String username) {
+    public static void editMusic(String username) throws RemoteException {
         System.out.println("\n\t- Edit Music -");
         System.out.println("\n\tINPUT OLD DATA");
 
@@ -1043,8 +1067,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         return uDate;
     }
 
+
     //-------INTERFACE----------//
-    //gets client username
+
+    //gets client interface username
     public String getUsername() {
         return clientUsername;
     }
@@ -1058,5 +1084,619 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     public void notifyRights(){
         System.out.println("Your rights have been changed to editor.");
     }
+
+    //-------EXCEPTION HANDLING----------//
+
+    //template
+    public static void lookup(){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                //meter cenas para aqui
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in starting rmiclient
+    public static void startingLookup(){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+                client = new RMIClient();
+                welcome();
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in register function
+    public static void registerLookup(String username, String password){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+                //tenta registar-se
+                if (rmiInterface.checkRegister(username, password)) {
+                    System.out.println("Registered successfully.");
+                    clientUsername = username;
+                    client.setUsername(clientUsername);
+                    //adicionar a lista de logged users no RMI
+                    rmiInterface.addLoggedUsers(client);
+                    menuUser(username);
+                } else {
+                    System.out.println("Username already in use.");
+                    welcome();
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in menu user
+    public static void menuUserLookup(int opt, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                if (rmiInterface.checkNotificationsRights(username, client)) {
+                    menuAdministrador(username);
+                }
+
+                //verificacao option
+                if ((opt < 0) || (opt > 5)) {
+                    System.out.println("\tInvalid option!");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        viewData(username);
+                        return;
+                    case 2:
+                        searchData(username);
+                        return;
+                    case 3:
+                        writeCritic(username);
+                        return;
+                    case 0:
+                        System.out.println("Logged out!");
+                        //remover
+                        String logout = rmiInterface.removeLoggedUsers(username);
+                        if(logout.equals("deleted")){
+                            System.exit(0);
+                        }
+                        return;
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in menu admin
+    public static void menuAdminLookup(int opt, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                rmiInterface.checkNotificationsRights(username, client);
+                //verificacao option
+                if ((opt < 0) || (opt > 4)) {
+                    System.out.println("\n\tInvalid option! ");
+                    continue;
+                }
+
+                switch (opt) {
+                    case 1:
+                        //menu insert data
+                        insertData(username);
+                        return;
+                    case 2:
+                        //menu change data
+                        //here
+                        changeData(username);
+                        return;
+                    case 3:
+                        //menu remove data
+                        removeData(username);
+                        return;
+                    case 4:
+                        //change user rights
+                        changeRights(username);
+                    case 0:
+                        System.out.println("Logged out!");
+                        //remover
+                        String logout = rmiInterface.removeLoggedUsers(username);
+                        if(logout.equals("deleted")){
+                            System.exit(0);
+                        }
+                        return;
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in login
+    public static void loginLookup(String username, String password){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                if (rmiInterface.checkLogin(username, password).equals("editor")) {
+                    System.out.println("Logged in as editor.");
+
+                    //meter interface com nome de user
+                    clientUsername = username;
+                    client.setUsername(clientUsername);
+                    //adicionar a lista de logged users no RMI
+                    rmiInterface.addLoggedUsers(client);
+
+                    menuAdministrador(username);
+                } else if (rmiInterface.checkLogin(username, password).equals("user")) {
+                    System.out.println("Logged in as user.");
+
+                    clientUsername = username;
+                    client.setUsername(clientUsername);
+                    //adicionar a lista de logged users no RMI
+                    rmiInterface.addLoggedUsers(client);
+
+                    menuUser(username);
+                } else {
+                    System.out.println("Error with login.");
+                    welcome();
+                }
+
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in change rights
+    public static void changeRightsLookup(String user, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                boolean checker = rmiInterface.checkUserRights(username, client);
+                if (checker) {
+                    System.out.println("Changed rights of user " + username + " to editor.");
+                    menuAdministrador(user);
+                } else {
+                    System.out.println("User not found or is already an editor.");
+                    menuAdministrador(user);
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in write critic
+    public static void writeCriticLookup(String strArtistName, String strAlbumName, int rate, String strCritic, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                if ((rate < 0) || (rate > 5)) {
+                    System.out.println("\tInvalid rate! Try again ");
+                    writeCritic(username);
+                }
+
+                if (strCritic.length()>300) {
+                    System.out.println("\tCritic too big! Try again");
+                    writeCritic(username);
+                }
+
+                if (rmiInterface.checkCritic(username,strArtistName,strAlbumName,rate,strCritic)) {
+                    System.out.println("Critic added.");
+                    menuUser(username);
+                } else {
+                    System.out.println("Error with critic! Try again");
+                    menuUser(username);
+                }
+
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in insert music
+    public static void insertMusicLookup(String strName, String strGenre, String strDuration, String udate, String lyrics, String strArtistName, String strAlbumName, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+                if (rmiInterface.checkMusic(strName, strGenre,strDuration,udate, lyrics, strArtistName,strAlbumName)) {
+
+                    System.out.println("Music added.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error adding music.");
+                    menuAdministrador(username);
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in insert artist
+    public static void inserArtistLookup(String artistName, String artistDesc, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                if (rmiInterface.checkArtist(artistName, artistDesc)) {
+                    System.out.println("Artist added.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error adding artist.");
+                    menuAdministrador(username);
+                }
+
+                //meter cenas para aqui
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in insert album
+    public static void insertAlbumLookup(String albumName, String albumDescr, String musicalGenre, String udate, String artistName, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                if (rmiInterface.checkAlbum(albumName, albumDescr, musicalGenre, udate, artistName)) {
+                    System.out.println("Album added.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error adding Album.");
+                    menuAdministrador(username);
+
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in view artist details
+    public static void viewArtistDetailsLookup(String artist, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                String result = rmiInterface.checkViewArtistDetails(username, artist);
+                if (result.equals("type|view_artist_details;error in view_artist_details")) {
+                    System.out.println("An error ocurred... Try again!");
+                    menuUser(username);
+                } else {
+                    String[] splitStringAll = result.split(";");
+
+                    System.out.println("\t-Artist details-");
+
+                    String[] splitStringName = splitStringAll[1].split("\\|");
+                    System.out.println("Artist name: " + splitStringName[1]);
+
+                    String[] splitStringDescription = splitStringAll[2].split("\\|");
+                    System.out.println("Artist Biography: " + splitStringDescription[1]);
+
+
+                    int j = 3, size = splitStringAll.length;
+
+                    if(size > 0) {
+                        System.out.println("Discography:");
+                    }
+
+                    while (j < size) {
+                        String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                        System.out.println("Album Name: " + splitStringAlbumName[1]);
+                        j++;
+                    }
+
+
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in view album details
+    public static void viewAlbumDetailsLookup(String artist, String album, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                String result = rmiInterface.checkViewAlbumDetails(username,artist,album);
+                if (result.equals("type|view_album_details;error in view_album_details")) {
+                    System.out.println("An error ocurred... Try again!");
+                    menuUser(username);
+                } else {
+                    String[] splitStringAll = result.split(";");
+
+                    System.out.println("\t-Album details-");
+
+                    String[] splitStringName = splitStringAll[1].split("\\|");
+                    System.out.println("Artist name: " + splitStringName[1]);
+
+                    int j = 3, size = splitStringAll.length;
+
+                    if(size > 2) {
+                        System.out.println("Songs:");
+                        while (j < size) {
+                            String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                            System.out.println("Music Name: " + splitStringAlbumName[1]);
+                            j++;
+                        }
+                    }
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in view album critics
+    public static void viewAlbumCriticsLookup(String artist, String album, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                String result = rmiInterface.checkViewAlbumCritics(username,artist,album);
+                if (result.equals("type|view_album_critics;error in view_album_critics")) {
+                    System.out.println("An error ocurred... Try again!");
+                    menuUser(username);
+                } else {
+                    String[] splitStringAll = result.split(";");
+
+                    System.out.println("\t-Album critics-");
+
+                    String[] splitStringName = splitStringAll[1].split("\\|");
+                    System.out.println("Artist name: " + splitStringName[1]);
+
+                    String [] splitString3 =splitStringAll[3].split("\\|");
+                    System.out.println("Average Rate: " + splitString3[1]);
+
+                    if(splitStringAll.length > 3) {
+                        int j = 4, size = splitStringAll.length;
+                        while(j < size) {
+                            String[] splitStringArtistName = splitStringAll[j + 1].split("\\|");
+                            String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                            System.out.println("Critic: "+splitStringArtistName[1]);
+                            System.out.println("Username: " + splitStringAlbumName[1]);
+                            j += 2;
+
+                        }
+                    }
+
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in search album from album name
+    public static void searchAlbumFromAlbumNameLookup(String albumName, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                String result = rmiInterface.checkFromAlbumName(username, albumName);
+                if (result.equals("type|search_album_name;error in search_album_name")) {
+                    System.out.println("An error ocurred... Try again!");
+                    menuUser(username);
+                } else {
+                    System.out.println("\t-Results-");
+                    //Aqui correu tudo bem
+                    String[] splitStringAll = result.split(";");
+                    //get item count
+                    String[] splitString1 = splitStringAll[1].split("\\|");
+                    int itemCount = Integer.parseInt(splitString1[1]);
+                    //get albums
+                    int j = 2, size = splitStringAll.length;
+                    while (j < size) {
+                        String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                        System.out.println("Album Name: " + splitStringAlbumName[1]);
+                        String[] splitStringArtistName = splitStringAll[j + 1].split("\\|");
+                        System.out.println("Artist Name: " + splitStringArtistName[1]);
+                        System.out.println("");
+                        j += 2;
+                    }
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in search album from artist lookup
+    public static void searchAlbumfromArtistLookup(String artist, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                String result = rmiInterface.checkFromArtistName(username, artist);
+                if (result.equals("type|search_album_artist;error in search_album_artist")) {
+                    System.out.println("An error ocurred... Try again!");
+                    menuUser(username);
+                } else {
+                    String[] splitStringAll = result.split(";");
+
+                    System.out.println("\t-Results-");
+
+                    String[] splitStringName = splitStringAll[1].split("\\|");
+                    System.out.println("Artist name: " + splitStringName[1]);
+
+                    int j = 3, size = splitStringAll.length;
+                    while (j < size) {
+                        String[] splitStringAlbumName = splitStringAll[j].split("\\|");
+                        System.out.println("Album Name: " + splitStringAlbumName[1]);
+                        j++;
+                    }
+                    menuUser(username);
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in remove music
+    public static void removeMusicLookup(String musicName, String artistName, String albumName, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+                if (rmiInterface.checkRemoveMusic(musicName, artistName, albumName)) {
+                    System.out.println("Music removed.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error removing music.");
+                    menuAdministrador(username);
+
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 }
 
