@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
@@ -121,9 +123,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                     String logout = rmiInterface.removeLoggedUsers(username);
                     if(logout.equals("deleted")){
                         System.exit(0);
-                    }
-                    else{
-                        System.out.println("és um burro diogo");
                     }
                     return;
             }
@@ -441,17 +440,21 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("Password: ");
         String password = s.nextLine();
 
-        if(rmiInterface.checkRegister(username, password)){
-            System.out.println("Registered successfully.");
-            clientUsername = username;
-            client.setUsername(clientUsername);
-            //adicionar a lista de logged users no RMI
-            rmiInterface.addLoggedUsers(client);
-            menuUser(username);
-        }
-        else{
-            System.out.println("Username already in use.");
-            welcome();
+        try {
+            if (rmiInterface.checkRegister(username, password)) {
+                System.out.println("Registered successfully.");
+                clientUsername = username;
+                client.setUsername(clientUsername);
+                //adicionar a lista de logged users no RMI
+                rmiInterface.addLoggedUsers(client);
+                menuUser(username);
+            } else {
+                System.out.println("Username already in use.");
+                welcome();
+            }
+        }catch(RemoteException e){
+            System.out.println("O meu username é: "+username);
+            System.out.println("A minha password é: "+password);
         }
 
 
@@ -918,7 +921,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     //-------- EDIT FUNCTIONS--------//
 
-    public static void editMusic(String username) throws RemoteException {
+    public static void editMusic(String username) {
         System.out.println("\n\t- Edit Music -");
         System.out.println("\n\tINPUT OLD DATA");
 
@@ -1042,12 +1045,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     //-------INTERFACE----------//
     //gets client username
-    public String getUsername() throws RemoteException {
+    public String getUsername() {
         return clientUsername;
     }
 
     //sets client interface username
-    public void setUsername(String username) throws RemoteException {
+    public void setUsername(String username) {
         this.clientUsername = username;
     }
 

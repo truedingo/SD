@@ -1252,7 +1252,6 @@ public class MulticastServer extends Thread {
     //Albuns de um artista
     public String albumCritics(String artistName, String albumName){
         float criticsAvg = calAvgRate(artistName,albumName);
-        System.out.println("sajfsdufdshiu" + criticsAvg);
         String avgString = Float.toString(criticsAvg);
 
         //String avgString = "2";
@@ -1277,7 +1276,7 @@ public class MulticastServer extends Thread {
     }
 
     // --------------- OBJECT FILES STUFF ----------------- //
-
+    //https://coderanch.com/t/278704/java/read-objects-file-ObjectInputStream
 
     //write from array users to file
     public void writeToUsersFile(File file) throws IOException {
@@ -1285,7 +1284,6 @@ public class MulticastServer extends Thread {
         ObjectOutputStream o = new ObjectOutputStream(f);
 
         for(User u : usersArrayList){
-            System.out.println(u);
             o.writeObject(u);
         }
         o.close();
@@ -1308,13 +1306,12 @@ public class MulticastServer extends Thread {
         }
     }
 
-    //write from database users to file
+    //write from array database to file
     public void writeToDatabaseFile(File file) throws IOException {
         FileOutputStream f = new FileOutputStream(file);
         ObjectOutputStream o = new ObjectOutputStream(f);
 
         for(Artist u : artistsArrayList){
-            System.out.println(u);
             o.writeObject(u);
         }
         o.close();

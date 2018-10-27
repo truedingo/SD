@@ -26,7 +26,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         super();
     }
 
-    public synchronized String sayHello() throws RemoteException {
+    public synchronized String sayHello() {
         System.out.println("hello");
         try {
             Thread.sleep(3000);
