@@ -914,13 +914,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         String artistName = s.nextLine();
 
 
-        if (rmiInterface.checkRemoveAlbum(artistName,albumName)) {
-            System.out.println("Album removed.");
-            menuAdministrador(username);
-        } else {
-            System.out.println("Error removing album.");
-            menuAdministrador(username);
+        try {
+            if (rmiInterface.checkRemoveAlbum(artistName, albumName)) {
+                System.out.println("Album removed.");
+                menuAdministrador(username);
+            } else {
+                System.out.println("Error removing album.");
+                menuAdministrador(username);
 
+            }
+        }catch(RemoteException e){
+            removeAlbumLookup(albumName, artistName, username);
         }
     }
 
@@ -932,13 +936,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("Artist name:");
         String artistName = s.nextLine();
 
-        if (rmiInterface.checkRemoveArtist(artistName)) {
-            System.out.println("Artist removed.");
-            menuAdministrador(username);
-        } else {
-            System.out.println("Error removing artist.");
-            menuAdministrador(username);
+        try {
+            if (rmiInterface.checkRemoveArtist(artistName)) {
+                System.out.println("Artist removed.");
+                menuAdministrador(username);
+            } else {
+                System.out.println("Error removing artist.");
+                menuAdministrador(username);
 
+            }
+        }catch(RemoteException e){
+            removeArtistLookup(artistName, username);
         }
     }
 
@@ -984,7 +992,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 menuAdministrador(username);
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            editMusicLookup(artistName, albumName, oldMusicName, newMusicName, strGenre, strDuration, udate, lyrics, username)
         }
 
 
@@ -1007,12 +1015,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("NEW Artist description:");
         String artistDesc = s.nextLine();
 
-        if (rmiInterface.checkEditArtist(oldArtistName, newArtistName, artistDesc)) {
-            System.out.println("Artist edited.");
-            menuAdministrador(username);
-        } else {
-            System.out.println("Error editing artist.");
-            menuAdministrador(username);
+        try {
+            if (rmiInterface.checkEditArtist(oldArtistName, newArtistName, artistDesc)) {
+                System.out.println("Artist edited.");
+                menuAdministrador(username);
+            } else {
+                System.out.println("Error editing artist.");
+                menuAdministrador(username);
+            }
+        }catch(RemoteException e){
+            editArtistLookup(oldArtistName, newArtistName, artistDesc, username);
         }
     }
 
@@ -1042,13 +1054,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         String udate = dateInput(s);
 
 
-        if (rmiInterface.checkEditAlbum(artistName, oldAlbumName, newAlbumName, albumDescr, musicalGenre, udate)) {
-            System.out.println("Album edited.");
-            menuAdministrador(username);
-        } else {
-            System.out.println("Error editing album.");
-            menuAdministrador(username);
+        try {
+            if (rmiInterface.checkEditAlbum(artistName, oldAlbumName, newAlbumName, albumDescr, musicalGenre, udate)) {
+                System.out.println("Album edited.");
+                menuAdministrador(username);
+            } else {
+                System.out.println("Error editing album.");
+                menuAdministrador(username);
 
+            }
+        }catch(RemoteException e){
+            editAlbumLookup(artistName, oldAlbumName, newAlbumName, albumDescr, musicalGenre, username);
         }
     }
 
@@ -1086,26 +1102,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //-------EXCEPTION HANDLING----------//
-
-    //template
-    public static void lookup(){
-        int fails = 0;
-        while(fails < 30){
-            try{
-                Thread.sleep(1000);
-                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
-                rmiInterface.sayHello();
-
-                //meter cenas para aqui
-            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
-                fails++;
-                if(fails == 30) {
-                    System.out.println("Couldn't connect to RMI Server.");
-                    System.exit(0);
-                }
-            }
-        }
-    }
 
     //handles remote exception in starting rmiclient
     public static void startingLookup(){
@@ -1689,10 +1685,137 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         }
     }
 
+    //handles remote exception in remove album
+    public static void removeAlbumLookup(String albumName, String artistName, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
 
+                if (rmiInterface.checkRemoveAlbum(artistName, albumName)) {
+                    System.out.println("Album removed.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error removing album.");
+                    menuAdministrador(username);
 
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
 
+    //handles remote exception in remove artist
+    public static void removeArtistLookup(String artistName, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
 
+                if (rmiInterface.checkRemoveArtist(artistName)) {
+                    System.out.println("Artist removed.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error removing artist.");
+                    menuAdministrador(username);
+
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in edit music
+    public static void editMusicLookup(String artistName, String albumName, String oldMusicName, String newMusicName, String strGenre, String strDuration, String udate, String lyrics, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                if (rmiInterface.checkEditSong(artistName, albumName,oldMusicName,newMusicName, strGenre, strDuration, udate, lyrics)) {
+
+                    System.out.println("Music edited.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error editing music.");
+                    menuAdministrador(username);
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in edit artist
+    public static void editArtistLookup(String oldArtistName, String newArtistName, String artistDesc, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+                if (rmiInterface.checkEditArtist(oldArtistName, newArtistName, artistDesc)) {
+                    System.out.println("Artist edited.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error editing artist.");
+                    menuAdministrador(username);
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in edit album
+    public static void editAlbumLookup(String artistName, String oldAlbumName, String newAlbumName, String albumDescr, String musicalGenre, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+                if (rmiInterface.checkEditAlbum(artistName, oldAlbumName, newAlbumName, albumDescr, musicalGenre, udate)) {
+                    System.out.println("Album edited.");
+                    menuAdministrador(username);
+                } else {
+                    System.out.println("Error editing album.");
+                    menuAdministrador(username);
+
+                }
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
 
 
 
