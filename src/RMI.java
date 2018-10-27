@@ -53,5 +53,13 @@ public interface RMI extends Remote {
 
     boolean checkNotificationsRights(String username, ClientInterface client) throws  RemoteException;
 
+    String checkViewSongDetails(String username, String artistName, String albumName, String song) throws RemoteException;
 
-}
+    int checkUpload(String username, String musicPath,String albumName, String artistName, String musicName) throws RemoteException;
+
+    int checkDownload(String username, String musicPath,String albumName, String artistName, String musicName);
+
+
+
+
+    }

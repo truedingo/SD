@@ -1,4 +1,6 @@
 import java.io.Serializable;
+import java.util.ArrayList;
+
 public class Song implements Serializable{
     private static final long serialVersionUID = 1L;
     private String songName;
@@ -6,7 +8,8 @@ public class Song implements Serializable{
     private String duration;
     private String releaseDate;
     private String lyrics;
-
+    private ArrayList<Integer> uploadId;
+    private ArrayList<Integer> downloadId;
 
 
     Song(){
@@ -18,6 +21,22 @@ public class Song implements Serializable{
         this.duration = duration;
         this.releaseDate = releaseDate;
         this.lyrics = lyrics;
+    }
+
+    public void addUploadId(int id) {
+        this.uploadId.add(id);
+    }
+
+    public void setUploadId(ArrayList<Integer> uploadId) {
+        this.uploadId = uploadId;
+    }
+
+    public ArrayList<Integer> getDownloadId() {
+        return downloadId;
+    }
+
+    public void setDownloadId(ArrayList<Integer> downloadId) {
+        this.downloadId = downloadId;
     }
 
     public static long getSerialVersionUID() {

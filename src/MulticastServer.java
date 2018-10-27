@@ -1,7 +1,5 @@
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
+import java.net.*;
 import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -528,47 +526,6 @@ public class MulticastServer extends Thread {
 
                     boolean flag = checkAlbumExist(albumName, artistName);
                     boolean flag2 = checkArtistExist(artistName);
-
-                    System.out.println(flag);
-                    if (!flag && !flag2) {
-                        //add critic
-                        addCritic(username, artistName, albumName, intRate, descricao, databaseFiles);
-                        String sendWriteCritic = "type|write_critic;successful";
-                        byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
-                        DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
-                        sendSocket.send(sendWriteCriticPacket);
-                        System.out.println("Sent to RMI: " + sendWriteCritic);
-                    } else {
-                        String sendWriteCritic = "type|write_critic;error in write critic";
-                        byte[] sendWriteCriticBuffer = sendWriteCritic.getBytes();
-                        DatagramPacket sendWriteCriticPacket = new DatagramPacket(sendWriteCriticBuffer, sendWriteCriticBuffer.length, group, RMI_PORT);
-                        sendSocket.send(sendWriteCriticPacket);
-                        System.out.println("Sent to RMI: " + sendWriteCritic);
-                    }
-
-                } else if (receiveString.contains("type|write_critic")) {
-
-                    String[] splitString = receiveString.split(";");
-                    //user
-                    String[] splitString1 = splitString[1].split("\\|");
-                    String username = splitString1[1];
-                    //artista
-                    String[] splitString2 = splitString[2].split("\\|");
-                    String artistName = splitString2[1];
-                    //album
-                    String[] splitString3 = splitString[3].split("\\|");
-                    String albumName = splitString3[1];
-                    //rate
-                    String[] splitString4 = splitString[4].split("\\|");
-                    String rate = splitString4[1];
-                    //Desc
-                    String[] splitString5 = splitString[5].split("\\|");
-                    String descricao = splitString5[1];
-
-                    int intRate = Integer.parseInt(rate);
-
-                    boolean flag = checkAlbumExist(albumName, artistName);
-                    boolean flag2 = checkArtistExist(artistName);
                     boolean flag3 = checkCritics(artistName, albumName, username);
 
                     //System.out.println(flag);
@@ -710,15 +667,16 @@ public class MulticastServer extends Thread {
 
                 } else if (receiveString.contains("type|view_album_critics")) {
 
-                    String[] splitString = receiveString.split(";");
+
+                    String [] splitString = receiveString.split(";");
                     //user
-                    String[] splitString1 = splitString[1].split("\\|");
+                    String [] splitString1 =splitString[1].split("\\|");
                     String username = splitString1[1];
                     //artistName
-                    String[] splitString2 = splitString[2].split("\\|");
+                    String [] splitString2 =splitString[2].split("\\|");
                     String artist = splitString2[1];
                     //albumName
-                    String[] splitString3 = splitString[3].split("\\|");
+                    String [] splitString3 =splitString[3].split("\\|");
                     String albumName = splitString3[1];
 
                     boolean flag = checkArtistExist(artist);
@@ -728,7 +686,7 @@ public class MulticastServer extends Thread {
                     System.out.println(!flag && !flag2);
                     if (!flag2) {
                         //search albuns
-                        String sendEditArtist = albumCritics(artist, albumName);
+                        String sendEditArtist = albumCritics(artist,albumName);
                         byte[] sendBufferEditArtist = sendEditArtist.getBytes();
                         DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
                         sendSocket.send(sendEditArtistPacket);
@@ -740,6 +698,142 @@ public class MulticastServer extends Thread {
                         sendSocket.send(sendEditArtistPacket);
                         System.out.println("Sent to RMI: " + sendEditArtist);
                     }
+
+
+                } else if (receiveString.contains("type|upload_music")) {
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    System.out.println(username);
+                    //path
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String musicPath = splitString2[1];
+                    System.out.println(musicPath);
+                    String[] splitString3 = splitString[3].split("\\|");
+                    String port = splitString3[1];
+                    String[] splitString4 = splitString[4].split("\\|");
+                    String serialNumber = splitString4[1];
+
+                    String[] splitString5 = splitString[5].split("\\|");
+                    String artistName = splitString5[1];
+                    String[] splitString6 = splitString[6].split("\\|");
+                    String albumName = splitString6[1];
+                    String[] splitString7 = splitString[7].split("\\|");
+                    String musicName = splitString7[1];
+
+
+
+                    //System.out.println(port);
+
+                    ServerSocket ssock = new ServerSocket(Integer.parseInt(port));
+                    addUploadToSong(Integer.parseInt(serialNumber),albumName,artistName,musicName, databaseFiles);
+
+                    String sendWaitMusic = "ok";
+                    byte[] sendBufferWaitMusic = sendWaitMusic.getBytes();
+                    DatagramPacket sendWaitMusicPacket = new DatagramPacket(sendBufferWaitMusic, sendBufferWaitMusic.length, group, RMI_PORT);
+                    sendSocket.send(sendWaitMusicPacket);
+                    System.out.println("Sent to RMI: " + sendWaitMusic);
+
+
+                    if (musicUpload(ssock, Integer.parseInt(port), musicPath)) {
+                        String sendEditMusic = "type|upload_music;successful";
+                        byte[] sendBufferEditMusic = sendEditMusic.getBytes();
+                        DatagramPacket sendEditMusicPacket = new DatagramPacket(sendBufferEditMusic, sendBufferEditMusic.length, group, RMI_PORT);
+                        sendSocket.send(sendEditMusicPacket);
+                        System.out.println("Sent to RMI: " + sendEditMusic);
+                    } else {
+                        String sendEditMusic = "type|upload_music;error in upload music";
+                        byte[] sendBufferEditMusic = sendEditMusic.getBytes();
+                        DatagramPacket sendEditMusicPacket = new DatagramPacket(sendBufferEditMusic, sendBufferEditMusic.length, group, RMI_PORT);
+                        sendSocket.send(sendEditMusicPacket);
+                        System.out.println("Sent to RMI: " + sendEditMusic);
+                    }
+
+                }
+                else if (receiveString.contains("type|download_music")) {
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    System.out.println(username);
+                    //path
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String musicPath = splitString2[1];
+                    System.out.println(musicPath);
+                    String[] splitString3 = splitString[3].split("\\|");
+                    String port = splitString3[1];
+                    String[] splitString4 = splitString[4].split("\\|");
+                    String serialNumber = splitString4[1];
+
+                    String[] splitString5 = splitString[5].split("\\|");
+                    String artistName = splitString5[1];
+                    String[] splitString6 = splitString[6].split("\\|");
+                    String albumName = splitString6[1];
+                    String[] splitString7 = splitString[7].split("\\|");
+                    String musicName = splitString7[1];
+
+                    System.out.println(port);
+                    ServerSocket ssock = new ServerSocket(Integer.parseInt(port));
+
+                    String sendWaitMusic = "ok";
+
+                    byte[] sendBufferWaitMusic = sendWaitMusic.getBytes();
+                    DatagramPacket sendWaitMusicPacket = new DatagramPacket(sendBufferWaitMusic, sendBufferWaitMusic.length, group, RMI_PORT);
+                    sendSocket.send(sendWaitMusicPacket);
+                    System.out.println("Sent to RMI: " + sendWaitMusic);
+
+                    if (musicDownload(ssock, Integer.parseInt(port), musicPath)) {
+                        String sendEditMusic = "type|download_music;successful";
+                        byte[] sendBufferEditMusic = sendEditMusic.getBytes();
+                        DatagramPacket sendEditMusicPacket = new DatagramPacket(sendBufferEditMusic, sendBufferEditMusic.length, group, RMI_PORT);
+                        sendSocket.send(sendEditMusicPacket);
+                        System.out.println("Sent to RMI: " + sendEditMusic);
+                    } else {
+                        String sendEditMusic = "type|download_music;error in download music";
+                        byte[] sendBufferEditMusic = sendEditMusic.getBytes();
+                        DatagramPacket sendEditMusicPacket = new DatagramPacket(sendBufferEditMusic, sendBufferEditMusic.length, group, RMI_PORT);
+                        sendSocket.send(sendEditMusicPacket);
+                        System.out.println("Sent to RMI: " + sendEditMusic);
+                    }
+
+                }
+                else if (receiveString.contains("type|view_song_details")) {
+                    String[] splitString = receiveString.split(";");
+                    //user
+                    String[] splitString1 = splitString[1].split("\\|");
+                    String username = splitString1[1];
+                    //artistName
+                    String[] splitString2 = splitString[2].split("\\|");
+                    String artist = splitString2[1];
+                    //albumName
+                    String[] splitString3 = splitString[3].split("\\|");
+                    String albumName = splitString3[1];
+                    //SongName
+                    String[] splitString4 = splitString[4].split("\\|");
+                    String song = splitString4[1];
+
+                    boolean flag = checkArtistExist(artist);
+                    boolean flag2 = checkAlbumExist(albumName, artist);
+
+
+                    System.out.println(!flag && !flag2);
+                    if (!flag2) {
+                        //search albuns
+                        String sendEditArtist = SongDetails(artist,albumName,song);
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    } else {
+                        String sendEditArtist = "type|view_song_details;error_in_view_song_details";
+                        byte[] sendBufferEditArtist = sendEditArtist.getBytes();
+                        DatagramPacket sendEditArtistPacket = new DatagramPacket(sendBufferEditArtist, sendBufferEditArtist.length, group, RMI_PORT);
+                        sendSocket.send(sendEditArtistPacket);
+                        System.out.println("Sent to RMI: " + sendEditArtist);
+                    }
+
+
                 }
 
 
@@ -1000,12 +1094,12 @@ public class MulticastServer extends Thread {
                         alb.addCritics(c);
                         alb.addAvgRate(rate);
                         //DEBUG
-                        System.out.println(c);
+                        //System.out.println(c);
+                        writeToDatabaseFile(file);
                     }
                 }
             }
         }
-        writeToDatabaseFile(file);
     }
 
     //-------- REMOVE --------//
@@ -1208,13 +1302,13 @@ public class MulticastServer extends Thread {
 
     // --------------- VIEW DATA (send) ----------------- //
 
-    //Albuns de um artista
-    public String artistDetails(String artistName){
+    //artist details
+    public String artistDetails(String artistName) {
         int i = 0;
-        String stringFinal = "type|view_artist_details;artist_name|"+ artistName +";description|";
-        for(Artist a: artistsArrayList){
-            if(a.getArtistName().equals(artistName)){
-                stringFinal+=a.getDescArtist() +";";
+        String stringFinal = "type|view_artist_details;artist_name|" + artistName + ";description|";
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                stringFinal += a.getDescArtist() + ";";
                 //ver albuns de um artista
                 for (Album alb : a.getAlbums()) {
                     stringFinal += "album_" + i + "_name|" + alb.getAlbumName() + ";";
@@ -1226,18 +1320,19 @@ public class MulticastServer extends Thread {
         return stringFinal;
     }
 
-    //Albuns de um artista
-    public String albumDetails(String artistName, String albumName){
+    //album details
+    public String albumDetails(String artistName, String albumName) {
         int i = 0;
-        String stringFinal = "type|view_album_details;artist_name|"+ artistName +";album_name|" + albumName + ";";
+        String stringFinal = "type|view_album_details;artist_name|" + artistName + ";album_name|" + albumName;
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(artistName)) {
                     for (Album alb : a.getAlbums()) {
                         if (alb.getAlbumName().equals(albumName)) {
+                            stringFinal += ";description|"+alb.getDescription()+";genre|"+alb.getMusicalGenre()+";release|"+alb.getReleaseDate();
                             if (!alb.getSongs().isEmpty()) {
                                 for (Song s : alb.getSongs()) {
-                                    stringFinal += "song_" + i + "_name|" + s.getSongName() + ";";
+                                    stringFinal += ";song_" + i + "_name|" + s.getSongName();
                                     i++;
                                 }
                             }
@@ -1246,17 +1341,43 @@ public class MulticastServer extends Thread {
                 }
             }
         }
+        stringFinal += ";" ;
         return stringFinal;
     }
 
-    //Albuns de um artista
-    public String albumCritics(String artistName, String albumName){
-        float criticsAvg = calAvgRate(artistName,albumName);
+    //song details
+    public String SongDetails(String artistName, String albumName, String song) {
+        String stringFinal = "type|view_song_details;artist_name|" + artistName + ";album_name|" + albumName + ";song_name|" + song;
+        if (!artistsArrayList.isEmpty()) {
+            for (Artist a : artistsArrayList) {
+                if (a.getArtistName().equals(artistName)) {
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(albumName)) {
+                            if (!alb.getSongs().isEmpty()) {
+                                for (Song s : alb.getSongs()) {
+                                    if (s.getSongName().equals(song)) {
+                                        stringFinal += ";genre|" + s.getSongGenre() + ";duration|" + s.getDuration() + ";date|" + s.getReleaseDate() + ";lyrics|" + s.getLyrics();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stringFinal += ";";
+        return stringFinal;
+    }
+
+    //album critics
+    public String albumCritics(String artistName, String albumName) {
+        float criticsAvg = calAvgRate(artistName, albumName);
+        System.out.println("sajfsdufdshiu" + criticsAvg);
         String avgString = Float.toString(criticsAvg);
 
         //String avgString = "2";
 
-        String stringFinal = "type|view_album_critics;artist_name|"+ artistName +";album_name|" + albumName + ";avg_rate|" + avgString + ";";
+        String stringFinal = "type|view_album_critics;artist_name|" + artistName + ";album_name|" + albumName + ";avg_rate|" + avgString + ";";
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(artistName)) {
@@ -1273,6 +1394,119 @@ public class MulticastServer extends Thread {
             }
         }
         return stringFinal;
+    }
+
+
+    // --------------- UPLOAD / DOWNLOAD ----------------- //
+
+    //uploads music
+    public boolean musicUpload(ServerSocket ssock, int port, String path) throws IOException {
+        System.out.println("oi1");
+        //Initialize Sockets
+        try {
+
+            System.out.println(ssock);
+            Socket socket = ssock.accept();
+            System.out.println("oi3");
+
+            //Specify the file
+            File file = new File(path);
+            FileInputStream fis = new FileInputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+
+            //Get socket's output stream
+            OutputStream os = socket.getOutputStream();
+            System.out.println("oi4");
+
+
+            //Read File Contents into contents array
+            byte[] contents;
+            long fileLength = file.length();
+            long current = 0;
+
+            while (current != fileLength) {
+                int size = 10000;
+                if (fileLength - current >= size)
+                    current += size;
+                else {
+                    size = (int) (fileLength - current);
+                    current = fileLength;
+                }
+                contents = new byte[size];
+                bis.read(contents, 0, size);
+                os.write(contents);
+                System.out.print("Sending file ... " + (current * 100) / fileLength + "% complete!");
+            }
+
+            os.flush();
+            //File transfer done. Close the socket connection!
+            socket.close();
+            ssock.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("File sent succesfully!");
+        return true;
+    }
+
+    //downloads musis
+    public boolean musicDownload(ServerSocket ssock, int port, String path) throws IOException {
+        //Initialize Sockets
+        Socket socket = ssock.accept();
+        String aux = "";
+
+        byte[] contents = new byte[10000];
+
+        if(path.contains("kiminonawa")){
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa_download.mp3";
+        }
+        else if(path.contains("Love")){
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love.mp3_download.mp3";
+        }
+        else if(path.contains("Gideon")){
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon_download.mp3";
+        }
+
+
+        //Initialize the FileOutputStream to the output file's full path.
+        FileOutputStream fos = new FileOutputStream(aux);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        InputStream is = socket.getInputStream();
+
+        //No of bytes read in one read() call
+        int bytesRead = 0;
+
+        while((bytesRead=is.read(contents))!=-1)
+            bos.write(contents, 0, bytesRead);
+
+        bos.flush();
+        socket.close();
+        ssock.close();
+
+        System.out.println("File saved successfully!");
+        return true;
+    }
+
+    //adds id to an existing music
+    public boolean addUploadToSong(int serialNumber, String albumName, String artistName, String musicName, File file) throws IOException {
+        for (Artist a : artistsArrayList) {
+            if (a.getArtistName().equals(artistName)) {
+                for (Album alb : a.getAlbums()) {
+                    if (alb.getAlbumName().equals(albumName)) {
+                        for(Song s : alb.getSongs()){
+                            if (s.getSongName().equals(musicName)) {
+                                s.addUploadId(serialNumber);
+                                writeToDatabaseFile(file);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     // --------------- OBJECT FILES STUFF ----------------- //

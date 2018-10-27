@@ -1,5 +1,7 @@
 import javax.swing.*;
+import java.io.*;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.rmi.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDate;
@@ -121,6 +123,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                         return;
                     case 3:
                         writeCritic(username);
+                        return;
+                    case 4:
+                        uploadFile(username);
+                        return;
+                    case 5:
+                        downloadFile(username);
                         return;
                     case 0:
                         System.out.println("Logged out!");
@@ -388,8 +396,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 System.out.println("\n\t- View Data -");
                 System.out.println("1. View album details.");
                 System.out.println("2. View artist details.");
-                System.out.println("3. View album critics.");
-                System.out.println("4. Back to main menu");
+                System.out.println("3. View song details.");
+                System.out.println("4. View album critics.");
+                System.out.println("5. Back to main menu");
 
                 System.out.println("0. Quit");
                 Scanner s = new Scanner(System.in);
@@ -397,7 +406,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 int opt = Integer.parseInt(strOpt);
 
                 //verificacao option
-                if ((opt < 0) || (opt > 4)) {
+                if ((opt < 0) || (opt > 5)) {
                     System.out.println("\tInvalid option! ");
                     continue;
                 }
@@ -414,12 +423,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                         viewData(username);
                         return;
                     case 3:
+                        viewSongDetails(username);
+                        viewData(username);
+                        return;
+                    case 4:
                         //view album critics
                         viewAlbumCritics(username);
                         viewData(username);
                         return;
 
-                    case 4:
+                    case 5:
                         menuUser(username);
                         return;
                     case 0:
@@ -743,6 +756,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
 
     // -------- VIEW DATA FUCNTIONS -----------------------
+
     public static void viewArtistDetails(String username) throws RemoteException {
         System.out.println("\n\t- View Artist Details -");
         Scanner s = new Scanner(System.in);
@@ -789,7 +803,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     }
 
-    public static void viewAlbumDetails(String username) throws RemoteException {
+    public static void viewAlbumDetails(String username) {
         System.out.println("\n\t- View Album Details -");
         Scanner s = new Scanner(System.in);
 
@@ -801,7 +815,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
         try {
             String result = rmiInterface.checkViewAlbumDetails(username,artist,album);
-            if (result.equals("type|view_album_details;error in view_album_details")) {
+            if (result.equals("type|view_album_details;error_in_view_album_details")) {
                 System.out.println("An error ocurred... Try again!");
                 menuUser(username);
             } else {
@@ -811,8 +825,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
                 String[] splitStringName = splitStringAll[1].split("\\|");
                 System.out.println("Artist name: " + splitStringName[1]);
+                String[] splitString2 = splitStringAll[3].split("\\|");
+                System.out.println("Description: " + splitString2[1]);
+                String[] splitString3 = splitStringAll[4].split("\\|");
+                System.out.println("Musical Genre: " + splitString3[1]);
+                String[] splitString4 = splitStringAll[5].split("\\|");
+                System.out.println("Release Date: " + splitString4[1]);
 
-                int j = 3, size = splitStringAll.length;
+
+                int j = 5, size = splitStringAll.length;
 
                 if(size > 2) {
                     System.out.println("Songs:");
@@ -826,7 +847,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         } catch (RemoteException e) {
             viewAlbumDetailsLookup(artist, album, username);
         }
-
 
     }
 
@@ -1101,6 +1121,241 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("Your rights have been changed to editor.");
     }
 
+    //-------MUSIC FUNCTIONS----------//
+
+    public static void viewSongDetails(String username){
+        System.out.println("\n\t- View Song Details -");
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Artist name:");
+        String artist = s.nextLine();
+        System.out.println("Album name:");
+        String album = s.nextLine();
+        System.out.println("Song name:");
+        String song = s.nextLine();
+
+
+
+        try {
+            String result = rmiInterface.checkViewSongDetails(username,artist,album,song);
+            if (result.equals("type|view_song_details;error_in_view_song_details")) {
+                System.out.println("An error ocurred... Try again!");
+                menuUser(username);
+            } else {
+                String[] splitString = result.split(";");
+
+                System.out.println("\t-Song Details-");
+
+                //aqui
+                String [] splitString3 =splitString[3].split("\\|");
+                System.out.println("Music Name: " + splitString3[1]);
+
+                //album name
+                String [] splitString4 =splitString[4].split("\\|");
+                System.out.println("Music Genre: " +splitString4[1]);
+
+                //album name
+                String [] splitString5 =splitString[5].split("\\|");
+                System.out.println("Duration: " + splitString5[1]);
+
+                //album name
+                String [] splitString6 =splitString[6].split("\\|");
+                System.out.println("Release Date: " + splitString6[1]);
+
+                ////album name
+                String [] splitString7 =splitString[7].split("\\|");
+                System.out.println("Lyrics: " + splitString7[1]);
+
+            }
+        } catch (RemoteException e) {
+            viewSongDetailsLookup(artist, album, song, username);
+        }
+
+    }
+
+    public static void uploadFile(String username){
+
+        System.out.println("\n\t- Upload Music -");
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("1. Kimi no na wa-Radwimps");
+        System.out.println("2. Mystery of love-Sufjan Stevens");
+        System.out.println("3. Visions of Gideon-Sufjan Stevens");
+
+        String musicNumber = s.nextLine();
+
+        String musicName = "";
+        String aux = "";
+
+        String music = "";
+        String album = "";
+        String artist = "";
+
+        if(musicNumber.equals("1")){
+            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa.mp3";
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa";
+            music = "kimi no na wa";
+            album = "chinocada";
+            artist = "radwimps";
+        }
+        else if(musicNumber.equals("2")){
+            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love.mp3";
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love";
+            music = "mystery of love";
+            album = "Call me by your name";
+            artist = "Sufjan Stevens";
+
+        }
+        else if(musicNumber.equals("3")){
+            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon.mp3";
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon";
+            music = "visions of gideon";
+            album = "Call me by your name";
+            artist = "Sufjan Stevens";
+        }
+
+        try {
+            int porto = rmiInterface.checkUpload(username,musicName,album,artist,music);
+            if (porto != -1) {
+                System.out.println("entrei aqui!!!");
+                musicUploadClient(porto,aux);
+                System.out.println("Music downloaded.");
+                menuUser(username);
+
+
+            } else {
+                System.out.println("Error downloading music.");
+                menuUser(username);
+            }
+        } catch (RemoteException e){
+            uploadFileLookup(musicName, aux, music, album, artist, username);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void musicUploadClient(int porto,String path) {
+        //Initialize socket
+        Socket socket = null;
+        try {
+            socket = new Socket("localhost", porto);
+            byte[] contents = new byte[10000];
+            //Initialize the FileOutputStream to the output file's full path.
+            FileOutputStream fos = new FileOutputStream(path+"_upload.mp3");
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            InputStream is = socket.getInputStream();
+
+            //No of bytes read in one read() call
+            int bytesRead = 0;
+            while ((bytesRead = is.read(contents)) != -1)
+                bos.write(contents, 0, bytesRead);
+
+            bos.flush();
+            socket.close();
+        } catch (IOException e){
+            System.out.println("Entrei na exception");
+        }
+        System.out.println("File saved successfully!");
+    }
+
+    public static void musicDownload(int porto, String path) throws IOException {
+        Socket socket = new Socket("localhost", 5000);
+        //System.out.println(porto);
+        //Specify the file
+        File file = new File(path);
+        FileInputStream fis = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+
+        //Get socket's output stream
+        OutputStream os = socket.getOutputStream();
+
+        //Read File Contents into contents array
+        byte[] contents;
+        long fileLength = file.length();
+        long current = 0;
+
+        while(current!=fileLength){
+            int size = 10000;
+            if(fileLength - current >= size)
+                current += size;
+            else{
+                size = (int)(fileLength - current);
+                current = fileLength;
+            }
+            contents = new byte[size];
+            bis.read(contents, 0, size);
+            os.write(contents);
+            System.out.print("Receiving file ... "+(current*100)/fileLength+"% complete!");
+        }
+
+        os.flush();
+        //File transfer done. Close the socket connection!
+        socket.close();
+        System.out.println("File saved succesfully!");
+    }
+
+    public static void downloadFile(String username){
+
+        System.out.println("\n\t- Download Music -");
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("1. Kimi no na wa-Radwimps");
+        System.out.println("2. Mystery of love-Sufjan Stevens");
+        System.out.println("3. Visions of Gideon-Sufjan Stevens");
+
+        String musicNumber = s.nextLine();
+
+        String musicName = "";
+        String aux = "";
+
+        String music = "";
+        String album = "";
+        String artist = "";
+
+        if(musicNumber.equals("1")){
+            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa.mp3";
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa";
+            music = "kimi no na wa";
+            album = "chinocada";
+            artist = "radwimps";
+        }
+        else if(musicNumber.equals("2")){
+            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love.mp3";
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love";
+            music = "mystery of love";
+            album = "Call me by your name";
+            artist = "Sufjan Stevens";
+
+        }
+        else if(musicNumber.equals("3")){
+            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon.mp3";
+            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon";
+            music = "visions of gideon";
+            album = "Call me by your name";
+            artist = "Sufjan Stevens";
+        }
+
+        try {
+            int porto = rmiInterface.checkDownload(username,musicName,album,artist,music);
+            if (porto != -1) {
+                System.out.println("entrei aqui!!!");
+                musicDownload(porto,musicName);
+                System.out.println("Music uploaded.");
+                menuUser(username);
+
+
+            } else {
+                System.out.println("Error uploading music.");
+                menuUser(username);
+            }
+        } catch (RemoteException e){
+            downloadFileLookup(musicName, music, album, artist, username);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     //-------EXCEPTION HANDLING----------//
 
     //handles remote exception in starting rmiclient
@@ -1181,6 +1436,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                         return;
                     case 3:
                         writeCritic(username);
+                        return;
+                    case 4:
+                        uploadFile(username);
+                        return;
+                    case 5:
+                        downloadFile(username);
                         return;
                     case 0:
                         System.out.println("Logged out!");
@@ -1500,7 +1761,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 rmiInterface.sayHello();
 
                 String result = rmiInterface.checkViewAlbumDetails(username,artist,album);
-                if (result.equals("type|view_album_details;error in view_album_details")) {
+                if (result.equals("type|view_album_details;error_in_view_album_details")) {
                     System.out.println("An error ocurred... Try again!");
                     menuUser(username);
                 } else {
@@ -1510,8 +1771,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
                     String[] splitStringName = splitStringAll[1].split("\\|");
                     System.out.println("Artist name: " + splitStringName[1]);
+                    String[] splitString2 = splitStringAll[3].split("\\|");
+                    System.out.println("Description: " + splitString2[1]);
+                    String[] splitString3 = splitStringAll[4].split("\\|");
+                    System.out.println("Musical Genre: " + splitString3[1]);
+                    String[] splitString4 = splitStringAll[5].split("\\|");
+                    System.out.println("Release Date: " + splitString4[1]);
 
-                    int j = 3, size = splitStringAll.length;
+
+                    int j = 5, size = splitStringAll.length;
 
                     if(size > 2) {
                         System.out.println("Songs:");
@@ -1816,5 +2084,123 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
             }
         }
     }
+
+    //handles remote exception in view song details
+    public static void viewSongDetailsLookup(String artist, String album, String song, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                String result = rmiInterface.checkViewSongDetails(username,artist,album,song);
+                if (result.equals("type|view_song_details;error_in_view_song_details")) {
+                    System.out.println("An error ocurred... Try again!");
+                    menuUser(username);
+                } else {
+                    String[] splitString = result.split(";");
+
+                    System.out.println("\t-Song Details-");
+
+                    //aqui
+                    String [] splitString3 =splitString[3].split("\\|");
+                    System.out.println("Music Name: " + splitString3[1]);
+
+                    //album name
+                    String [] splitString4 =splitString[4].split("\\|");
+                    System.out.println("Music Genre: " +splitString4[1]);
+
+                    //album name
+                    String [] splitString5 =splitString[5].split("\\|");
+                    System.out.println("Duration: " + splitString5[1]);
+
+                    //album name
+                    String [] splitString6 =splitString[6].split("\\|");
+                    System.out.println("Release Date: " + splitString6[1]);
+
+                    ////album name
+                    String [] splitString7 =splitString[7].split("\\|");
+                    System.out.println("Lyrics: " + splitString7[1]);
+
+                }
+
+
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in upload file
+    public static void uploadFileLookup(String musicName, String aux, String music, String album, String artist, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                int porto = rmiInterface.checkUpload(username,musicName,album,artist,music);
+                if (porto != -1) {
+                    System.out.println("entrei aqui!!!");
+                    musicUploadClient(porto,aux);
+                    System.out.println("Music downloaded.");
+                    menuUser(username);
+
+
+                } else {
+                    System.out.println("Error downloading music.");
+                    menuUser(username);
+                }
+
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
+
+    //handles remote exception in download file
+    public static void downloadFileLookup(String musicName, String music, String album, String artist, String username){
+        int fails = 0;
+        while(fails < 30){
+            try{
+                Thread.sleep(1000);
+                rmiInterface = (RMI) Naming.lookup("rmi://localhost:7000/DropMusic");
+                rmiInterface.sayHello();
+
+                int porto = rmiInterface.checkDownload(username,musicName,album,artist,music);
+                if (porto != -1) {
+                    System.out.println("entrei aqui!!!");
+                    musicDownload(porto,musicName);
+                    System.out.println("Music uploaded.");
+                    menuUser(username);
+
+
+                } else {
+                    System.out.println("Error uploading music.");
+                    menuUser(username);
+                }
+
+            } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
+                fails++;
+                if(fails == 30) {
+                    System.out.println("Couldn't connect to RMI Server.");
+                    System.exit(0);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
 
