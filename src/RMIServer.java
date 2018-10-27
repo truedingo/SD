@@ -875,6 +875,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 		System.out.println("PortoRMI: " + configurations.getRMIport());
 		System.out.println("HostRMI: " + configurations.getRMIhost());
 		int fails=0;
+		MulticastSocket connectionSocket = null;
 		while(fails<6) {
 			try {
 
