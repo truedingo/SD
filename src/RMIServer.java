@@ -65,6 +65,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        } catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -127,6 +129,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+                System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,6 +171,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -205,6 +211,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -242,6 +250,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -281,6 +291,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -320,6 +332,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -359,6 +373,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -398,6 +414,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -438,6 +456,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -479,6 +499,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -519,6 +541,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -560,6 +584,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -596,6 +622,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -633,6 +661,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -670,6 +700,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -707,6 +739,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -744,6 +778,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -823,6 +859,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        }catch(SocketTimeoutException e){
+            System.out.println("Couldn't connect to Multicast.");
         } catch (IOException e) {
             e.printStackTrace();
         }
