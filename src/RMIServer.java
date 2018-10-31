@@ -853,7 +853,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
         return client;
     }
 
-    public synchronized String removeLoggedUsers(String username) throws RemoteException {
+    public void removeLoggedUsers(String username) throws RemoteException {
         ClientInterface rem = null;
         if(!loggedUsers.isEmpty()){
             for(ClientInterface c : loggedUsers){
@@ -864,7 +864,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI, Serializable 
             }
         }
         loggedUsers.remove(rem);
-        return "deleted";
     }
 
     public synchronized boolean checkNotificationsRights(String username, ClientInterface client) {

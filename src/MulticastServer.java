@@ -45,8 +45,8 @@ public class MulticastServer extends Thread {
             socket.joinGroup(group);
 
             //files stuff
-            String userFilesString = "/Users/dingo/Desktop/SD/DropMusicMerged/users" + database_uid + ".txt";
-            String databaseFilesString = "/Users/dingo/Desktop/SD/DropMusicMerged/database" + database_uid + ".txt";
+            String userFilesString = "/Users/dingo/Desktop/DropMusic/Source Code/src/users" + database_uid + ".txt";
+            String databaseFilesString = "/Users/dingo/Desktop/DropMusic/Source Code/src/database" + database_uid + ".txt";
 
             File userFiles = new File(userFilesString);
             File databaseFiles = new File(databaseFilesString);
@@ -83,7 +83,7 @@ public class MulticastServer extends Thread {
                         sendSocket.send(sendRegisterPacket);
                         System.out.println();
                         System.out.println("Sent to RMI: " + sendRegister);
-                    } else {
+                    } else if(!flag) {
                         System.out.println("Username already in use");
                         String sendError = "type|status;logged|off;msg|ErrorWithUsername";
                         byte[] sendBufferError = sendError.getBytes();
@@ -117,7 +117,7 @@ public class MulticastServer extends Thread {
                             sendSocket.send(sendLoginPacket);
                             System.out.println("Sent to RMI: " + sendLogin);
                         }
-                    } else {
+                    } else if(!flag) {
                         String sendLogin = "type|status;logged|on;msg|ErrorWithLogin";
                         byte[] sendBufferLogin = sendLogin.getBytes();
                         DatagramPacket sendLoginPacket = new DatagramPacket(sendBufferLogin, sendBufferLogin.length, group, RMI_PORT);
@@ -205,18 +205,18 @@ public class MulticastServer extends Thread {
 
                     boolean flag;
                     flag = checkArtistExist(getArtistName);
+                    boolean flag2 = checkAlbumExist(getAlbumName, getArtistName);
+                    System.out.println("Flag Artist: "+flag + " Flag Album: "+flag2);
                     System.out.println(flag);
-                    if (!flag) {
+                    if (!flag && flag2) {
                         addAlbum(getAlbumName, getDescription, getMusicGenre, getDate, getArtistName, databaseFiles);
                         String sendAlbum = "type|insert_album;successful";
-
                         byte[] sendBufferAlbum = sendAlbum.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferAlbum, sendBufferAlbum.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
                         System.out.println("Sent to RMI: " + sendAlbum);
-                    } else {
+                    } else if(flag || !flag2){
                         String sendArtist = "type|insert_album;error in insert album";
-
                         byte[] sendBufferAlbum = sendArtist.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferAlbum, sendBufferAlbum.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
@@ -232,7 +232,7 @@ public class MulticastServer extends Thread {
 
                     boolean flag;
                     flag = checkArtistExist(artistName);
-                    System.out.println(flag);
+                    //System.out.println(flag);
                     if (flag) {
                         //Adiciona artista a lista
                         addArtist(artistName, artistDescription, databaseFiles);
@@ -244,7 +244,6 @@ public class MulticastServer extends Thread {
                         System.out.println("Sent to RMI: " + sendArtist);
                     } else {
                         String sendArtist = "type|insert_artist;error in insert artist";
-
                         byte[] sendBufferArtist = sendArtist.getBytes();
                         DatagramPacket artistPacket = new DatagramPacket(sendBufferArtist, sendBufferArtist.length, group, RMI_PORT);
                         sendSocket.send(artistPacket);
@@ -856,7 +855,7 @@ public class MulticastServer extends Thread {
     //-------- LOGIN/REGISTER--------//
 
     //register
-    public boolean register(String username, String password, File file) throws IOException {
+    public synchronized boolean register(String username, String password, File file) throws IOException {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 return false;
@@ -870,7 +869,7 @@ public class MulticastServer extends Thread {
     }
 
     //login
-    public boolean login(String username, String password) {
+    public synchronized boolean login(String username, String password) {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
                 return true;
@@ -882,7 +881,7 @@ public class MulticastServer extends Thread {
 
     // --------- SEARCH (send) ------------ //
 
-    public int countItems(String albumName) {
+    public synchronized int countItems(String albumName) {
         int itemCount = 0;
         for (Artist a : artistsArrayList) {
             for (Album alb : a.getAlbums()) {
@@ -896,7 +895,7 @@ public class MulticastServer extends Thread {
         return itemCount;
     }
 
-    public String searchForAlbumName(String albumName) {
+    public synchronized String searchForAlbumName(String albumName) {
         int itemCount = countItems(albumName);
         String stringFinal = "type|search_album_name;item_count|" + itemCount + ";";
         int i = 0;
@@ -911,7 +910,7 @@ public class MulticastServer extends Thread {
         return stringFinal;
     }
 
-    public int countAlbums(String artistName) {
+    public synchronized int countAlbums(String artistName) {
         int itemCount = 0;
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
@@ -923,7 +922,7 @@ public class MulticastServer extends Thread {
         return itemCount;
     }
 
-    public String searchForArtistName(String artistName) {
+    public synchronized String searchForArtistName(String artistName) {
         int itemCount = countAlbums(artistName);
         String stringFinal = "type|search_album_artist;artist_name|" + artistName + ";item_count|" + itemCount + ";";
         int i = 0;
@@ -942,7 +941,7 @@ public class MulticastServer extends Thread {
     //-------- CHECK--------//
 
     //check if user is editor
-    public boolean checkRights(String username) {
+    public synchronized boolean checkRights(String username) {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 if (u.isRights()) {
@@ -954,7 +953,7 @@ public class MulticastServer extends Thread {
     }
 
     //check artist - funcao que verifica se o artista que vamos inserir ja existe - se ja existir retorna false, se nao retorna true
-    public boolean checkArtistExist(String name) {
+    public synchronized boolean checkArtistExist(String name) {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(name)) {
@@ -966,12 +965,17 @@ public class MulticastServer extends Thread {
     }
 
     //check album - Se ja existir um album com esse nome retorna falso
-    public boolean checkAlbumExist(String albumName, String artistName) {
+    public synchronized boolean checkAlbumExist(String albumName, String artistName) {
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
-                for (Album alb : a.getAlbums()) {
-                    if (alb.getAlbumName().equals(albumName)) {
-                        return false;
+                if(a.getAlbums().isEmpty()){
+                    return true;
+                }
+                else {
+                    for (Album alb : a.getAlbums()) {
+                        if (alb.getAlbumName().equals(albumName)) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -980,7 +984,7 @@ public class MulticastServer extends Thread {
     }
 
     //check music - se ja existir uma musica desse artista com esse nome falso
-    public boolean checkMusicRepetition(String artistName, String albumName, String musicName) {
+    public synchronized boolean checkMusicRepetition(String artistName, String albumName, String musicName) {
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
                 for (Album alb : a.getAlbums()) {
@@ -998,7 +1002,7 @@ public class MulticastServer extends Thread {
     }
 
     //notify later
-    public void notifyRights(String username) {
+    public synchronized void notifyRights(String username) {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 u.setNotifiedRights(true);
@@ -1007,7 +1011,7 @@ public class MulticastServer extends Thread {
     }
 
     //check notify later
-    public boolean checkNotifyLater(String username) {
+    public synchronized boolean checkNotifyLater(String username) {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 if (u.isNotifiedRights()) {
@@ -1019,7 +1023,7 @@ public class MulticastServer extends Thread {
     }
 
     //check album 2
-    public boolean checkAlbum2(String albumName) {
+    public synchronized boolean checkAlbum2(String albumName) {
         for (Artist a : artistsArrayList) {
             for (Album alb : a.getAlbums()) {
                 if (alb.getAlbumName().equals(albumName)) {
@@ -1031,7 +1035,7 @@ public class MulticastServer extends Thread {
     }
 
     //changes boolean to false
-    public void setNotifyRights(String username, File file) throws IOException {
+    public synchronized void setNotifyRights(String username, File file) throws IOException {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 u.setNotifiedRights(false);
@@ -1043,7 +1047,7 @@ public class MulticastServer extends Thread {
     //-------- ADD --------//
 
     //add artist
-    public void addArtist(String name, String description, File file) throws IOException {
+    public synchronized void addArtist(String name, String description, File file) throws IOException {
         Artist a;
         a = new Artist(name, description);
         artistsArrayList.add(a);
@@ -1054,7 +1058,7 @@ public class MulticastServer extends Thread {
     }
 
     //add song
-    public void addSong(String name, String genre, String duration, String udate, String lyrics, String albumName, String artistName, File file) throws IOException {
+    public synchronized void addSong(String name, String genre, String duration, String udate, String lyrics, String albumName, String artistName, File file) throws IOException {
 
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
@@ -1072,7 +1076,7 @@ public class MulticastServer extends Thread {
     }
 
     //add album
-    public void addAlbum(String albumName, String desc, String musicGenre, String date, String artistName, File file) throws IOException {
+    public synchronized void addAlbum(String albumName, String desc, String musicGenre, String date, String artistName, File file) throws IOException {
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
                 Album album = new Album(albumName, desc, date, musicGenre);
@@ -1085,7 +1089,7 @@ public class MulticastServer extends Thread {
     }
 
     //add critic
-    public void addCritic(String username, String artistName, String albumName, int rate, String critic, File file) throws IOException {
+    public synchronized void addCritic(String username, String artistName, String albumName, int rate, String critic, File file) throws IOException {
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
                 for (Album alb : a.getAlbums()) {
@@ -1105,7 +1109,7 @@ public class MulticastServer extends Thread {
     //-------- REMOVE --------//
 
     //remove music
-    public void removeMusic(String musicName, String artistName, String albumName, File file) throws IOException {
+    public synchronized void removeMusic(String musicName, String artistName, String albumName, File file) throws IOException {
         Album getAlbum = null;
         Song removeSong = null;
         if (!artistsArrayList.isEmpty()) {
@@ -1131,7 +1135,7 @@ public class MulticastServer extends Thread {
     }
 
     //remove album
-    public void removeAlbum(String artistName, String albumName, File file) throws IOException {
+    public synchronized void removeAlbum(String artistName, String albumName, File file) throws IOException {
         Artist getArtist = null;
         Album removeAlbum = null;
         if (!artistsArrayList.isEmpty()) {
@@ -1151,7 +1155,7 @@ public class MulticastServer extends Thread {
     }
 
     //remove artist
-    public void removeArtist(String artistName, File file) throws IOException {
+    public synchronized void removeArtist(String artistName, File file) throws IOException {
         Artist removeArtist = null;
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
@@ -1168,7 +1172,7 @@ public class MulticastServer extends Thread {
     //-------- EDIT --------//
 
     //edit artist
-    public boolean editArtist(String oldArtistName, String newArtistName, String description, File file) throws IOException {
+    public synchronized boolean editArtist(String oldArtistName, String newArtistName, String description, File file) throws IOException {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(oldArtistName)) {
@@ -1186,7 +1190,7 @@ public class MulticastServer extends Thread {
     }
 
     //edit album
-    public boolean editAlbum(String artistName, String OldAlbumName, String newAlbumName, String description, String musicGenre, String udate, File file) throws IOException {
+    public synchronized boolean editAlbum(String artistName, String OldAlbumName, String newAlbumName, String description, String musicGenre, String udate, File file) throws IOException {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(artistName)) {
@@ -1210,7 +1214,7 @@ public class MulticastServer extends Thread {
     }
 
     //edit music
-    public boolean editMusic(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics, File file) throws IOException {
+    public synchronized boolean editMusic(String artistName, String albumName, String oldMusicName, String newMusicName, String musicGenre, String duration, String date, String lyrics, File file) throws IOException {
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
                 if (a.getArtistName().equals(artistName)) {
@@ -1244,7 +1248,7 @@ public class MulticastServer extends Thread {
     //-------- OTHER --------//
 
     //set rights
-    public void setRights(String username, File file) throws IOException {
+    public synchronized void setRights(String username, File file) throws IOException {
         for (User u : usersArrayList) {
             if (u.getUsername().equals(username)) {
                 u.setRights(true);
@@ -1254,7 +1258,7 @@ public class MulticastServer extends Thread {
     }
 
     //avg rate calc
-    public float calAvgRate(String artistName, String albumName) {
+    public synchronized float calAvgRate(String artistName, String albumName) {
         int sum = 0;
         float totalRates = 0;
         for (Artist a : artistsArrayList) {
@@ -1278,7 +1282,7 @@ public class MulticastServer extends Thread {
     }
 
     //retorna false caso o user ja tena ter feito uma critica
-    public boolean checkCritics(String artistName, String albumName,String username){
+    public synchronized boolean checkCritics(String artistName, String albumName,String username){
         int result = 0;
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
@@ -1303,7 +1307,7 @@ public class MulticastServer extends Thread {
     // --------------- VIEW DATA (send) ----------------- //
 
     //artist details
-    public String artistDetails(String artistName) {
+    public synchronized String artistDetails(String artistName) {
         int i = 0;
         String stringFinal = "type|view_artist_details;artist_name|" + artistName + ";description|";
         for (Artist a : artistsArrayList) {
@@ -1321,7 +1325,7 @@ public class MulticastServer extends Thread {
     }
 
     //album details
-    public String albumDetails(String artistName, String albumName) {
+    public synchronized String albumDetails(String artistName, String albumName) {
         int i = 0;
         String stringFinal = "type|view_album_details;artist_name|" + artistName + ";album_name|" + albumName;
         if (!artistsArrayList.isEmpty()) {
@@ -1346,7 +1350,7 @@ public class MulticastServer extends Thread {
     }
 
     //song details
-    public String SongDetails(String artistName, String albumName, String song) {
+    public synchronized String SongDetails(String artistName, String albumName, String song) {
         String stringFinal = "type|view_song_details;artist_name|" + artistName + ";album_name|" + albumName + ";song_name|" + song;
         if (!artistsArrayList.isEmpty()) {
             for (Artist a : artistsArrayList) {
@@ -1370,7 +1374,7 @@ public class MulticastServer extends Thread {
     }
 
     //album critics
-    public String albumCritics(String artistName, String albumName) {
+    public synchronized String albumCritics(String artistName, String albumName) {
         float criticsAvg = calAvgRate(artistName, albumName);
         System.out.println("sajfsdufdshiu" + criticsAvg);
         String avgString = Float.toString(criticsAvg);
@@ -1399,8 +1403,9 @@ public class MulticastServer extends Thread {
 
     // --------------- UPLOAD / DOWNLOAD ----------------- //
 
+    //http://www.codebytes.in/2014/11/file-transfer-using-tcp-java.html?fbclid=IwAR2tAKzWEfDqG9oQvzA7bfOkgnihxFlgbuAmbSVVLCn_WGCOgJxW5AdRQ8o
     //uploads music
-    public boolean musicUpload(ServerSocket ssock, int port, String path) throws IOException {
+    public synchronized boolean musicUpload(ServerSocket ssock, int port, String path) throws IOException {
         System.out.println("oi1");
         //Initialize Sockets
         try {
@@ -1451,7 +1456,7 @@ public class MulticastServer extends Thread {
     }
 
     //downloads musis
-    public boolean musicDownload(ServerSocket ssock, int port, String path) throws IOException {
+    public synchronized boolean musicDownload(ServerSocket ssock, int port, String path) throws IOException {
         //Initialize Sockets
         Socket socket = ssock.accept();
         String aux = "";
@@ -1489,7 +1494,7 @@ public class MulticastServer extends Thread {
     }
 
     //adds id to an existing music
-    public boolean addUploadToSong(int serialNumber, String albumName, String artistName, String musicName, File file) throws IOException {
+    public synchronized boolean addUploadToSong(int serialNumber, String albumName, String artistName, String musicName, File file) throws IOException {
         for (Artist a : artistsArrayList) {
             if (a.getArtistName().equals(artistName)) {
                 for (Album alb : a.getAlbums()) {
@@ -1513,7 +1518,7 @@ public class MulticastServer extends Thread {
     //https://coderanch.com/t/278704/java/read-objects-file-ObjectInputStream
 
     //write from array users to file
-    public void writeToUsersFile(File file) throws IOException {
+    public synchronized void writeToUsersFile(File file) throws IOException {
         FileOutputStream f = new FileOutputStream(file);
         ObjectOutputStream o = new ObjectOutputStream(f);
 
@@ -1525,7 +1530,7 @@ public class MulticastServer extends Thread {
     }
 
     //reads from user file and stores into an array
-    public CopyOnWriteArrayList<User> readFromUsersFile(File file) throws IOException, ClassNotFoundException {
+    public synchronized CopyOnWriteArrayList<User> readFromUsersFile(File file) throws IOException, ClassNotFoundException {
         FileInputStream fi = new FileInputStream(file);
         ObjectInputStream oi = new ObjectInputStream(fi);
         while(true){
@@ -1541,7 +1546,7 @@ public class MulticastServer extends Thread {
     }
 
     //write from array database to file
-    public void writeToDatabaseFile(File file) throws IOException {
+    public synchronized void writeToDatabaseFile(File file) throws IOException {
         FileOutputStream f = new FileOutputStream(file);
         ObjectOutputStream o = new ObjectOutputStream(f);
 
@@ -1553,7 +1558,7 @@ public class MulticastServer extends Thread {
     }
 
     //reads from database file and stores into an array
-    public CopyOnWriteArrayList<Artist> readFromDatabaseFile(File file) throws IOException, ClassNotFoundException {
+    public synchronized CopyOnWriteArrayList<Artist> readFromDatabaseFile(File file) throws IOException, ClassNotFoundException {
         FileInputStream fi = new FileInputStream(file);
         ObjectInputStream oi = new ObjectInputStream(fi);
         while(true){

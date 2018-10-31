@@ -45,7 +45,7 @@ public interface RMI extends Remote {
 
     void addLoggedUsers(ClientInterface c) throws java.rmi.RemoteException;
 
-    String removeLoggedUsers(String username) throws RemoteException;
+    void removeLoggedUsers(String username) throws RemoteException;
 
     boolean searchOnlineListRights(String username) throws RemoteException;
 
@@ -57,7 +57,7 @@ public interface RMI extends Remote {
 
     int checkUpload(String username, String musicPath,String albumName, String artistName, String musicName) throws RemoteException;
 
-    int checkDownload(String username, String musicPath,String albumName, String artistName, String musicName);
+    int checkDownload(String username, String musicPath,String albumName, String artistName, String musicName) throws RemoteException;
 
 
 

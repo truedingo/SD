@@ -48,7 +48,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     //-------- MENUS--------//
 
     //menu welcome
-    public static void welcome(){
+    public synchronized static void welcome(){
         while (true){
             try {
                 System.out.println("\n\t- Welcome to DropMusic -");
@@ -90,7 +90,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //menu user
-    public static void menuUser(String username) throws RemoteException {
+    public synchronized static void menuUser(String username) throws RemoteException {
         while (true) {
             int lookupOpt = 0;
             try {
@@ -133,11 +133,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                     case 0:
                         System.out.println("Logged out!");
                         //remover
-                        String logout = rmiInterface.removeLoggedUsers(username);
-                        if (logout.equals("deleted")) {
-                            System.exit(0);
-                        }
-                        return;
+                        rmiInterface.removeLoggedUsers(username);
+                        System.exit(0);
                 }
             }catch(RemoteException e){
                 menuUserLookup(lookupOpt, username);
@@ -146,7 +143,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //menu admin
-    public static void menuAdministrador(String username) throws RemoteException {
+    public synchronized static void menuAdministrador(String username) throws RemoteException {
         while (true) {
             int lookupOpt = 0;
             try {
@@ -188,10 +185,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                     case 0:
                         System.out.println("Logged out!");
                         //remover
-                        String logout = rmiInterface.removeLoggedUsers(username);
-                        if(logout.equals("deleted")){
-                            System.exit(0);
-                        }
+                        rmiInterface.removeLoggedUsers(username);
+                        System.exit(0);
                         return;
                 }
             }catch (NumberFormatException e ){
@@ -203,7 +198,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //menu remove data
-    public static void removeData(String username){
+    public synchronized static void removeData(String username){
         while (true){
             try {
                 System.out.println("\n\t- Remove Data -");
@@ -252,7 +247,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //menu change data
-    public static void changeData(String username){
+    public synchronized static void changeData(String username){
         while (true){
             try {
                 System.out.println("\n\t- Change Data -");
@@ -302,7 +297,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //menu insert data
-    public static void insertData(String username){
+    public synchronized static void insertData(String username){
         while (true){
             try {
                 System.out.println("\t- Insert Data -");
@@ -349,7 +344,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         }
 
     //menu search data
-    public static void searchData(String username){
+    public synchronized static void searchData(String username){
         while (true) {
             try {
                 System.out.println("\n\t- Search Data -");
@@ -390,7 +385,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         }
 
     //menu search data
-    public static void viewData(String username){
+    public synchronized static void viewData(String username){
         while (true) {
             try {
                 System.out.println("\n\t- View Data -");
@@ -453,7 +448,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     //-------- MENU FUNCTIONS--------//
 
     //register
-    public static void register() throws RemoteException{
+    public synchronized static void register() throws RemoteException{
 
         Scanner s = new Scanner(System.in);
         System.out.println("Username: ");
@@ -482,7 +477,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //login
-    public static void login() throws RemoteException{
+    public synchronized static void login() throws RemoteException{
         Scanner s = new Scanner(System.in);
         System.out.println("Username: ");
         String username = s.nextLine();
@@ -520,7 +515,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //change rights
-    public static void changeRights(String user) throws RemoteException {
+    public synchronized static void changeRights(String user) throws RemoteException {
         Scanner s = new Scanner(System.in);
         System.out.println("Insert username: ");
         String username = s.nextLine();
@@ -540,7 +535,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //write critic
-    public static void writeCritic(String username) throws RemoteException{
+    public synchronized static void writeCritic(String username) throws RemoteException{
         System.out.println("\n\t- Write Critic -");
         Scanner s = new Scanner(System.in);
 
@@ -583,7 +578,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     //-------- INSERT FUNCTIONS--------//
 
     //insert music
-    public static void insertMusic(String username) throws RemoteException {
+    public synchronized static void insertMusic(String username) throws RemoteException {
         System.out.println("\n\t- Insert Music -");
         System.out.println("Music name:");
         Scanner s = new Scanner(System.in);
@@ -624,7 +619,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //insert artist
-    public static void insertArtist(String username) throws RemoteException {
+    public synchronized static void insertArtist(String username) throws RemoteException {
         System.out.println("\n\t- Insert Artist -");
         System.out.println("Artist name:");
         Scanner s = new Scanner(System.in);
@@ -647,7 +642,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //insert album
-    public static void insertAlbum(String username) throws RemoteException {
+    public synchronized static void insertAlbum(String username) throws RemoteException {
 
         System.out.println("\n\t- Insert Album -");
         System.out.println("Album name:");
@@ -684,7 +679,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     // ------- SEARCH FUNCTIONS -------- //
 
-    public static void searchAlbumfromAlbumName(String username) throws RemoteException {
+    public synchronized static void searchAlbumfromAlbumName(String username) throws RemoteException {
         System.out.println("\n\t- Search Album from Album Name -");
         Scanner s = new Scanner(System.in);
 
@@ -720,7 +715,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         }
     }
 
-    public static void searchAlbumfromArtist(String username) throws RemoteException {
+    public synchronized static void searchAlbumfromArtist(String username) throws RemoteException {
         System.out.println("\n\t- Search Album from Artist -");
         Scanner s = new Scanner(System.in);
 
@@ -757,7 +752,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     // -------- VIEW DATA FUCNTIONS -----------------------
 
-    public static void viewArtistDetails(String username) throws RemoteException {
+    public synchronized static void viewArtistDetails(String username) throws RemoteException {
         System.out.println("\n\t- View Artist Details -");
         Scanner s = new Scanner(System.in);
 
@@ -803,7 +798,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     }
 
-    public static void viewAlbumDetails(String username) {
+    public synchronized static void viewAlbumDetails(String username) {
         System.out.println("\n\t- View Album Details -");
         Scanner s = new Scanner(System.in);
 
@@ -833,7 +828,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 System.out.println("Release Date: " + splitString4[1]);
 
 
-                int j = 5, size = splitStringAll.length;
+                int j = 6, size = splitStringAll.length;
 
                 if(size > 2) {
                     System.out.println("Songs:");
@@ -850,7 +845,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     }
 
-    public static void viewAlbumCritics(String username) throws RemoteException{
+    public synchronized static void viewAlbumCritics(String username) throws RemoteException{
         System.out.println("\n\t- View Album Critics -");
         Scanner s = new Scanner(System.in);
 
@@ -899,7 +894,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     //-------- REMOVE FUNCTIONS--------//
 
     //remove music
-    public static void removeMusic(String username) throws RemoteException{
+    public synchronized static void removeMusic(String username) throws RemoteException{
         System.out.println("\n\t- Remove Music -");
         Scanner s = new Scanner(System.in);
 
@@ -924,7 +919,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //remove album
-    public static void removeAlbum(String username) throws RemoteException{
+    public synchronized static void removeAlbum(String username) throws RemoteException{
         System.out.println("\n\t- Remove Album -");
         Scanner s = new Scanner(System.in);
 
@@ -949,7 +944,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //remove artist
-    public static void removeArtist(String username) throws RemoteException{
+    public synchronized static void removeArtist(String username) throws RemoteException{
         System.out.println("\n\t- Remove Artist -");
         Scanner s = new Scanner(System.in);
 
@@ -973,7 +968,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     //-------- EDIT FUNCTIONS--------//
 
-    public static void editMusic(String username) throws RemoteException {
+    public synchronized static void editMusic(String username) throws RemoteException {
         System.out.println("\n\t- Edit Music -");
         System.out.println("\n\tINPUT OLD DATA");
 
@@ -1019,7 +1014,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //insert artist
-    public static void editArtist(String username) throws RemoteException {
+    public synchronized static void editArtist(String username) throws RemoteException {
         System.out.println("\n\t- Edit Artist -");
         System.out.println("\n\tINPUT OLD DATA");
 
@@ -1049,7 +1044,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //insert album
-    public static void editAlbum(String username) throws RemoteException {
+    public synchronized static void editAlbum(String username) throws RemoteException {
         System.out.println("\n\t- Edit Album -");
         System.out.println("\n\tINPUT OLD DATA");
 
@@ -1091,10 +1086,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     //-------OTHERS----------//
 
     ///https://stackoverflow.com/questions/44696400/user-to-enter-date-mm-dd-yyyy-and-validate-the-data-entered
-    public static String dateInput(Scanner s) {
+    public synchronized static String dateInput(Scanner s) {
         System.out.println("Please enter a date (mm/dd/yyyy)");
-        String uDate = s.nextLine();
+        String uDate = null;
         try {
+            uDate = s.nextLine();
             LocalDate.parse(uDate, PARSE_FORMATTER);
         } catch (DateTimeParseException dtpe) {
             System.out.println(uDate + " is a not valid Date");
@@ -1123,7 +1119,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     //-------MUSIC FUNCTIONS----------//
 
-    public static void viewSongDetails(String username){
+    //http://www.codebytes.in/2014/11/file-transfer-using-tcp-java.html?fbclid=IwAR2tAKzWEfDqG9oQvzA7bfOkgnihxFlgbuAmbSVVLCn_WGCOgJxW5AdRQ8o
+
+    public synchronized static void viewSongDetails(String username){
         System.out.println("\n\t- View Song Details -");
         Scanner s = new Scanner(System.in);
 
@@ -1173,7 +1171,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
 
     }
 
-    public static void uploadFile(String username){
+    public synchronized static void uploadFile(String username){
 
         System.out.println("\n\t- Upload Music -");
         Scanner s = new Scanner(System.in);
@@ -1234,7 +1232,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         }
     }
 
-    public static void musicUploadClient(int porto,String path) {
+    public synchronized static void musicUploadClient(int porto,String path) {
         //Initialize socket
         Socket socket = null;
         try {
@@ -1258,7 +1256,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("File saved successfully!");
     }
 
-    public static void musicDownload(int porto, String path) throws IOException {
+    public synchronized static void musicDownload(int porto, String path) throws IOException {
         Socket socket = new Socket("localhost", 5000);
         //System.out.println(porto);
         //Specify the file
@@ -1294,7 +1292,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("File saved succesfully!");
     }
 
-    public static void downloadFile(String username){
+    public synchronized static void downloadFile(String username){
 
         System.out.println("\n\t- Download Music -");
         Scanner s = new Scanner(System.in);
@@ -1359,7 +1357,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     //-------EXCEPTION HANDLING----------//
 
     //handles remote exception in starting rmiclient
-    public static void startingLookup(){
+    public synchronized static void startingLookup(){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1379,7 +1377,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in register function
-    public static void registerLookup(String username, String password){
+    public synchronized static void registerLookup(String username, String password){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1409,7 +1407,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in menu user
-    public static void menuUserLookup(int opt, String username){
+    public synchronized static void menuUserLookup(int opt, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1446,11 +1444,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                     case 0:
                         System.out.println("Logged out!");
                         //remover
-                        String logout = rmiInterface.removeLoggedUsers(username);
-                        if(logout.equals("deleted")){
-                            System.exit(0);
-                        }
-                        return;
+                        rmiInterface.removeLoggedUsers(username);
+                        System.exit(0);
                 }
             } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
                 fails++;
@@ -1463,7 +1458,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in menu admin
-    public static void menuAdminLookup(int opt, String username){
+    public synchronized static void menuAdminLookup(int opt, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1498,11 +1493,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                     case 0:
                         System.out.println("Logged out!");
                         //remover
-                        String logout = rmiInterface.removeLoggedUsers(username);
-                        if(logout.equals("deleted")){
-                            System.exit(0);
-                        }
-                        return;
+                        rmiInterface.removeLoggedUsers(username);
+                        System.exit(0);
                 }
             } catch (RemoteException | NotBoundException | MalformedURLException | InterruptedException e) {
                 fails++;
@@ -1515,7 +1507,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in login
-    public static void loginLookup(String username, String password){
+    public synchronized static void loginLookup(String username, String password){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1558,7 +1550,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in change rights
-    public static void changeRightsLookup(String user, String username){
+    public synchronized static void changeRightsLookup(String user, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1585,7 +1577,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in write critic
-    public static void writeCriticLookup(String strArtistName, String strAlbumName, int rate, String strCritic, String username){
+    public synchronized static void writeCriticLookup(String strArtistName, String strAlbumName, int rate, String strCritic, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1622,7 +1614,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in insert music
-    public static void insertMusicLookup(String strName, String strGenre, String strDuration, String udate, String lyrics, String strArtistName, String strAlbumName, String username){
+    public synchronized static void insertMusicLookup(String strName, String strGenre, String strDuration, String udate, String lyrics, String strArtistName, String strAlbumName, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1648,7 +1640,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in insert artist
-    public static void inserArtistLookup(String artistName, String artistDesc, String username){
+    public synchronized static void inserArtistLookup(String artistName, String artistDesc, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1676,7 +1668,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in insert album
-    public static void insertAlbumLookup(String albumName, String albumDescr, String musicalGenre, String udate, String artistName, String username){
+    public synchronized static void insertAlbumLookup(String albumName, String albumDescr, String musicalGenre, String udate, String artistName, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1703,7 +1695,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in view artist details
-    public static void viewArtistDetailsLookup(String artist, String username){
+    public synchronized static void viewArtistDetailsLookup(String artist, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1752,7 +1744,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in view album details
-    public static void viewAlbumDetailsLookup(String artist, String album, String username){
+    public synchronized static void viewAlbumDetailsLookup(String artist, String album, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1779,7 +1771,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                     System.out.println("Release Date: " + splitString4[1]);
 
 
-                    int j = 5, size = splitStringAll.length;
+                    int j = 6, size = splitStringAll.length;
 
                     if(size > 2) {
                         System.out.println("Songs:");
@@ -1801,7 +1793,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in view album critics
-    public static void viewAlbumCriticsLookup(String artist, String album, String username){
+    public synchronized static void viewAlbumCriticsLookup(String artist, String album, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1848,7 +1840,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in search album from album name
-    public static void searchAlbumFromAlbumNameLookup(String albumName, String username){
+    public synchronized static void searchAlbumFromAlbumNameLookup(String albumName, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1889,7 +1881,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in search album from artist lookup
-    public static void searchAlbumfromArtistLookup(String artist, String username){
+    public synchronized static void searchAlbumfromArtistLookup(String artist, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1928,7 +1920,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in remove music
-    public static void removeMusicLookup(String musicName, String artistName, String albumName, String username){
+    public synchronized static void removeMusicLookup(String musicName, String artistName, String albumName, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1954,7 +1946,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in remove album
-    public static void removeAlbumLookup(String albumName, String artistName, String username){
+    public synchronized static void removeAlbumLookup(String albumName, String artistName, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -1981,7 +1973,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in remove artist
-    public static void removeArtistLookup(String artistName, String username){
+    public synchronized static void removeArtistLookup(String artistName, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -2008,7 +2000,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in edit music
-    public static void editMusicLookup(String artistName, String albumName, String oldMusicName, String newMusicName, String strGenre, String strDuration, String udate, String lyrics, String username){
+    public synchronized static void editMusicLookup(String artistName, String albumName, String oldMusicName, String newMusicName, String strGenre, String strDuration, String udate, String lyrics, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -2035,7 +2027,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in edit artist
-    public static void editArtistLookup(String oldArtistName, String newArtistName, String artistDesc, String username){
+    public synchronized static void editArtistLookup(String oldArtistName, String newArtistName, String artistDesc, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -2060,7 +2052,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in edit album
-    public static void editAlbumLookup(String artistName, String oldAlbumName, String newAlbumName, String albumDescr, String musicalGenre, String udate, String username){
+    public synchronized static void editAlbumLookup(String artistName, String oldAlbumName, String newAlbumName, String albumDescr, String musicalGenre, String udate, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -2086,7 +2078,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in view song details
-    public static void viewSongDetailsLookup(String artist, String album, String song, String username){
+    public synchronized static void viewSongDetailsLookup(String artist, String album, String song, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -2137,7 +2129,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in upload file
-    public static void uploadFileLookup(String musicName, String aux, String music, String album, String artist, String username){
+    public synchronized static void uploadFileLookup(String musicName, String aux, String music, String album, String artist, String username){
         int fails = 0;
         while(fails < 30){
             try{
@@ -2169,7 +2161,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
     }
 
     //handles remote exception in download file
-    public static void downloadFileLookup(String musicName, String music, String album, String artist, String username){
+    public synchronized static void downloadFileLookup(String musicName, String music, String album, String artist, String username){
         int fails = 0;
         while(fails < 30){
             try{
