@@ -1176,53 +1176,29 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("\n\t- Upload Music -");
         Scanner s = new Scanner(System.in);
 
-        System.out.println("1. Kimi no na wa-Radwimps");
-        System.out.println("2. Mystery of love-Sufjan Stevens");
-        System.out.println("3. Visions of Gideon-Sufjan Stevens");
-
-        String musicNumber = s.nextLine();
+        System.out.println("Insert FilePath:");
+        String filePath = s.nextLine();
+        System.out.println("Insert Album Name:");
+        String album = s.nextLine();
+        System.out.println("Insert Artist Name:");
+        String artist = s.nextLine();
+        System.out.println("Insert Music Name:");
+        String music = s.nextLine();
 
         String musicName = "";
         String aux = "";
 
-        String music = "";
-        String album = "";
-        String artist = "";
-
-        if(musicNumber.equals("1")){
-            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa.mp3";
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa";
-            music = "kimi no na wa";
-            album = "chinocada";
-            artist = "radwimps";
-        }
-        else if(musicNumber.equals("2")){
-            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love.mp3";
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love";
-            music = "mystery of love";
-            album = "Call me by your name";
-            artist = "Sufjan Stevens";
-
-        }
-        else if(musicNumber.equals("3")){
-            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon.mp3";
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon";
-            music = "visions of gideon";
-            album = "Call me by your name";
-            artist = "Sufjan Stevens";
-        }
-
         try {
-            int porto = rmiInterface.checkUpload(username,musicName,album,artist,music);
+            int porto = rmiInterface.checkUpload(username,filePath,album,artist,music);
             if (porto != -1) {
-                System.out.println("entrei aqui!!!");
-                musicUploadClient(porto,aux);
-                System.out.println("Music downloaded.");
+                //System.out.println("entrei aqui!!!");
+                musicUploadClient(porto,filePath,username,music);
+                System.out.println("Music uploaded.");
                 menuUser(username);
 
 
             } else {
-                System.out.println("Error downloading music.");
+                System.out.println("Error uploading music.");
                 menuUser(username);
             }
         } catch (RemoteException e){
@@ -1232,14 +1208,18 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         }
     }
 
-    public synchronized static void musicUploadClient(int porto,String path) {
+    public synchronized static void musicUploadClient(int porto,String path,String user, String music) {
         //Initialize socket
         Socket socket = null;
         try {
             socket = new Socket("localhost", porto);
             byte[] contents = new byte[10000];
             //Initialize the FileOutputStream to the output file's full path.
-            FileOutputStream fos = new FileOutputStream(path+"_upload.mp3");
+            //System.out.println(path+"_upload.mp3");
+            //FileOutputStream fos = new FileOutputStream(path+"_"+user+"_upload.mp3");
+            ///Users/iroseiro/Desktop/Dialeto.mp3
+            FileOutputStream fos = new FileOutputStream("/Users/iroseiro/DropMusicInes/Uploads/"+user+"_"+music+".mp3");
+
             BufferedOutputStream bos = new BufferedOutputStream(fos);
             InputStream is = socket.getInputStream();
 
@@ -1300,6 +1280,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         System.out.println("1. Kimi no na wa-Radwimps");
         System.out.println("2. Mystery of love-Sufjan Stevens");
         System.out.println("3. Visions of Gideon-Sufjan Stevens");
+        System.out.println("4. Other");
+
 
         String musicNumber = s.nextLine();
 
@@ -1311,39 +1293,47 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
         String artist = "";
 
         if(musicNumber.equals("1")){
-            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa.mp3";
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa";
+            musicName = "/Users/dingo/Desktop/DropMusic/Source Code/Musics/kiminonawa.mp3";
             music = "kimi no na wa";
             album = "chinocada";
             artist = "radwimps";
         }
         else if(musicNumber.equals("2")){
-            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love.mp3";
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love";
+            musicName = "/Users/dingo/Desktop/DropMusic/Source Code/Musics/love.mp3";
             music = "mystery of love";
             album = "Call me by your name";
             artist = "Sufjan Stevens";
 
         }
         else if(musicNumber.equals("3")){
-            musicName = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon.mp3";
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon";
+            musicName = "/Users/dingo/Desktop/DropMusic/Source Code/Musics/gideon.mp3";
             music = "visions of gideon";
             album = "Call me by your name";
             artist = "Sufjan Stevens";
+        }
+        else if(musicNumber.equals("4")){
+            System.out.println("Insert FilePath:");
+            musicName = s.nextLine();
+            System.out.println("Insert Music:");
+            music = s.nextLine();
+            System.out.println("Insert Album:");
+            album = s.nextLine();
+            System.out.println("Insert Artist:");
+            artist = s.nextLine();
+
         }
 
         try {
             int porto = rmiInterface.checkDownload(username,musicName,album,artist,music);
             if (porto != -1) {
-                System.out.println("entrei aqui!!!");
+                //System.out.println("entrei aqui!!!");
                 musicDownload(porto,musicName);
-                System.out.println("Music uploaded.");
+                System.out.println("Music downloaded.");
                 menuUser(username);
 
 
             } else {
-                System.out.println("Error uploading music.");
+                System.out.println("Error downloading music.");
                 menuUser(username);
             }
         } catch (RemoteException e){
@@ -2140,7 +2130,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientInterface{
                 int porto = rmiInterface.checkUpload(username,musicName,album,artist,music);
                 if (porto != -1) {
                     System.out.println("entrei aqui!!!");
-                    musicUploadClient(porto,aux);
                     System.out.println("Music downloaded.");
                     menuUser(username);
 

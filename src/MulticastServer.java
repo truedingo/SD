@@ -782,7 +782,7 @@ public class MulticastServer extends Thread {
                     sendSocket.send(sendWaitMusicPacket);
                     System.out.println("Sent to RMI: " + sendWaitMusic);
 
-                    if (musicDownload(ssock, Integer.parseInt(port), musicPath)) {
+                    if (musicDownload(ssock, Integer.parseInt(port), musicPath,username,musicName)) {
                         String sendEditMusic = "type|download_music;successful";
                         byte[] sendBufferEditMusic = sendEditMusic.getBytes();
                         DatagramPacket sendEditMusicPacket = new DatagramPacket(sendBufferEditMusic, sendBufferEditMusic.length, group, RMI_PORT);
@@ -1406,13 +1406,13 @@ public class MulticastServer extends Thread {
     //http://www.codebytes.in/2014/11/file-transfer-using-tcp-java.html?fbclid=IwAR2tAKzWEfDqG9oQvzA7bfOkgnihxFlgbuAmbSVVLCn_WGCOgJxW5AdRQ8o
     //uploads music
     public synchronized boolean musicUpload(ServerSocket ssock, int port, String path) throws IOException {
-        System.out.println("oi1");
+        //System.out.println("oi1");
         //Initialize Sockets
         try {
 
             System.out.println(ssock);
             Socket socket = ssock.accept();
-            System.out.println("oi3");
+            //System.out.println("oi3");
 
             //Specify the file
             File file = new File(path);
@@ -1421,7 +1421,7 @@ public class MulticastServer extends Thread {
 
             //Get socket's output stream
             OutputStream os = socket.getOutputStream();
-            System.out.println("oi4");
+            //System.out.println("oi4");
 
 
             //Read File Contents into contents array
@@ -1455,8 +1455,8 @@ public class MulticastServer extends Thread {
         return true;
     }
 
-    //downloads musis
-    public synchronized boolean musicDownload(ServerSocket ssock, int port, String path) throws IOException {
+    //downloads music
+    public synchronized boolean musicDownload(ServerSocket ssock, int port, String path, String username,String musicName) throws IOException {
         //Initialize Sockets
         Socket socket = ssock.accept();
         String aux = "";
@@ -1464,13 +1464,17 @@ public class MulticastServer extends Thread {
         byte[] contents = new byte[10000];
 
         if(path.contains("kiminonawa")){
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/kiminonawa_download.mp3";
+            aux = "/Users/dingo/Desktop/DropMusic/Source Code/Musics/kiminonawa_"+username+".mp3";
         }
-        else if(path.contains("Love")){
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Mystery of Love.mp3_download.mp3";
+        else if(path.contains("love")){
+            aux = "/Users/dingo/Desktop/DropMusic/Source Code/Musics/love_"+username+".mp3";
         }
-        else if(path.contains("Gideon")){
-            aux = "/Users/iroseiro/Desktop/DropMusicMerged/src/Sufjan Stevens_Visions of Gideon_download.mp3";
+        else if(path.contains("gideon")){
+            aux = "/Users/dingo/Desktop/DropMusic/Source Code/Musics/gideon_"+username +".mp3";
+        }
+        else{
+            //aux = path + "_"+username+ ".mp3";
+            aux = "/Users/dingo/Desktop/DropMusic/Source Code/Downloads/"+musicName+"_"+username+".mp3";
         }
 
 
@@ -1513,7 +1517,6 @@ public class MulticastServer extends Thread {
 
         return false;
     }
-
     // --------------- OBJECT FILES STUFF ----------------- //
     //https://coderanch.com/t/278704/java/read-objects-file-ObjectInputStream
 
